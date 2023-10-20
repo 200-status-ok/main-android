@@ -6,11 +6,16 @@
 <!--    <string name="email_or_phone_number">Email or Phone number</string>-->
 <!--    <string name="verification_code">Verification Code</string>-->
 <!--    <string name="send">Send</string>-->
-    <string name="app_name">همینجاست</string>
+    <string name="app_name">Haminjast</string>
     <string name="login">ورود</string>
     <string name="login_with_google">ورود با گوگل</string>
     <string name="login_to_continue">برای ادامه وارد شو</string>
     <string name="email_or_phone_number">ایمیل یا شماره تلفن</string>
     <string name="verification_code">کد تایید</string>
     <string name="send">ارسال</string>
+    <string name="lost">گم شده</string>
+    <string name="found">پیدا شده</string>
+    <string name="ads">آگهی‌ها</string>
+    <string name="chat">چت</string>
+    <string name="me">من</string>
 </resources>
