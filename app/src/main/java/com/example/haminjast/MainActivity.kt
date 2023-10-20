@@ -20,6 +20,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -71,8 +72,13 @@ class MainActivity : ComponentActivity() {
 fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String) -> Unit = {}) {
     NavigationBar {
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("Home") },
+            icon = {
+                Icon(
+                    Icons.Filled.Home,
+                    contentDescription = stringResource(id = R.string.ads)
+                )
+            },
+            label = { Text(stringResource(id = R.string.ads)) },
             selected = currentDestinationRoute == Ads.route || currentDestinationRoute == null,
             onClick = {
                 onItemClicked(Ads.route)
@@ -80,8 +86,8 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
         )
 
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") },
+            icon = { Icon(Icons.Filled.Settings, contentDescription = stringResource(id = R.string.chat)) },
+            label = { Text(stringResource(id = R.string.chat)) },
             selected = currentDestinationRoute == Chat.route,
             onClick = {
                 onItemClicked(Chat.route)
@@ -89,9 +95,9 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
         )
 
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
+            icon = { Icon(Icons.Filled.Person, contentDescription = stringResource(id = R.string.me)) },
             selected = currentDestinationRoute == Me.route,
-            label = { Text("Profile") },
+            label = { Text(stringResource(id = R.string.me)) },
             onClick = {
                 onItemClicked(Me.route)
             }

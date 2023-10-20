@@ -7,4 +7,6 @@
     <string name="email_or_phone_number">ایمیل یا شماره تلفن</string>
     <string name="verification_code">کد تایید</string>
     <string name="send">ارسال</string>
+    <string name="lost">گم شده</string>
+    <string name="found">پیدا شده</string>
 </resources>
