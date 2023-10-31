@@ -61,7 +61,10 @@ fun RegistrationCodeInput(
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         BasicTextField(
             value = code.value,
-            onValueChange = { code.value = it },
+            onValueChange = {
+                code.value = it
+                onTextChanged(code.value.text)
+            },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             decorationBox = {
                 CodeInputDecoration(code.value.text, codeLength)
@@ -134,7 +137,8 @@ private fun CodeEntry(text: String) {
 fun OTPView(
     modifier: Modifier = Modifier,
     otpState: OTPState = OTPState.NOT_REQUESTED,
-    onSendOTPClicked: () -> Unit = {}
+    onSendOTPClicked: () -> Unit = {},
+    onTextChanged: (String) -> Unit = {}
 ) {
     Surface(
         modifier = modifier
@@ -148,7 +152,8 @@ fun OTPView(
                 modifier = Modifier.fillMaxWidth(0.75f),
                 codeLength = 6,
                 initialCode = "",
-                onTextChanged = {})
+                onTextChanged = onTextChanged
+            )
             Divider(
                 modifier = Modifier
                     .fillMaxHeight()
