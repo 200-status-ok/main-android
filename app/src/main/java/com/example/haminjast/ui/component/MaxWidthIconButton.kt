@@ -1,5 +1,6 @@
 package com.example.haminjast.ui.component
 
+import android.service.autofill.OnClickAction
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -31,10 +32,11 @@ fun MaxWidthIconButton(
     text: String,
     backgroundColor: Color = PrimaryBlack,
     contentColor: Color = Color.White,
+    onClick : () -> Unit
 ) {
     Button(
         modifier = modifier.fillMaxWidth(),
-        onClick = { /*TODO*/ },
+        onClick = onClick,
         shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor, contentColor = contentColor),
     ) {
@@ -63,21 +65,4 @@ fun MaxWidthIconButton(
             }
         }
     }
-}
-
-@Preview(locale="fa")
-@Composable
-fun LoginButtonP() {
-    MaxWidthIconButton(text = stringResource(R.string.login), backgroundColor = PrimaryBlack)
-}
-
-@Preview(locale="fa")
-@Composable
-fun LoginWithGoogleButtonP() {
-    MaxWidthIconButton(
-        icon = R.drawable.ic_google,
-        text = stringResource(R.string.login_with_google),
-        backgroundColor = Color.White,
-        contentColor = PrimaryBlack
-    )
 }

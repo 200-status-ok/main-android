@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haminjast.R
 import com.example.haminjast.data.LoginRepository
+import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.component.MaxWidthBorderedEditText
 import com.example.haminjast.ui.component.MaxWidthIconButton
 import com.example.haminjast.ui.component.OTPView
@@ -37,12 +39,14 @@ import com.example.haminjast.ui.theme.PrimaryBlack
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(
         factory = LoginViewModelFactory(
-            LoginRepository
+            LoginRepository,
+            LoginDataStore(LocalContext.current)
         )
     )
 ) {
     val otpState: LoginViewModel.OTPState by viewModel.otpState.collectAsStateWithLifecycle()
     val userName: String by viewModel.userName.collectAsStateWithLifecycle()
+    val otp: String by viewModel.otp.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -105,15 +109,22 @@ fun LoginScreen(
                 }
             )
             Spacer(modifier = Modifier.size(8.dp))
-            OTPView(modifier = Modifier.height(52.dp), otpState, onSendOTPClicked = {
+            OTPView(modifier = Modifier.height(52.dp), otpState,
+                onSendOTPClicked = {
                 viewModel.sendOTP(userName)
+            },
+                onTextChanged = {
+                viewModel.onOtpChanged(it)
             })
         }
 
         Column(Modifier.padding(bottom = 64.dp)) {
             MaxWidthIconButton(
                 modifier = Modifier.height(52.dp),
-                text = stringResource(id = R.string.login)
+                text = stringResource(id = R.string.login),
+                onClick = {
+                    viewModel.verifyOTP(userName,otp)
+                }
             )
             Spacer(modifier = Modifier.size(16.dp))
             MaxWidthIconButton(
@@ -121,7 +132,10 @@ fun LoginScreen(
                 text = stringResource(id = R.string.login_with_google),
                 icon = R.drawable.ic_google,
                 backgroundColor = Color.White,
-                contentColor = PrimaryBlack
+                contentColor = PrimaryBlack,
+                onClick = {
+
+                }
             )
         }
     }

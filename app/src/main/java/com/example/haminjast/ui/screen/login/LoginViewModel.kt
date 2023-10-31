@@ -3,15 +3,19 @@ package com.example.haminjast.ui.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haminjast.data.LoginRepository
+import com.example.haminjast.data.datastore.LoginDataStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository, private val loginDataStore: LoginDataStore) : ViewModel() {
 
     private val _userName = MutableStateFlow("")
     val userName = _userName.asStateFlow()
+
+    private val _otp = MutableStateFlow("")
+    val otp = _otp.asStateFlow()
 
     private val _otpState = MutableStateFlow(OTPState.NOT_REQUESTED)
     val otpState = _otpState.asStateFlow()
@@ -35,8 +39,28 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
     }
 
+    fun verifyOTP(userName: String, otp: String) {
+        if (!validateUserName(userName)) return
+        viewModelScope.launch {
+            val verifyOTPResult = loginRepository.verifyOTP(userName, otp)
+            if (verifyOTPResult.isSuccess) {
+                verifyOTPResult.getOrNull()?.token?.let {
+                    loginDataStore.saveToken(it)
+                }
+            }else{
+                _otpState.update {
+                    OTPState.NOT_REQUESTED
+                }
+            }
+        }
+    }
+
     fun onUserNameChanged(userName:String){
         _userName.update { userName }
+    }
+
+    fun onOtpChanged(otp : String){
+        _otp.update { otp }
     }
 
     private fun validateUserName(userName: String): Boolean {
