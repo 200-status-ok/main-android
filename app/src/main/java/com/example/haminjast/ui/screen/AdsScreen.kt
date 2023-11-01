@@ -1,5 +1,6 @@
 package com.example.haminjast.ui.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,19 +31,21 @@ import com.example.haminjast.data.model.fakeAdList
 import com.example.haminjast.ui.theme.PrimaryBlack
 
 @Composable
-fun AdsScreen() {
+fun AdsScreen(onAdClicked: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(fakeAdList) {
-                AdItem(ad = it)
+                AdItem(ad = it, onAdClicked = onAdClicked)
             }
         }
     }
 }
 
 @Composable
-fun AdItem(ad: Ad) {
-    Column {
+fun AdItem(ad: Ad, onAdClicked: () -> Unit = {}) {
+    Column(modifier = Modifier.clickable {
+        onAdClicked()
+    }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -52,7 +55,8 @@ fun AdItem(ad: Ad) {
             AsyncImage(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(104.dp).clip(RoundedCornerShape(2.dp)),
+                    .width(104.dp)
+                    .clip(RoundedCornerShape(2.dp)),
                 model = ad.imgUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop

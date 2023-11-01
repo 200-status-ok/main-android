@@ -1,6 +1,7 @@
 package com.example.haminjast
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.haminjast.ui.navigation.AdDetail
 import com.example.haminjast.ui.navigation.Ads
 import com.example.haminjast.ui.navigation.Chat
 import com.example.haminjast.ui.navigation.Login
@@ -36,6 +38,7 @@ import com.example.haminjast.ui.screen.AdsScreen
 import com.example.haminjast.ui.screen.ChatScreen
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
+import com.example.haminjast.ui.screen.singleAd.AdDetailScreen
 import com.example.haminjast.ui.theme.HaminjastTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,15 +51,20 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val currentBackStack by navController.currentBackStackEntryAsState()
                     val currentDestination = currentBackStack?.destination
+                    val showBottomNav= listOf(Ads,Chat,Me).map { it.route }.contains(currentDestination?.route)
+
+                    Log.d("modar","currentDestination:$currentDestination");
 
                     Scaffold(
                         bottomBar = {
-                            BottomNavigationBar(
-                                currentDestinationRoute = currentDestination?.route,
-                                onItemClicked = { route ->
-                                    navController.navigateSingleTopTo(route)
-                                }
-                            )
+                            if (showBottomNav) {
+                                BottomNavigationBar(
+                                    currentDestinationRoute = currentDestination?.route,
+                                    onItemClicked = { route ->
+                                        navController.navigateSingleTopTo(route)
+                                    }
+                                )
+                            }
                         },
                         content = { innerPadding ->
                             MainNavHost(navController = navController, innerPadding = innerPadding)
@@ -86,7 +94,12 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
         )
 
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Settings, contentDescription = stringResource(id = R.string.chat)) },
+            icon = {
+                Icon(
+                    Icons.Filled.Settings,
+                    contentDescription = stringResource(id = R.string.chat)
+                )
+            },
             label = { Text(stringResource(id = R.string.chat)) },
             selected = currentDestinationRoute == Chat.route,
             onClick = {
@@ -95,7 +108,12 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
         )
 
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Person, contentDescription = stringResource(id = R.string.me)) },
+            icon = {
+                Icon(
+                    Icons.Filled.Person,
+                    contentDescription = stringResource(id = R.string.me)
+                )
+            },
             selected = currentDestinationRoute == Me.route,
             label = { Text(stringResource(id = R.string.me)) },
             onClick = {
@@ -113,7 +131,11 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(route = Ads.route) {
-            AdsScreen()
+            AdsScreen(
+                onAdClicked = {
+                    navController.navigateSingleTopTo(AdDetail.route)
+                }
+            )
         }
         composable(route = Chat.route) {
             ChatScreen()
@@ -123,6 +145,9 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
         }
         composable(route = Login.route) {
             LoginScreen()
+        }
+        composable(route = AdDetail.route) {
+            AdDetailScreen()
         }
     }
 }
