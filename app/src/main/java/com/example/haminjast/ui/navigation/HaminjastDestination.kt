@@ -30,3 +30,7 @@ object Login : HaminjastDestination {
     override val icon = Icons.Filled.Person
     override val route = "login"
 }
+object AdDetail : HaminjastDestination {
+    override val icon = Icons.Filled.Person
+    override val route = "adDetail"
+}
