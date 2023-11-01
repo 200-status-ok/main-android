@@ -28,17 +28,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.haminjast.ui.navigation.AdDetail
 import com.example.haminjast.ui.navigation.Ads
 import com.example.haminjast.ui.navigation.Chat
 import com.example.haminjast.ui.navigation.Login
 import com.example.haminjast.ui.navigation.Me
+import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.screen.AdsScreen
 import com.example.haminjast.ui.screen.ChatScreen
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
-import com.example.haminjast.ui.screen.singleAd.AdDetailScreen
+import com.example.haminjast.ui.screen.posterDetail.PosterDetailScreen
 import com.example.haminjast.ui.theme.HaminjastTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,7 +133,7 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
         composable(route = Ads.route) {
             AdsScreen(
                 onAdClicked = {
-                    navController.navigateSingleTopTo(AdDetail.route)
+                    navController.navigateSingleTopTo(PosterDetail.route)
                 }
             )
         }
@@ -146,8 +146,12 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
         composable(route = Login.route) {
             LoginScreen()
         }
-        composable(route = AdDetail.route) {
-            AdDetailScreen()
+        composable(
+            route = PosterDetail.routeWithArgs,
+            arguments = PosterDetail.arguments
+        ) { backStackEntry ->
+            val posterId = backStackEntry.arguments?.getInt(PosterDetail.posterIdArg)!!
+            PosterDetailScreen(posterId)
         }
     }
 }

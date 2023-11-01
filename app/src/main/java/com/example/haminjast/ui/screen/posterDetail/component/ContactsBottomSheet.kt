@@ -1,4 +1,4 @@
-package com.example.haminjast.ui.screen.singleAd.component
+package com.example.haminjast.ui.screen.posterDetail.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

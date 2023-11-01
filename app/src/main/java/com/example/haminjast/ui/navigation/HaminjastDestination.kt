@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 interface HaminjastDestination {
     val icon: ImageVector
@@ -30,7 +32,14 @@ object Login : HaminjastDestination {
     override val icon = Icons.Filled.Person
     override val route = "login"
 }
-object AdDetail : HaminjastDestination {
+object PosterDetail : HaminjastDestination {
     override val icon = Icons.Filled.Person
-    override val route = "adDetail"
+    override val route = "poster_detail"
+
+    const val posterIdArg = "poster_id"
+    val arguments = listOf(
+        navArgument(posterIdArg) { type = NavType.IntType }
+    )
+
+    val routeWithArgs = "${route}/{${posterIdArg}}"
 }
