@@ -14,3 +14,7 @@ fun NavHostController.navigateSingleTopTo(route: String) {
         restoreState = true
     }
 }
+
+fun NavHostController.navigateToPosterDetail(posterId:Int) {
+    this.navigateSingleTopTo("${PosterDetail.route}/$posterId")
+}

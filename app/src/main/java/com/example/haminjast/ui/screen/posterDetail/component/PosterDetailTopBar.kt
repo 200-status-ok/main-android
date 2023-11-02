@@ -14,22 +14,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.haminjast.R
 
 @Composable
-fun PosterDetailTopBar() {
+fun PosterDetailTopBar(
+    onBackClicked: () -> Unit = {},
+    onBookMarkClicked: () -> Unit = {},
+    onMenuClicked: () -> Unit = {}
+) {
     TopAppBar(
-        title = { /*TODO*/ },
+        title = {},
         navigationIcon = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = { onBackClicked() }) {
                 Image(painter = painterResource(id = R.drawable.ic_back), contentDescription = null)
             }
         },
         actions = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = { onBookMarkClicked() }) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_bookmark),
                     contentDescription = null
                 )
             }
-            IconButton(onClick = { }) {
+            IconButton(onClick = { onMenuClicked() }) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_3_dots_menu),
                     contentDescription = null

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +35,10 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
+fun ContactsBottomSheetContent(
+    contacts: List<Pair<String, String>>? = null,
+    onToggleBottomSheet: () -> Unit = {}
+) {
     Divider(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +63,7 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
             }
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = "راه های ارتباطی",
+                text = stringResource(R.string.contacts),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = VazirFont,
@@ -69,7 +74,7 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            BlueB()
+            ChatButton()
             Spacer(modifier = Modifier.size(20.dp))
         }
     }
@@ -77,7 +82,7 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
     Spacer(modifier = Modifier.size(16.dp))
 
     @Composable
-    fun ContactsItem() {
+    fun ContactsItem(contact: Pair<String, String>) {
         Row(
             modifier = Modifier
                 .height(48.dp)
@@ -87,7 +92,7 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "شماره همراه",
+                text = contact.first,
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -98,7 +103,7 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
             )
 
             Text(
-                text = "09223334456",
+                text = contact.second,
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -110,17 +115,19 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
         }
     }
 
-    LazyColumn() {
-        items(2) {
-            ContactsItem()
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp), color = PrimaryBlack.copy(alpha = 0.2f)
-            )
-        }
-        item{
-            Spacer(modifier = Modifier.size(32.dp))
+    contacts?.let {
+        LazyColumn {
+            items(it, key = { contact -> contact.first }) { contact ->
+                ContactsItem(contact)
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp), color = PrimaryBlack.copy(alpha = 0.2f)
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.size(32.dp))
+            }
         }
     }
 }
@@ -128,11 +135,11 @@ fun ContactsBottomSheetContent(onToggleBottomSheet: () -> Unit = {}) {
 @Composable
 @RTLPixel5Previews
 fun ContactsBottomSheetPreview() {
-    ContactsBottomSheetContent()
+    ContactsBottomSheetContent(listOf())
 }
 
 @Composable
-fun BlueB(){
+fun ChatButton() {
     Button(
         modifier = Modifier.size(120.dp, 36.dp),
         onClick = { /*TODO*/ },
@@ -162,5 +169,5 @@ fun BlueB(){
 @Composable
 @RTLPixel5Previews
 fun BlueBPreview() {
-    BlueB()
+    ChatButton()
 }
