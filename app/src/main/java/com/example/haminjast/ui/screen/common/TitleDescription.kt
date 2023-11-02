@@ -20,11 +20,11 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun TitleDescription() {
+fun TitleDescription(title: String, description: String) {
     Column(modifier = Modifier.padding(start = 20.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "توضیحات",
+                text = title,
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = VazirFont,
@@ -50,7 +50,7 @@ fun TitleDescription() {
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             modifier = Modifier.padding(end = 20.dp),
-            text = "یکی از مشکلاتی که مشکلان شصیشسطز لفذذر زی بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.یکی از مشکلاتی که مشکلان شصیشسطز لفذذر زی بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.یکی از مشکلاتی که مشکلان شصیشسطز لفذذر زی بیشتر افراد با آن مواجه هستند.\n یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.یکی از مشکلاتی که مشکلان شصیشسطز لفذذر زی بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.",
+            text = description,
             style = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = VazirFont,
@@ -65,5 +65,5 @@ fun TitleDescription() {
 @RTLPixel5Previews
 @Composable
 fun TitleDescriptionPreview() {
-    TitleDescription()
+    TitleDescription(title = "عنوان", description = "توضیحات")
 }

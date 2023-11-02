@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haminjast.R
-import com.example.haminjast.data.LoginRepository
 import com.example.haminjast.data.datastore.LoginDataStore
+import com.example.haminjast.data.repository.LoginRepository
 import com.example.haminjast.ui.component.MaxWidthBorderedEditText
 import com.example.haminjast.ui.component.MaxWidthIconButton
 import com.example.haminjast.ui.component.OTPView

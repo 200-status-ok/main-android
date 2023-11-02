@@ -31,20 +31,20 @@ import com.example.haminjast.data.model.fakeAdList
 import com.example.haminjast.ui.theme.PrimaryBlack
 
 @Composable
-fun AdsScreen(onAdClicked: () -> Unit = {}) {
+fun AdsScreen(onPosterClicked: (Int) -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(fakeAdList) {
-                AdItem(ad = it, onAdClicked = onAdClicked)
+                PosterItem(ad = it, onPosterClicked = onPosterClicked)
             }
         }
     }
 }
 
 @Composable
-fun AdItem(ad: Ad, onAdClicked: () -> Unit = {}) {
+fun PosterItem(ad: Ad, onPosterClicked: (Int) -> Unit = {}) {
     Column(modifier = Modifier.clickable {
-        onAdClicked()
+        onPosterClicked(0) //todo set poster id
     }) {
         Row(
             modifier = Modifier
@@ -90,5 +90,5 @@ fun AdItem(ad: Ad, onAdClicked: () -> Unit = {}) {
 @Preview
 @Composable
 fun AdItemP() {
-    AdItem(fakeAdList[0])
+    PosterItem(fakeAdList[0])
 }

@@ -1,4 +1,4 @@
-package com.example.haminjast.data
+package com.example.haminjast.data.repository
 
 
 import com.example.haminjast.data.network.LoginRetrofit

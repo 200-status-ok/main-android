@@ -2,11 +2,11 @@ package com.example.haminjast.ui.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.haminjast.data.LoginRepository
 import com.example.haminjast.data.datastore.LoginDataStore
+import com.example.haminjast.data.repository.LoginRepository
 
-class LoginViewModelFactory(private val loginRepository:LoginRepository,
-    private val loginDataStore: LoginDataStore
+class LoginViewModelFactory(private val loginRepository: LoginRepository,
+                            private val loginDataStore: LoginDataStore
 ) :
     ViewModelProvider.NewInstanceFactory() {
 

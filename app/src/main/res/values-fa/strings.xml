@@ -9,4 +9,7 @@
     <string name="send">ارسال</string>
     <string name="lost">گم شده</string>
     <string name="found">پیدا شده</string>
+    <string name="contacts">راه های ارتباطی</string>
+    <string name="reward">مژدگانی</string>
+    <string name="description">توضیحات</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -16,10 +17,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,39 +30,62 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haminjast.R
+import com.example.haminjast.ui.model.PosterStatus
+import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.screen.common.RewardBar
 import com.example.haminjast.ui.screen.common.TitleDescription
-import com.example.haminjast.ui.screen.posterDetail.ImageAlbum
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
 
 @Composable
-fun PosterDetailContent(innerPadding: PaddingValues) {
+fun PosterDetailContent(innerPadding: PaddingValues, poster: UiPoster? = null) {
     val configuration = LocalConfiguration.current
 
-    val screenWidth = configuration.screenWidthDp.dp // todo remember
+    val screenWidth = remember {
+        configuration.screenWidthDp.dp // todo remember
+    }
+
     CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            ImageAlbum(width = screenWidth, height = (((screenWidth.value * 2) / 3) - 24).dp)
-            Spacer(modifier = Modifier.size(16.dp))
-            PosterDetailHeader()
-            Spacer(modifier = Modifier.size(16.dp))
-            RewardBar()
-            Spacer(modifier = Modifier.size(16.dp))
-            TitleDescription()
+        poster?.let {
+            Column(
+                modifier = Modifier.
+                    fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                ImageAlbum(
+                    width = screenWidth,
+                    height = (((screenWidth.value * 2) / 3) - 24).dp,
+                    imageUrls = it.imageUrls
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                PosterDetailHeader(
+                    title = it.title,
+                    posterStatus = it.status,
+                    timeCreated = it.timeCreated,
+                    vicinity = it.vicinity
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                it.reward?.let { it1 ->
+                    RewardBar(it1)
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
+                TitleDescription(stringResource(id = R.string.description), it.description)
+            }
         }
     }
 }
 
 @Composable
-fun PosterDetailHeader() {
+fun PosterDetailHeader(
+    title: String,
+    posterStatus: PosterStatus,
+    timeCreated: String,
+    vicinity: String
+) {
     Column(modifier = Modifier.padding(start = 20.dp)) {
         Text(
-            text = "اگزوز خاور",
+            text = title,
             style = TextStyle(
                 fontSize = 26.sp,
                 fontFamily = VazirFont,
@@ -70,7 +96,7 @@ fun PosterDetailHeader() {
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "3 دقیقه پیش",
+                text = timeCreated,
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -87,7 +113,7 @@ fun PosterDetailHeader() {
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = "گم شده در ستارخان",
+                text = "${stringResource(id = posterStatus.value)} در $vicinity",
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -103,5 +129,10 @@ fun PosterDetailHeader() {
 @Composable
 @Preview(locale = "fa")
 fun PosterDetailHeaderPreview() {
-    PosterDetailHeader()
+    PosterDetailHeader(
+        title = "دوچرخه یک سرنشینه",
+        posterStatus = PosterStatus.Lost,
+        timeCreated = "سه دقیقه پیش",
+        vicinity = "میدان ونک"
+    )
 }
