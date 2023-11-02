@@ -18,4 +18,7 @@
     <string name="ads">آگهی‌ها</string>
     <string name="chat">چت</string>
     <string name="me">من</string>
+    <string name="contacts">راه های ارتباطی</string>
+    <string name="reward">مژدگانی</string>
+    <string name="description">توضیحات</string>
 </resources>

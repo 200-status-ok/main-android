@@ -2,8 +2,8 @@ package com.example.haminjast.ui.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.haminjast.data.LoginRepository
 import com.example.haminjast.data.datastore.LoginDataStore
+import com.example.haminjast.data.repository.LoginRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

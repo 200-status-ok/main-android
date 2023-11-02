@@ -10,18 +10,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haminjast.R
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.PrimaryBlue
 import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun RewardBar() {
+fun RewardBar(reward: Long) {
     Surface(modifier = Modifier.fillMaxWidth(), color = PrimaryBlue) {
         Row(
             modifier = Modifier
@@ -30,7 +32,7 @@ fun RewardBar() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "مژدگانی",
+                text = stringResource(R.string.reward),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = VazirFont,
@@ -40,7 +42,7 @@ fun RewardBar() {
                 )
             )
             Text(
-                text = "۱۰۰،۰۰۰ تومان",
+                text = "$reward تومان",
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -56,5 +58,5 @@ fun RewardBar() {
 @RTLPixel5Previews
 @Composable
 fun RewardBarPreview() {
-    RewardBar()
+    RewardBar(reward = 10000)
 }

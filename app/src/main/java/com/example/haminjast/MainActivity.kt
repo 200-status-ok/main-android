@@ -1,7 +1,6 @@
 package com.example.haminjast
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +33,7 @@ import com.example.haminjast.ui.navigation.Login
 import com.example.haminjast.ui.navigation.Me
 import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
+import com.example.haminjast.ui.navigation.navigateToPosterDetail
 import com.example.haminjast.ui.screen.AdsScreen
 import com.example.haminjast.ui.screen.ChatScreen
 import com.example.haminjast.ui.screen.MeScreen
@@ -51,9 +51,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val currentBackStack by navController.currentBackStackEntryAsState()
                     val currentDestination = currentBackStack?.destination
-                    val showBottomNav= listOf(Ads,Chat,Me).map { it.route }.contains(currentDestination?.route)
-
-                    Log.d("modar","currentDestination:$currentDestination");
+                    val showBottomNav =
+                        listOf(Ads, Chat, Me).map { it.route }.contains(currentDestination?.route)
 
                     Scaffold(
                         bottomBar = {
@@ -132,8 +131,8 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
     ) {
         composable(route = Ads.route) {
             AdsScreen(
-                onAdClicked = {
-                    navController.navigateSingleTopTo(PosterDetail.route)
+                onPosterClicked = {
+                    navController.navigateToPosterDetail(0)
                 }
             )
         }
@@ -151,7 +150,9 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
             arguments = PosterDetail.arguments
         ) { backStackEntry ->
             val posterId = backStackEntry.arguments?.getInt(PosterDetail.posterIdArg)!!
-            PosterDetailScreen(posterId)
+            PosterDetailScreen(posterId, onBackClicked = {
+                navController.popBackStack()
+            })
         }
     }
 }

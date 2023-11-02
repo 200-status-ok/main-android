@@ -2,16 +2,21 @@
 
 package com.example.haminjast.ui.screen.posterDetail
 
+import android.util.Log
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.haminjast.data.repository.PosterRepository
+import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.screen.posterDetail.component.ContactsBottomSheetContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailTopBar
@@ -25,27 +30,35 @@ fun PosterDetailScreen(
     posterId: Int = 0,
     viewModel: PosterDetailViewModel = viewModel(
         factory = PosterDetailViewModelFactory(
-            posterId
+            posterId,
+            PosterRepository
         )
-    )
+    ),
+    onBackClicked: () -> Unit = {}
 ) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
+    val poster: State<UiPoster?> = viewModel.poster.collectAsStateWithLifecycle()
+    Log.d("modar","poster: ${poster.value}");
+
     BottomSheetScaffold(
         topBar = {
-            PosterDetailTopBar()
+            PosterDetailTopBar(onBackClicked = onBackClicked) //todo: add bookmark and menu click
         },
         sheetContent = {
-            ContactsBottomSheetContent(onToggleBottomSheet = {
-                coroutineScope.launch {
-                    if (bottomSheetScaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
-                        bottomSheetScaffoldState.bottomSheetState.expand()
-                    } else {
-                        bottomSheetScaffoldState.bottomSheetState.partialExpand()
+            ContactsBottomSheetContent(
+                contacts = poster.value?.contacts,
+                onToggleBottomSheet = {
+                    coroutineScope.launch {
+                        if (bottomSheetScaffoldState.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
+                            bottomSheetScaffoldState.bottomSheetState.expand()
+                        } else {
+                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                        }
                     }
                 }
-            })
+            )
         },
         scaffoldState = bottomSheetScaffoldState,
         sheetPeekHeight = 61.5.dp,
@@ -55,7 +68,7 @@ fun PosterDetailScreen(
         sheetContainerColor = Gray,
         containerColor = Color.White
     ) { innerPadding ->
-        PosterDetailContent(innerPadding)
+        PosterDetailContent(innerPadding, poster = poster.value)
     }
 }
 
