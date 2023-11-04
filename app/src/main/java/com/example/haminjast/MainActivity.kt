@@ -34,7 +34,7 @@ import com.example.haminjast.ui.navigation.Me
 import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
-import com.example.haminjast.ui.screen.AdsScreen
+import com.example.haminjast.ui.screen.ads.AdsScreen
 import com.example.haminjast.ui.screen.ChatScreen
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.login.LoginScreen

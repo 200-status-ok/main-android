@@ -1,11 +1,11 @@
 package com.example.haminjast.data.repository
 
 
-import com.example.haminjast.data.network.LoginRetrofit
-import com.example.haminjast.data.network.LoginRetrofitService
-import com.example.haminjast.data.network.OtpRequest
-import com.example.haminjast.data.network.VerifyOtpRequest
-import com.example.haminjast.data.network.VerifyOtpResponse
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofit
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
+import com.example.haminjast.data.network.loginretrofit.OtpRequest
+import com.example.haminjast.data.network.loginretrofit.VerifyOtpRequest
+import com.example.haminjast.data.network.loginretrofit.VerifyOtpResponse
 
 object LoginRepository{
     private val apiService: LoginRetrofitService =
