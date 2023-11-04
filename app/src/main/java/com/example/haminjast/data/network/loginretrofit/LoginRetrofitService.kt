@@ -1,4 +1,4 @@
-package com.example.haminjast.data.network
+package com.example.haminjast.data.network.loginretrofit
 
 import retrofit2.Response
 import retrofit2.http.Body

@@ -1,4 +1,4 @@
-package com.example.haminjast.ui.screen
+package com.example.haminjast.ui.screen.ads
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,17 +21,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.haminjast.data.model.Ad
 import com.example.haminjast.data.model.fakeAdList
 import com.example.haminjast.ui.theme.PrimaryBlack
 
 @Composable
-fun AdsScreen(onPosterClicked: (Int) -> Unit = {}) {
+fun AdsScreen(
+    viewModel: AdsViewModel = viewModel(
+        factory = provideViewModelFactory(
+            context = LocalContext.current
+        )
+    ),
+    onPosterClicked: (Int) -> Unit = {}
+) {
+    val posters = viewModel.posters.collectAsLazyPagingItems()
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(fakeAdList) {
