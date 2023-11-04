@@ -1,4 +1,4 @@
-package com.example.haminjast.data.network
+package com.example.haminjast.data.network.loginretrofit
 
 
 import com.google.gson.GsonBuilder

@@ -85,4 +85,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     //datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //paging
+    implementation("androidx.paging:paging-runtime-ktx:3.1.1")
+    //paging compose
+    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
 }
