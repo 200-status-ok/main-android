@@ -1,11 +1,10 @@
 @file:OptIn(
     ExperimentalFoundationApi::class, ExperimentalFoundationApi::class,
-    ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
 )
 
 package com.example.haminjast.ui.screen.createPoster
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -62,8 +62,6 @@ fun CreatePosterScreen(
 ) {
     val showAddContactDialog by viewModel.showAddContactDialog.collectAsStateWithLifecycle()
 
-    Log.d("modar", "showAddContactDialog: $showAddContactDialog");
-
     val title by viewModel.title.collectAsStateWithLifecycle()
     val desc by viewModel.desc.collectAsStateWithLifecycle()
     val posterStatus by viewModel.posterStatus.collectAsStateWithLifecycle()
@@ -82,13 +80,13 @@ fun CreatePosterScreen(
 
     Scaffold(
         topBar = {
-            CreatePosterTopBar(onCloseClicked = onCloseClicked, posterStatus = posterStatus,
-                onLostClicked = {
-                    viewModel.setPosterStatus(PosterStatus.Lost)
-                }, onFoundClicked = {
-                    viewModel.setPosterStatus(PosterStatus.Found)
-                }
-            )
+//            CreatePosterTopBar(onCloseClicked = onCloseClicked, posterStatus = posterStatus,
+//                onLostClicked = {
+//                    viewModel.setPosterStatus(PosterStatus.Lost)
+//                }, onFoundClicked = {
+//                    viewModel.setPosterStatus(PosterStatus.Found)
+//                }
+//            )
         },
         content = { innerPadding ->
             CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
@@ -101,6 +99,13 @@ fun CreatePosterScreen(
                         .animateContentSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    CreatePosterTopBar(onCloseClicked = onCloseClicked, posterStatus = posterStatus,
+                        onLostClicked = {
+                            viewModel.setPosterStatus(PosterStatus.Lost)
+                        }, onFoundClicked = {
+                            viewModel.setPosterStatus(PosterStatus.Found)
+                        }
+                    )
                     ImageSelector(
                         imgUrls = imgUrls,
                         onSelectorClicked = {

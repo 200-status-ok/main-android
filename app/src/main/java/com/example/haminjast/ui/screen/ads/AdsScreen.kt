@@ -1,7 +1,5 @@
 package com.example.haminjast.ui.screen.ads
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,8 +41,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.haminjast.R
-import com.example.haminjast.R
-import com.example.haminjast.data.model.fakeAdList
 import com.example.haminjast.data.model.posterToUiPoster
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.theme.PrimaryBlack
@@ -59,8 +55,7 @@ fun AdsScreen(
     ),
     onPosterClicked: (Int) -> Unit = {}
 ) {
-//    val posters = viewModel.posters.collectAsLazyPagingItems()
-    Log.d("adfsdf","${posters.itemCount}")
+    val posters = viewModel.posters.collectAsLazyPagingItems()
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(posters.itemCount) {
@@ -176,13 +171,13 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                             fontSize = 14.sp,
                             fontFamily = VazirFont,
                             fontWeight = FontWeight(600),
-                            color = PrimaryBlack,
+                            color = PrimaryBlack.copy(alpha = 0.9f),
                             textAlign = TextAlign.Right,
                         )
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = ad.desc,
+                        text = ad.description,
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
@@ -195,7 +190,7 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = ad.date,
+                        text = ad.timeCreated,
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
@@ -206,13 +201,15 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                     )
                     Spacer(modifier = Modifier.size(4.dp))
                     Image(
-                        modifier = Modifier.size(6.dp).padding(top = 3.dp),
+                        modifier = Modifier
+                            .size(6.dp)
+                            .padding(top = 3.dp),
                         painter = painterResource(id = R.drawable.dot),
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.size(4.dp))
                     Text(
-                        text = "${stringResource(id = ad.status.stringRes)} در ${ad.location}",
+                        text = "${stringResource(id = ad.status.value)} در ${ad.vicinity}",
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,

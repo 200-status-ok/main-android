@@ -84,7 +84,8 @@ class MainActivity : ComponentActivity() {
                             if (currentDestination?.route == Ads.route) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-                                        navController.navigateSingleTopTo(CreatePoster.route)
+//                                        navController.navigateSingleTopTo(CreatePoster.route)
+                                        navController.navigateToPosterDetail(0)
                                     },
                                     icon = {
                                         Icon(

@@ -54,8 +54,9 @@ fun TitleDescriptionInput(
                     textAlign = TextAlign.Right,
                 )
             )
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Text(
+                modifier = Modifier.padding(bottom = 2.dp),
                 text = "...........................................................................",
                 style = TextStyle(
                     fontSize = 14.sp,
