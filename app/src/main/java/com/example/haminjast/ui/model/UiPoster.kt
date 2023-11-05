@@ -6,7 +6,7 @@ data class UiPoster(
     val id: Int,
     val title: String,
     val description: String,
-    val imageUrls: List<String>,
+    val imageUrls: List<String>? = null,
     private val timeCreatedTimeStamp: Long,
     val status: PosterStatus,
     val vicinity: String,

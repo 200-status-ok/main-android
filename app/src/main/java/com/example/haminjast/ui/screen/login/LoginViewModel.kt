@@ -4,8 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.repository.LoginRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -39,8 +44,8 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
         }
     }
 
-    fun verifyOTP(userName: String, otp: String) {
-        if (!validateUserName(userName)) return
+    fun verifyOTP(userName: String, otp:String){
+        if (!validateUserName(userName))
         viewModelScope.launch {
             val verifyOTPResult = loginRepository.verifyOTP(userName, otp)
             if (verifyOTPResult.isSuccess) {
@@ -54,6 +59,8 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
             }
         }
     }
+
+    suspend fun getToken() = loginDataStore.getToken.first()
 
     fun onUserNameChanged(userName:String){
         _userName.update { userName }

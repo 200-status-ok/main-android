@@ -3,7 +3,7 @@ package com.example.haminjast.ui.screen.ads
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.example.haminjast.data.PosterRepository
+import com.example.haminjast.data.repository.PosterRepository
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 class AdsViewModel(

@@ -1,11 +1,31 @@
 package com.example.haminjast.data.repository
 
+
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.example.haminjast.data.mediator.PosterRemoteMediator
+import com.example.haminjast.data.model.Poster
+import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus.Lost
 import com.example.haminjast.ui.model.UiPoster
 import kotlinx.coroutines.delay
 
-object PosterRepository {
+class PosterRepository(
+    private val apiService : PosterRetrofitService
+) {
+
+    fun getPosters(pageSize: Int): Pager<Int, Poster> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = pageSize,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                PosterRemoteMediator(apiService)
+            }
+        )
+    }
     suspend fun getPosterById(id: Int): Result<UiPoster?> {
         delay(100)
         return Result.success(
