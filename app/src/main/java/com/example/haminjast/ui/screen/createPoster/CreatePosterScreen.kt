@@ -111,8 +111,8 @@ fun CreatePosterScreen(
                     Spacer(modifier = Modifier.size(32.dp))
                     if (imgUrls.isNotEmpty()) {
                         AiSuggestionBar()
+                        Spacer(modifier = Modifier.size(16.dp))
                     }
-                    Spacer(modifier = Modifier.size(24.dp))
                     TitleDescriptionInput(
                         title = stringResource(id = R.string.title),
                         description = "یکی از مشکلاتی که مشکلان بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.", //todo
@@ -120,7 +120,7 @@ fun CreatePosterScreen(
                         value = title,
                         onValueChanged = { viewModel.setTitle(it) }
                     )
-                    Spacer(modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.size(16.dp))
                     TitleDescriptionInput(
                         title = stringResource(id = R.string.description),
                         description = "یکی از مشکلاتی که مشکلان بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.یکی از مشکلاتی که مشکلان بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.", //todo
@@ -129,7 +129,7 @@ fun CreatePosterScreen(
                         value = desc,
                         onValueChanged = { viewModel.setDesc(it) }
                     )
-                    Spacer(modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.size(16.dp))
                     TitleDescription(title = stringResource(id = R.string.contacts))
                     Spacer(modifier = Modifier.size(8.dp))
                     ContactsList(

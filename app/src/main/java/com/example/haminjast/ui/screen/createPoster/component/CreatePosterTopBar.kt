@@ -39,7 +39,7 @@ fun CreatePosterTopBar(
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = VazirFont,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight(700),
                     color = Color(0xFF3A3A3A),
                     textAlign = TextAlign.Right,
                 )
