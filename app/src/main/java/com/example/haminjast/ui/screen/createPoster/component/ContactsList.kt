@@ -43,7 +43,7 @@ fun ContactsList(
                 .fillMaxWidth()
                 .height(42.dp),
             onClick = { onAddContactClicked() },
-            text = stringResource(R.string.add_picture),
+            text = stringResource(R.string.add),
             icon = R.drawable.ic_plus
         )
         Spacer(modifier = Modifier.size(8.dp))
@@ -83,10 +83,10 @@ fun ContactItem(
                 .height(42.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.size(12.dp))
+            Spacer(modifier = Modifier.size(8.dp))
             IconButton(
                 modifier = Modifier
-                    .size(22.dp)
+                    .size(32.dp)
                     .padding(2.dp),
                 onClick = { onDeleteClicked(contact) }
             ) {
@@ -97,7 +97,7 @@ fun ContactItem(
                     tint = PrimaryBlack.copy(alpha = 0.6f)
                 )
             }
-            Spacer(modifier = Modifier.size(10.dp))
+            Spacer(modifier = Modifier.size(2.dp))
             Text(
                 text = contact.name,
                 style = TextStyle(

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -49,11 +50,12 @@ fun OutlinedCenteredIconButton(
             Spacer(modifier = Modifier.size(8.dp))
         }
         Text(
+            modifier= Modifier.padding(bottom = 2.dp),
             text = text,
             style = TextStyle(
                 fontSize = 14.sp,
                 fontFamily = VazirFont,
-                fontWeight = FontWeight(500),
+                fontWeight = FontWeight(600),
                 color = PrimaryBlack.copy(alpha = 0.8f),
                 textAlign = TextAlign.Right,
             )

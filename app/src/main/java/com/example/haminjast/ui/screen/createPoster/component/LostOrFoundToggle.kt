@@ -40,7 +40,7 @@ fun LostOrFoundToggle(
 ) {
     Row(
         modifier = Modifier
-            .size(141.dp, 24.dp)
+            .size(141.dp, 28.dp)
             .border(1.dp, PrimaryBlack, RoundedCornerShape(4.dp))
             .clip(RoundedCornerShape(4.dp)),
         verticalAlignment = CenterVertically,
@@ -58,7 +58,7 @@ fun LostOrFoundToggle(
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = VazirFont,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight(if (value == PosterStatus.Lost) 700 else 500),
                     color = Color.Black,
                     textAlign = TextAlign.Center,
                 )
@@ -84,7 +84,7 @@ fun LostOrFoundToggle(
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = VazirFont,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight((if (value == PosterStatus.Found) 700 else 500)),
                     color = Color.Black,
                     textAlign = TextAlign.Center,
                 ),

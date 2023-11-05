@@ -60,14 +60,6 @@ fun ImageSelector(
                 onSelectorClicked = onSelectorClicked
             )
         }
-//        if (imgUrls.isEmpty()) {
-//            item {
-//                Selector(
-//                    modifier = Modifier.size(smallerSide.dp, biggerSide.dp),
-//                    onSelectorClicked = onSelectorClicked
-//                )
-//            }
-//        }
         items(imgUrls, key = { it }) { url ->
             AsyncImage(
                 modifier = Modifier
@@ -111,8 +103,8 @@ fun Selector(modifier: Modifier = Modifier, onSelectorClicked: () -> Unit = {}) 
     ) {
         Icon(
             modifier = Modifier.size(64.dp),
-            painter = painterResource(id = R.drawable.ic_plus),
-            contentDescription = null
+            painter = painterResource(id = R.drawable.ic_choose_image),
+            contentDescription = null,
         )
         Spacer(modifier = Modifier.size(12.dp))
         Text(
@@ -120,8 +112,8 @@ fun Selector(modifier: Modifier = Modifier, onSelectorClicked: () -> Unit = {}) 
             style = TextStyle(
                 fontSize = 14.sp,
                 fontFamily = VazirFont,
-                fontWeight = FontWeight(500),
-                color = PrimaryBlack.copy(alpha = 0.6f),
+                fontWeight = FontWeight(600),
+                color = PrimaryBlack.copy(alpha = 0.7f),
                 textAlign = TextAlign.Right,
             )
         )

@@ -34,7 +34,7 @@ fun TitleDescription(title: String, description: String? = null) {
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = VazirFont,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight(600),
                     color = PrimaryBlack.copy(alpha = 0.9f),
                     textAlign = TextAlign.Right,
                 )
@@ -63,7 +63,7 @@ fun TitleDescription(title: String, description: String? = null) {
                     fontSize = 12.sp,
                     fontFamily = VazirFont,
                     fontWeight = FontWeight(400),
-                    color = PrimaryBlack.copy(alpha = 0.8f),
+                    color = PrimaryBlack.copy(alpha = 0.9f),
                     textAlign = TextAlign.Right,
                 )
             )

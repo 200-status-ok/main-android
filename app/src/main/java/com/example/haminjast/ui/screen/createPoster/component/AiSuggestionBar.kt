@@ -45,7 +45,7 @@ fun AiSuggestionBar(onSuggestClicked: () -> Unit = {}) {
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight(600),
                     color = PrimaryBlack.copy(alpha = 0.9f),
                     textAlign = TextAlign.Right,
                 )
@@ -85,13 +85,13 @@ fun AiSuggestionBar(onSuggestClicked: () -> Unit = {}) {
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
-                            fontWeight = FontWeight(500),
+                            fontWeight = FontWeight(600),
                             color = Color(0xFFFFFFFF),
                             textAlign = TextAlign.Right,
                         )
                     )
                     Image(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(26.dp),
                         painter = painterResource(R.drawable.ic_magic),
                         contentDescription = null
                     )

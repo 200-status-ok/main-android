@@ -2,6 +2,7 @@ package com.example.haminjast.ui.screen.ads
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,10 +43,12 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.haminjast.R
+import com.example.haminjast.R
 import com.example.haminjast.data.model.fakeAdList
 import com.example.haminjast.data.model.posterToUiPoster
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.theme.PrimaryBlack
+import com.example.haminjast.ui.theme.VazirFont
 
 @Composable
 fun AdsScreen(
@@ -51,13 +59,19 @@ fun AdsScreen(
     ),
     onPosterClicked: (Int) -> Unit = {}
 ) {
-    val posters = viewModel.posters.collectAsLazyPagingItems()
+//    val posters = viewModel.posters.collectAsLazyPagingItems()
     Log.d("adfsdf","${posters.itemCount}")
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(posters.itemCount) {
                 posters[it]?.let { poster ->
                     PosterItem(posterToUiPoster(poster), onPosterClicked)
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp),
+                        color = PrimaryBlack.copy(alpha = 0.1f)
+                    )
                 }
             }
             posters.apply {
@@ -138,14 +152,14 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
+                .height(112.dp)
                 .padding(8.dp)
         ) {
             AsyncImage(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(104.dp)
-                    .clip(RoundedCornerShape(2.dp)),
+                    .width(96.dp)
+                    .clip(RoundedCornerShape(4.dp)),
                 model = ad.imageUrls?.get(0),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
@@ -156,23 +170,60 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(text = ad.title)
+                    Text(
+                        text = ad.title,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = VazirFont,
+                            fontWeight = FontWeight(600),
+                            color = PrimaryBlack,
+                            textAlign = TextAlign.Right,
+                        )
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = ad.description, fontSize = 12.sp)
+                    Text(
+                        text = ad.desc,
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = VazirFont,
+                            fontWeight = FontWeight(400),
+                            color = PrimaryBlack.copy(alpha = 0.8f)
+                        ),
+                        textAlign = TextAlign.Right,
+                        maxLines = 2
+                    )
                 }
-                Text(
-                    modifier = Modifier,
-                    text = "${ad.timeCreated} | ${stringResource(id = ad.status.value)} در ${ad.vicinity}",
-                    fontSize = 12.sp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = ad.date,
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = VazirFont,
+                            fontWeight = FontWeight(400),
+                            color = PrimaryBlack.copy(alpha = 0.8f),
+                            textAlign = TextAlign.Right,
+                        )
+                    )
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Image(
+                        modifier = Modifier.size(6.dp).padding(top = 3.dp),
+                        painter = painterResource(id = R.drawable.dot),
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(
+                        text = "${stringResource(id = ad.status.stringRes)} در ${ad.location}",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontFamily = VazirFont,
+                            fontWeight = FontWeight(400),
+                            color = PrimaryBlack.copy(alpha = 0.8f),
+                            textAlign = TextAlign.Right,
+                        )
+                    )
+                }
             }
         }
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp),
-            color = PrimaryBlack.copy(alpha = 0.1f)
-        )
     }
 }
 

@@ -49,7 +49,7 @@ fun TitleDescriptionInput(
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = VazirFont,
-                    fontWeight = FontWeight(500),
+                    fontWeight = FontWeight(600),
                     color = PrimaryBlack.copy(alpha = 0.9f),
                     textAlign = TextAlign.Right,
                 )
@@ -76,7 +76,7 @@ fun TitleDescriptionInput(
                 fontSize = 12.sp,
                 fontFamily = VazirFont,
                 fontWeight = FontWeight(400),
-                color = PrimaryBlack.copy(alpha = 0.8f),
+                color = PrimaryBlack.copy(alpha = 0.9f),
                 textAlign = TextAlign.Right,
             )
         )
