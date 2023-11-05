@@ -2,6 +2,9 @@ package com.example.haminjast.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.haminjast.ui.model.Contact
+import com.example.haminjast.ui.model.PosterStatus
+import com.example.haminjast.ui.model.UiPoster
 import com.google.gson.annotations.SerializedName
 
 data class EntityResponse(
@@ -81,3 +84,22 @@ data class Tag(
     val name: String,
     val state: String
 )
+
+fun posterToUiPoster(poster: Poster): UiPoster {
+    return UiPoster(
+        id = poster.id,
+        title = poster.title,
+        description = poster.description,
+        imageUrls = poster.images,
+        timeCreatedTimeStamp = 0,
+        status = if(poster.status == "lost") PosterStatus.Lost else PosterStatus.Found,
+        vicinity = poster.addresses[0].address_detail,
+        reward = poster.award.toLong(),
+        lat = poster.addresses[0].location.lat,
+        lng = poster.addresses[0].location.lon,
+        issuerId = poster.user_id,
+        contacts = listOf(
+            Contact("شماره تماس", poster.user_phone),
+            Contact("تلگرام", poster.tel_id)),
+    )
+}
