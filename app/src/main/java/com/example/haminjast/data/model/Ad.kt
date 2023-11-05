@@ -40,7 +40,7 @@ val fakeAdList = mutableListOf<Ad>().apply {
             "لپتاپ",
             "یک لپتاپ ایسوس سفید دیشب در محدوده ی فلکه اول تهرانپارس گم شده.",
             AdStatus.LOST,
-            "https://www.bprshop.com/uploads/server/267848e59969a142a81b35d18de09045moghdame.jpg",
+            "https://storage.mixin.ir/9927609931-media/product-images/1686243801_81112.jpg",
             "دیروز", "تهرانپارس"
         )
     )
@@ -58,7 +58,7 @@ val fakeAdList = mutableListOf<Ad>().apply {
             "لپتاپ",
             "یک لپتاپ ایسوس سفید دیشب در محدوده ی فلکه اول تهرانپارس پیدا شده.",
             AdStatus.FOUND,
-            "https://www.bprshop.com/uploads/server/267848e59969a142a81b35d18de09045moghdame.jpg",
+            "https://storage.mixin.ir/9927609931-media/product-images/1686243801_81112.jpg",
             "دیروز", "تهرانپارس"
         )
     )
@@ -85,7 +85,7 @@ val fakeAdList = mutableListOf<Ad>().apply {
             "لپتاپ",
             "یک لپتاپ ایسوس سفید دیشب در محدوده ی فلکه اول تهرانپارس گم شده.",
             AdStatus.LOST,
-            "https://www.bprshop.com/uploads/server/267848e59969a142a81b35d18de09045moghdame.jpg",
+            "https://storage.mixin.ir/9927609931-media/product-images/1686243801_81112.jpg",
             "دیروز", "ستارخان"
         )
     )

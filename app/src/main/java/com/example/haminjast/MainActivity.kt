@@ -20,10 +20,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,6 +50,8 @@ import com.example.haminjast.ui.screen.createPoster.CreatePosterScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
 import com.example.haminjast.ui.screen.posterDetail.PosterDetailScreen
 import com.example.haminjast.ui.theme.HaminjastTheme
+import com.example.haminjast.ui.theme.PrimaryBlack
+import com.example.haminjast.ui.theme.VazirFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -81,10 +89,24 @@ class MainActivity : ComponentActivity() {
                                     icon = {
                                         Icon(
                                             painter = painterResource(id = R.drawable.ic_plus),
-                                            null
+                                            null,
+                                            tint = Color.White
                                         )
                                     },
-                                    text = { Text(text = stringResource(id = R.string.new_poster)) },
+                                    text = {
+                                        Text(
+                                            modifier=Modifier.padding(bottom = 2.dp),
+                                            text = stringResource(id = R.string.new_poster),
+                                            style = TextStyle(
+                                                fontSize = 14.sp,
+                                                fontFamily = VazirFont,
+                                                fontWeight = FontWeight(400),
+                                                color = Color.White,
+                                                textAlign = TextAlign.Center,
+                                            )
+                                        )
+                                    },
+                                    containerColor = PrimaryBlack
                                 )
                             }
                         }
