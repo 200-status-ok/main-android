@@ -3,10 +3,10 @@ package com.example.haminjast.ui.screen.ads
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.haminjast.data.PosterRepository
 import com.example.haminjast.data.database.RoomDB
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofit
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
+import com.example.haminjast.data.repository.PosterRepository
 
 class AdsViewModelFactory(
     private val adsRepository: PosterRepository
@@ -26,7 +26,6 @@ private fun providePosterRepository(
 ): PosterRepository {
     return PosterRepository(
         apiService = PosterRetrofit.getRetrofitInstance().create(PosterRetrofitService::class.java),
-        db = RoomDB.getInstance(context),
     )
 }
 

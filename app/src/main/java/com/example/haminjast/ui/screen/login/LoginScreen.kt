@@ -1,5 +1,6 @@
 package com.example.haminjast.ui.screen.login
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,9 @@ import com.example.haminjast.ui.component.MaxWidthBorderedEditText
 import com.example.haminjast.ui.component.MaxWidthIconButton
 import com.example.haminjast.ui.component.OTPView
 import com.example.haminjast.ui.theme.PrimaryBlack
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -124,6 +128,12 @@ fun LoginScreen(
                 text = stringResource(id = R.string.login),
                 onClick = {
                     viewModel.verifyOTP(userName,otp)
+                    CoroutineScope(Dispatchers.Default).launch{
+                        val token = viewModel.getToken()
+                        if (token != ""){
+                            Log.d("token",token)
+                        }
+                    }
                 }
             )
             Spacer(modifier = Modifier.size(16.dp))

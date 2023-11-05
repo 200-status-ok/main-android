@@ -1,5 +1,7 @@
 package com.example.haminjast.ui.screen.ads
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,24 +15,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
-import com.example.haminjast.data.model.Ad
+import com.example.haminjast.R
 import com.example.haminjast.data.model.fakeAdList
+import com.example.haminjast.data.model.posterToUiPoster
+import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.theme.PrimaryBlack
 
 @Composable
@@ -43,17 +52,86 @@ fun AdsScreen(
     onPosterClicked: (Int) -> Unit = {}
 ) {
     val posters = viewModel.posters.collectAsLazyPagingItems()
+    Log.d("adfsdf","${posters.itemCount}")
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(fakeAdList) {
-                PosterItem(ad = it, onPosterClicked = onPosterClicked)
+            items(posters.itemCount) {
+                posters[it]?.let { poster ->
+                    PosterItem(posterToUiPoster(poster), onPosterClicked)
+                }
+            }
+            posters.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item { PageLoader(modifier = Modifier.fillParentMaxSize()) }
+                    }
+
+                    loadState.refresh is LoadState.Error -> {
+                        val error = posters.loadState.refresh as LoadState.Error
+                        item {
+                            ErrorMessage(
+                                modifier = Modifier.fillParentMaxSize(),
+                                message = error.error.localizedMessage!!,
+                                onClickRetry = { retry() })
+                        }
+                    }
+
+                    loadState.append is LoadState.Error -> {
+                        val error = posters.loadState.append as LoadState.Error
+                        item {
+                            ErrorMessage(
+                                modifier = Modifier,
+                                message = error.error.localizedMessage!!,
+                                onClickRetry = { retry() })
+                        }
+                    }
+                }
             }
         }
     }
 }
+@Composable
+fun PageLoader(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Loading...",
+            color = MaterialTheme.colorScheme.primary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        CircularProgressIndicator(Modifier.padding(top = 10.dp))
+    }
+}
+
 
 @Composable
-fun PosterItem(ad: Ad, onPosterClicked: (Int) -> Unit = {}) {
+fun ErrorMessage(
+    message: String,
+    modifier: Modifier = Modifier,
+    onClickRetry: () -> Unit
+) {
+    Row(
+        modifier = modifier.padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = message,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.weight(1f),
+            maxLines = 2
+        )
+        OutlinedButton(onClick = onClickRetry) {
+            Text(text = "retry")
+        }
+    }
+}
+@Composable
+fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
     Column(modifier = Modifier.clickable {
         onPosterClicked(0) //todo set poster id
     }) {
@@ -68,7 +146,7 @@ fun PosterItem(ad: Ad, onPosterClicked: (Int) -> Unit = {}) {
                     .fillMaxHeight()
                     .width(104.dp)
                     .clip(RoundedCornerShape(2.dp)),
-                model = ad.imgUrl,
+                model = ad.imageUrls?.get(0),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
@@ -80,11 +158,11 @@ fun PosterItem(ad: Ad, onPosterClicked: (Int) -> Unit = {}) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(text = ad.title)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = ad.desc, fontSize = 12.sp)
+                    Text(text = ad.description, fontSize = 12.sp)
                 }
                 Text(
                     modifier = Modifier,
-                    text = "${ad.date} | ${stringResource(id = ad.status.stringRes)} در ${ad.location}",
+                    text = "${ad.timeCreated} | ${stringResource(id = ad.status.value)} در ${ad.vicinity}",
                     fontSize = 12.sp
                 )
             }
@@ -101,5 +179,5 @@ fun PosterItem(ad: Ad, onPosterClicked: (Int) -> Unit = {}) {
 @Preview
 @Composable
 fun AdItemP() {
-    PosterItem(fakeAdList[0])
+    //PosterItem(fakeAdList[0])
 }

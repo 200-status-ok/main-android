@@ -111,7 +111,7 @@ fun Selector(modifier: Modifier = Modifier, onSelectorClicked: () -> Unit = {}) 
     ) {
         Icon(
             modifier = Modifier.size(64.dp),
-            painter = painterResource(id = R.drawable.ic_choose_image),
+            painter = painterResource(id = R.drawable.ic_plus),
             contentDescription = null
         )
         Spacer(modifier = Modifier.size(12.dp))

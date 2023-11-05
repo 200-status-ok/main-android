@@ -12,10 +12,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.haminjast.data.repository.PosterRepository
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.screen.posterDetail.component.ContactsBottomSheetContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailContent
@@ -29,9 +29,8 @@ import kotlinx.coroutines.launch
 fun PosterDetailScreen(
     posterId: Int = 0,
     viewModel: PosterDetailViewModel = viewModel(
-        factory = PosterDetailViewModelFactory(
+        factory = provideViewModelFactory(
             posterId,
-            PosterRepository
         )
     ),
     onBackClicked: () -> Unit = {}

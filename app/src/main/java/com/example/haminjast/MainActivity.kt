@@ -1,6 +1,5 @@
 package com.example.haminjast
 
-import AdsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,6 +39,7 @@ import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
 import com.example.haminjast.ui.screen.ChatScreen
 import com.example.haminjast.ui.screen.MeScreen
+import com.example.haminjast.ui.screen.ads.AdsScreen
 import com.example.haminjast.ui.screen.createPoster.CreatePosterScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
 import com.example.haminjast.ui.screen.posterDetail.PosterDetailScreen
