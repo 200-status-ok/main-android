@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haminjast.R
+import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.theme.ButtonBlue
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
@@ -36,7 +37,7 @@ import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
 fun ContactsBottomSheetContent(
-    contacts: List<Pair<String, String>>? = null,
+    contacts: List<Contact>? = null,
     onToggleBottomSheet: () -> Unit = {}
 ) {
     Divider(
@@ -82,7 +83,7 @@ fun ContactsBottomSheetContent(
     Spacer(modifier = Modifier.size(16.dp))
 
     @Composable
-    fun ContactsItem(contact: Pair<String, String>) {
+    fun ContactsItem(contact: Contact) {
         Row(
             modifier = Modifier
                 .height(48.dp)
@@ -92,7 +93,7 @@ fun ContactsBottomSheetContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = contact.first,
+                text = contact.name,
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -103,7 +104,7 @@ fun ContactsBottomSheetContent(
             )
 
             Text(
-                text = contact.second,
+                text = contact.value,
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
@@ -117,7 +118,7 @@ fun ContactsBottomSheetContent(
 
     contacts?.let {
         LazyColumn {
-            items(it, key = { contact -> contact.first }) { contact ->
+            items(it, key = { contact -> contact.name }) { contact ->
                 ContactsItem(contact)
                 Divider(
                     modifier = Modifier
