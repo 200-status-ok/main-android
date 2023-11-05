@@ -12,4 +12,11 @@
     <string name="contacts">راه های ارتباطی</string>
     <string name="reward">مژدگانی</string>
     <string name="description">توضیحات</string>
+    <string name="new_poster">آگهی جدید</string>
+    <string name="add_picture">اضافه کردن تصویر</string>
+    <string name="ai_suggestion">پیشنهاد هوش مصنوعی</string>
+    <string name="ai_suggestion_description">میتونی از هوش مصنوعی استفاده کنی تا از روی عکسی که بارگذاری کردی عنوان، توضیحات و تگ های مناسب بهت پیشنهاد بده.</string>
+    <string name="title">عنوان</string>
+    <string name="confirm">تایید</string>
+    <string name="add">افزودن</string>
 </resources>

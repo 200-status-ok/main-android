@@ -1,5 +1,6 @@
 package com.example.haminjast.data.repository
 
+import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus.Lost
 import com.example.haminjast.ui.model.UiPoster
 import kotlinx.coroutines.delay
@@ -25,8 +26,8 @@ object PosterRepository {
                 lng = 34.0,
                 issuerId = 1,
                 contacts = listOf(
-                    Pair("شماره تماس", "09123456789"),
-                    Pair("ایمیل", "felanihastam@gmail.com")
+                    Contact("شماره تماس", "09123456789"),
+                    Contact("ایمیل", "felanihastam@gmail.com")
                 )
             )
         )

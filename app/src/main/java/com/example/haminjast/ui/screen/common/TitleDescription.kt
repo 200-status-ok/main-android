@@ -1,8 +1,10 @@
 package com.example.haminjast.ui.screen.common
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,9 +22,13 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun TitleDescription(title: String, description: String) {
+fun TitleDescription(title: String, description: String? = null) {
     Column(modifier = Modifier.padding(start = 20.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = title,
                 style = TextStyle(
@@ -35,30 +41,33 @@ fun TitleDescription(title: String, description: String) {
             )
             Spacer(modifier = Modifier.width(24.dp))
             Text(
-                text = ".......................................",
+                text = ".................................................................................",
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
                     fontWeight = FontWeight(600),
                     color = PrimaryBlack.copy(alpha = 0.4f),
-                    textAlign = TextAlign.Right,
+                    textAlign = TextAlign.Left,
                     letterSpacing = 2.8.sp,
                 ),
                 maxLines = 1
             )
         }
-        Spacer(modifier = Modifier.size(8.dp))
-        Text(
-            modifier = Modifier.padding(end = 20.dp),
-            text = description,
-            style = TextStyle(
-                fontSize = 12.sp,
-                fontFamily = VazirFont,
-                fontWeight = FontWeight(400),
-                color = PrimaryBlack.copy(alpha = 0.8f),
-                textAlign = TextAlign.Right,
+        description?.let {
+            if (it.isEmpty()) return@let
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                modifier = Modifier.padding(end = 20.dp),
+                text = it,
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = VazirFont,
+                    fontWeight = FontWeight(400),
+                    color = PrimaryBlack.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Right,
+                )
             )
-        )
+        }
     }
 }
 

@@ -14,11 +14,16 @@ data class UiPoster(
     val lat: Double,
     val lng: Double,
     val issuerId: Int,
-    val contacts: List<Pair<String, String>>? = null
+    val contacts: List<Contact>? = null
 ) {
     val timeCreated: String
         get() = "سه دقیقه پیش"
 }
+
+data class Contact(
+    val name: String,
+    val value: String
+)
 
 enum class PosterStatus(val value: Int) {
     Lost(R.string.lost), Found(R.string.found)

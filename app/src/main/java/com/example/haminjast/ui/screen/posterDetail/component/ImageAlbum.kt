@@ -27,7 +27,6 @@ fun ImageAlbum(width: Dp, height: Dp, imageUrls: List<String>? = null) {
     fun Img(modifier: Modifier = Modifier, url: String) {
         AsyncImage(
             modifier = modifier
-                .size(width, height)
                 .clip(RoundedCornerShape(6.dp)),
             model = url,
             contentDescription = null,
