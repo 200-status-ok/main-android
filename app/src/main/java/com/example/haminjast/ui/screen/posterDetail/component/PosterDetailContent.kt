@@ -42,7 +42,7 @@ fun PosterDetailContent(innerPadding: PaddingValues, poster: UiPoster? = null) {
     val configuration = LocalConfiguration.current
 
     val screenWidth = remember {
-        configuration.screenWidthDp.dp // todo remember
+        configuration.screenWidthDp.dp
     }
 
     CompositionLocalProvider(LocalOverscrollConfiguration provides null) {

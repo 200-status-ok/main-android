@@ -43,3 +43,8 @@ object PosterDetail : HaminjastDestination {
 
     val routeWithArgs = "${route}/{${posterIdArg}}"
 }
+
+object CreatePoster : HaminjastDestination {
+    override val icon = Icons.Filled.Person
+    override val route = "create_poster"
+}
