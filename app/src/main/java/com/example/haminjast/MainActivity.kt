@@ -43,7 +43,7 @@ import com.example.haminjast.ui.navigation.Me
 import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
-import com.example.haminjast.ui.screen.ChatScreen
+import com.example.haminjast.ui.screen.chat.ChatsListScreen
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.ads.AdsScreen
 import com.example.haminjast.ui.screen.createPoster.CreatePosterScreen
@@ -180,7 +180,7 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
             )
         }
         composable(route = Chat.route) {
-            ChatScreen()
+            ChatsListScreen()
         }
         composable(route = Me.route) {
             MeScreen(onLoginClicked = { navController.navigateSingleTopTo(Login.route) })
