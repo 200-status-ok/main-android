@@ -6,6 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
     name = "rtl",
     group = "rtl",
     locale = "fa",
-    device = "id:pixel_5"
+    device = "id:pixel_5",
+    backgroundColor = 0xFFFFFFFF,
 )
 annotation class RTLPixel5Previews
