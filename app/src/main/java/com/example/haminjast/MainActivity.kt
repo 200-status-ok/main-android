@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.haminjast.ui.navigation.Ads
+import com.example.haminjast.ui.navigation.Chat
 import com.example.haminjast.ui.navigation.ChatsList
 import com.example.haminjast.ui.navigation.CreatePoster
 import com.example.haminjast.ui.navigation.Login
@@ -44,7 +45,8 @@ import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.ads.AdsScreen
-import com.example.haminjast.ui.screen.chat.ChatsListScreen
+import com.example.haminjast.ui.screen.chat.ChatScreen
+import com.example.haminjast.ui.screen.chatslist.ChatsListScreen
 import com.example.haminjast.ui.screen.common.HaminjastBottomNavigationBar
 import com.example.haminjast.ui.screen.createPoster.CreatePosterScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
@@ -86,8 +88,8 @@ class MainActivity : ComponentActivity() {
                             if (currentDestination?.route == Ads.route) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-//                                        navController.navigateSingleTopTo(CreatePoster.route)
-                                        navController.navigateToPosterDetail(0)
+                                        navController.navigateSingleTopTo(CreatePoster.route)
+//                                        navController.navigateToPosterDetail(0)
                                     },
                                     icon = {
                                         Icon(
@@ -249,7 +251,11 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
             )
         }
         composable(route = ChatsList.route) {
-            ChatsListScreen()
+            ChatsListScreen(
+                onChatClicked = {
+                    navController.navigateSingleTopTo(Chat.route)
+                }
+            )
         }
         composable(route = Me.route) {
             MeScreen(onLoginClicked = { navController.navigateSingleTopTo(Login.route) })
@@ -270,6 +276,9 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
             CreatePosterScreen(onCloseClicked = {
                 navController.popBackStack()
             })
+        }
+        composable(route = Chat.route) {
+            ChatScreen()
         }
     }
 }

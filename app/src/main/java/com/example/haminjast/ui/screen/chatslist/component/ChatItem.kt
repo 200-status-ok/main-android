@@ -1,6 +1,7 @@
-package com.example.haminjast.ui.screen.chat.component
+package com.example.haminjast.ui.screen.chatslist.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,11 +36,19 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun ChatItem() {
-    Column(modifier = Modifier.fillMaxWidth().height(120.dp).padding(horizontal = 16.dp), verticalArrangement = Arrangement.Center) {
-        Row(modifier = Modifier
+fun ChatItem(onClick: () -> Unit = {}) {
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)) {
+            .height(120.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { onClick() }, verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+        ) {
             AsyncImage(
                 modifier = Modifier
                     .size(56.dp)

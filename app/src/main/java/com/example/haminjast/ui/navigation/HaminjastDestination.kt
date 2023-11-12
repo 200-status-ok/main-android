@@ -20,7 +20,7 @@ object Ads : HaminjastDestination {
 
 object ChatsList : HaminjastDestination {
     override val icon = Icons.Filled.Check
-    override val route = "chat"
+    override val route = "chat_list"
 }
 
 object Me : HaminjastDestination {
@@ -32,6 +32,7 @@ object Login : HaminjastDestination {
     override val icon = Icons.Filled.Person
     override val route = "login"
 }
+
 object PosterDetail : HaminjastDestination {
     override val icon = Icons.Filled.Person
     override val route = "poster_detail"
@@ -42,6 +43,11 @@ object PosterDetail : HaminjastDestination {
     )
 
     val routeWithArgs = "${route}/{${posterIdArg}}"
+}
+
+object Chat : HaminjastDestination {
+    override val icon = Icons.Filled.Person
+    override val route = "chat"
 }
 
 object CreatePoster : HaminjastDestination {
