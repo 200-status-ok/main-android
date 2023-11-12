@@ -19,3 +19,6 @@ val DarkerLostRed=Color(0xFFFF7676)
 val FoundBlue=Color(0xFFA0E9FF)
 val TagGray=Color(0xFFEFEFEF)
 val DividerGray=Color(0xFFF5F5F5)
+val NavBarBlue=Color(0xFF87C4FF)
+
+val transp=Color(0x22FF)

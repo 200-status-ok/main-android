@@ -4,16 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,20 +35,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.haminjast.ui.navigation.Ads
-import com.example.haminjast.ui.navigation.Chat
+import com.example.haminjast.ui.navigation.ChatsList
 import com.example.haminjast.ui.navigation.CreatePoster
 import com.example.haminjast.ui.navigation.Login
 import com.example.haminjast.ui.navigation.Me
 import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
-import com.example.haminjast.ui.screen.chat.ChatsListScreen
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.ads.AdsScreen
+import com.example.haminjast.ui.screen.chat.ChatsListScreen
+import com.example.haminjast.ui.screen.common.HaminjastBottomNavigationBar
 import com.example.haminjast.ui.screen.createPoster.CreatePosterScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
 import com.example.haminjast.ui.screen.posterDetail.PosterDetailScreen
 import com.example.haminjast.ui.theme.HaminjastTheme
+import com.example.haminjast.ui.theme.NavBarBlue
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
 
@@ -64,12 +65,13 @@ class MainActivity : ComponentActivity() {
                     val currentBackStack by navController.currentBackStackEntryAsState()
                     val currentDestination = currentBackStack?.destination
                     val showBottomNav =
-                        listOf(Ads, Chat, Me).map { it.route }.contains(currentDestination?.route)
+                        listOf(Ads, ChatsList, Me).map { it.route }
+                            .contains(currentDestination?.route)
 
                     Scaffold(
                         bottomBar = {
                             if (showBottomNav) {
-                                BottomNavigationBar(
+                                HaminjastBottomNavigationBar(
                                     currentDestinationRoute = currentDestination?.route,
                                     onItemClicked = { route ->
                                         navController.navigateSingleTopTo(route)
@@ -96,7 +98,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     text = {
                                         Text(
-                                            modifier=Modifier.padding(bottom = 2.dp),
+                                            modifier = Modifier.padding(bottom = 2.dp),
                                             text = stringResource(id = R.string.new_poster),
                                             style = TextStyle(
                                                 fontSize = 14.sp,
@@ -120,15 +122,38 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String) -> Unit = {}) {
-    NavigationBar {
+    NavigationBar(modifier = Modifier.height(64.dp), containerColor = Color.White) {
         NavigationBarItem(
+            colors = NavigationBarItemDefaults.colors(indicatorColor = Color.White),
             icon = {
                 Icon(
-                    Icons.Filled.Home,
-                    contentDescription = stringResource(id = R.string.ads)
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_haminjast),
+                    contentDescription = stringResource(id = R.string.ads),
+                    tint = if (currentDestinationRoute == Ads.route || currentDestinationRoute == null) {
+                        NavBarBlue
+                    } else {
+                        PrimaryBlack.copy(alpha = 0.8f)
+                    }
                 )
             },
-            label = { Text(stringResource(id = R.string.ads)) },
+            label = {
+                Text(
+                    stringResource(id = R.string.ads),
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = VazirFont,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xCC3A3A3A),
+                        textAlign = TextAlign.Right,
+                    ),
+                    color = if (currentDestinationRoute == Ads.route || currentDestinationRoute == null) {
+                        NavBarBlue
+                    } else {
+                        PrimaryBlack.copy(alpha = 0.8f)
+                    }
+                )
+            },
             selected = currentDestinationRoute == Ads.route || currentDestinationRoute == null,
             onClick = {
                 onItemClicked(Ads.route)
@@ -138,26 +163,70 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
         NavigationBarItem(
             icon = {
                 Icon(
-                    Icons.Filled.Settings,
-                    contentDescription = stringResource(id = R.string.chat)
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_chat_2),
+                    contentDescription = stringResource(id = R.string.chat),
+                    tint = if (currentDestinationRoute == ChatsList.route) {
+                        NavBarBlue
+                    } else {
+                        PrimaryBlack.copy(alpha = 0.8f)
+                    }
                 )
             },
-            label = { Text(stringResource(id = R.string.chat)) },
-            selected = currentDestinationRoute == Chat.route,
+            label = {
+                Text(
+                    stringResource(id = R.string.chat),
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = VazirFont,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xCC3A3A3A),
+                        textAlign = TextAlign.Right,
+                    ),
+                    color = if (currentDestinationRoute == ChatsList.route) {
+                        NavBarBlue
+                    } else {
+                        PrimaryBlack.copy(alpha = 0.8f)
+                    }
+                )
+            },
+            selected = currentDestinationRoute == ChatsList.route,
             onClick = {
-                onItemClicked(Chat.route)
+                onItemClicked(ChatsList.route)
             }
         )
 
         NavigationBarItem(
             icon = {
                 Icon(
-                    Icons.Filled.Person,
-                    contentDescription = stringResource(id = R.string.me)
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = stringResource(id = R.string.me),
+                    tint = if (currentDestinationRoute == Me.route) {
+                        NavBarBlue
+                    } else {
+                        PrimaryBlack.copy(alpha = 0.8f)
+                    }
                 )
             },
             selected = currentDestinationRoute == Me.route,
-            label = { Text(stringResource(id = R.string.me)) },
+            label = {
+                Text(
+                    stringResource(id = R.string.me),
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = VazirFont,
+                        fontWeight = FontWeight(400),
+                        color = Color(0xCC3A3A3A),
+                        textAlign = TextAlign.Right,
+                    ),
+                    color = if (currentDestinationRoute == Me.route) {
+                        NavBarBlue
+                    } else {
+                        PrimaryBlack.copy(alpha = 0.8f)
+                    }
+                )
+            },
             onClick = {
                 onItemClicked(Me.route)
             }
@@ -179,7 +248,7 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
                 }
             )
         }
-        composable(route = Chat.route) {
+        composable(route = ChatsList.route) {
             ChatsListScreen()
         }
         composable(route = Me.route) {
