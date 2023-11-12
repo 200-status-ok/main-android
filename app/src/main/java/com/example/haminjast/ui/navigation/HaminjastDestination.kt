@@ -18,7 +18,7 @@ object Ads : HaminjastDestination {
     override val route = "ads"
 }
 
-object Chat : HaminjastDestination {
+object ChatsList : HaminjastDestination {
     override val icon = Icons.Filled.Check
     override val route = "chat"
 }
