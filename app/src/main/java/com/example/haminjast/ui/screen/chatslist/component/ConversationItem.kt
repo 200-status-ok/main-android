@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.haminjast.R
+import com.example.haminjast.ui.model.UiConversation
 import com.example.haminjast.ui.screen.common.TagText
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.PrimaryBlue
@@ -36,13 +37,13 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun ChatItem(onClick: () -> Unit = {}) {
+fun ConversationItem(conversation: UiConversation, onClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .padding(horizontal = 16.dp)
-            .clickable { onClick() }, verticalArrangement = Arrangement.Center
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp), verticalArrangement = Arrangement.Center
     ) {
         Row(
             modifier = Modifier
@@ -53,7 +54,7 @@ fun ChatItem(onClick: () -> Unit = {}) {
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(4.dp)),
-                model = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
+                model = conversation.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
@@ -71,7 +72,7 @@ fun ChatItem(onClick: () -> Unit = {}) {
                     )
                     Text(
                         modifier = Modifier.padding(start = 6.dp),
-                        text = "اگزوز خاور",
+                        text = conversation.title,
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontFamily = VazirFont,
@@ -81,21 +82,25 @@ fun ChatItem(onClick: () -> Unit = {}) {
                         )
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    TagText(
-                        text = stringResource(id = R.string.my_poster),
-                        backgroundColor = TagGray
-                    )
-                    Icon(
-                        modifier = Modifier
-                            .padding(horizontal = 6.dp)
-                            .size(3.dp),
-                        painter = painterResource(id = R.drawable.dot),
-                        contentDescription = null,
-                        tint = PrimaryBlack
-                    )
+
+                    if (conversation.myPoster) {
+                        TagText(
+                            text = stringResource(id = R.string.my_poster),
+                            backgroundColor = TagGray
+                        )
+                        Icon(
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp)
+                                .size(3.dp),
+                            painter = painterResource(id = R.drawable.dot),
+                            contentDescription = null,
+                            tint = PrimaryBlack
+                        )
+                    }
+
                     Text(
                         modifier = Modifier,
-                        text = "۱۱ : ۵۹",
+                        text = conversation.lastMessageDate,
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
@@ -105,16 +110,20 @@ fun ChatItem(onClick: () -> Unit = {}) {
                         )
                     )
                 }
-                TagText(
-                    text = "۲ پیام خوانده نشده",
-                    backgroundColor = PrimaryBlue
-                )
+
+                if (conversation.unreadCount > 0) {
+                    TagText(
+                        text = "${conversation.unreadCount} ${stringResource(id = R.string.description)}",
+                        backgroundColor = PrimaryBlue
+                    )
+                }
+
             }
         }
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = "یکی از مشکلان شصیشسطز لفذذر زی بیشتر مشکلان شصیشسطز لفذذر زی بیشتر مشکلاتی که مشکلز لفذذر زی بیشتر افراد با آن مواجه هستند.",
+            text = conversation.lastMessage,
             style = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = VazirFont,
@@ -128,6 +137,16 @@ fun ChatItem(onClick: () -> Unit = {}) {
 
 @RTLPixel5Previews
 @Composable
-fun ChatItemPreview() {
-    ChatItem()
+fun ConversationItemPreview() {
+    ConversationItem(
+        UiConversation(
+            id = 0,
+            title = "دوچرخه",
+            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
+            lastMessage = "سلام. دوچرخه رو پیدا کردم. اگه میخوای بیا بگیرش",
+            lastMessageDate = "۳ دقیقه پیش",
+            unreadCount = 2,
+            myPoster = true,
+        )
+    )
 }
