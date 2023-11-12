@@ -22,3 +22,6 @@ val DividerGray=Color(0xFFF5F5F5)
 val NavBarBlue=Color(0xFF87C4FF)
 
 val transp=Color(0x22FF)
+
+val IncomingMessageColor=Color(0xFFEFF8FF)
+val OutgoingMessageColor=Color(0xFFFFF6F4)
