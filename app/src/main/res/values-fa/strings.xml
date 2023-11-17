@@ -22,4 +22,5 @@
     <string name="add">افزودن</string>
     <string name="my_poster">آگهی من</string>
     <string name="unread_message">پیام خوانده نشده</string>
+    <string name="tag">تگ</string>
 </resources>
