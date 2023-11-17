@@ -22,6 +22,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.screen.posterDetail.component.ContactsBottomSheetContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailContent
@@ -63,7 +64,9 @@ fun PosterDetailScreen(
             Surface(shadowElevation = if (isScrolled) 4.dp else 0.dp) {
                 PosterDetailTopBar(
                     onBackClicked = onBackClicked,
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
+                    onBookMarkClicked = {
+                    }
                 ) //todo: add bookmark and menu click
             }
         },
@@ -93,12 +96,6 @@ fun PosterDetailScreen(
     ) { innerPadding ->
         PosterDetailContent(innerPadding, poster = poster.value)
     }
-}
-
-@Composable
-@RTLPixel5Previews
-fun PosterDetailScreenPreview() {
-    PosterDetailScreen()
 }
 
 
