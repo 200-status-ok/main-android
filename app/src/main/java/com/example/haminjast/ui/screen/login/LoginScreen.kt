@@ -1,6 +1,7 @@
 package com.example.haminjast.ui.screen.login
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -38,15 +40,18 @@ import com.example.haminjast.ui.theme.PrimaryBlack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginScreen(
+    loginDataStore: LoginDataStore,
     viewModel: LoginViewModel = viewModel(
         factory = LoginViewModelFactory(
             LoginRepository,
-            LoginDataStore(LocalContext.current)
+            loginDataStore
         )
-    )
+    ),
+    onClickLogin : () -> Unit = {}
 ) {
     val otpState: LoginViewModel.OTPState by viewModel.otpState.collectAsStateWithLifecycle()
     val userName: String by viewModel.userName.collectAsStateWithLifecycle()
@@ -121,18 +126,22 @@ fun LoginScreen(
                 viewModel.onOtpChanged(it)
             })
         }
-
+        val errorToast = Toast.makeText(LocalContext.current,"خطا در ورود",Toast.LENGTH_SHORT)
         Column(Modifier.padding(bottom = 64.dp)) {
             MaxWidthIconButton(
                 modifier = Modifier.height(52.dp),
                 text = stringResource(id = R.string.login),
                 onClick = {
-                    viewModel.verifyOTP(userName,otp)
-                    CoroutineScope(Dispatchers.Default).launch{
-                        val token = viewModel.getToken()
-                        if (token != ""){
-                            Log.d("token",token)
+                    CoroutineScope(Dispatchers.IO).launch{
+                        val isLogin = viewModel.verifyOTP(userName,otp)
+                        if(isLogin){
+                            withContext(Dispatchers.Main){
+                                onClickLogin()
+                            }
+                        }else{
+                            errorToast.show()
                         }
+
                     }
                 }
             )
@@ -149,11 +158,4 @@ fun LoginScreen(
             )
         }
     }
-}
-
-
-@Preview(locale = "fa", backgroundColor = 0xFFF9FFF6, showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
 }

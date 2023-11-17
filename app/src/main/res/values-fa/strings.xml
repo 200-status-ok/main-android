@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">همینجاست</string>
     <string name="login">ورود</string>
+    <string name="my_ads">آگهی های من</string>
     <string name="login_with_google">ورود با گوگل</string>
     <string name="login_to_continue">برای ادامه وارد شو</string>
     <string name="email_or_phone_number">ایمیل یا شماره تلفن</string>

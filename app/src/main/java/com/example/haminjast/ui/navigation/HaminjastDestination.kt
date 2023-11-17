@@ -54,3 +54,8 @@ object CreatePoster : HaminjastDestination {
     override val icon = Icons.Filled.Person
     override val route = "create_poster"
 }
+
+object MyPoster : HaminjastDestination {
+    override val icon = Icons.Filled.Person
+    override val route = "my_poster"
+}

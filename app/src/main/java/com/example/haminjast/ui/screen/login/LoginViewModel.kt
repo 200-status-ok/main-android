@@ -44,23 +44,29 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
         }
     }
 
-    fun verifyOTP(userName: String, otp:String){
-        if (!validateUserName(userName))
-        viewModelScope.launch {
+    suspend fun verifyOTP(userName: String, otp:String) : Boolean{
+        if (!validateUserName(userName)) return false
+        val loginJob = viewModelScope.async{
             val verifyOTPResult = loginRepository.verifyOTP(userName, otp)
             if (verifyOTPResult.isSuccess) {
                 verifyOTPResult.getOrNull()?.token?.let {
-                    loginDataStore.saveToken(it)
+                    loginDataStore.saveTokenF(it)
                 }
+                _otpState.update {
+                    OTPState.NOT_REQUESTED
+                }
+                true
             }else{
                 _otpState.update {
                     OTPState.NOT_REQUESTED
                 }
+                false
             }
         }
+        return loginJob.await()
     }
 
-    suspend fun getToken() = loginDataStore.getToken.first()
+    fun getToken() = loginDataStore.readTokenF()
 
     fun onUserNameChanged(userName:String){
         _userName.update { userName }
