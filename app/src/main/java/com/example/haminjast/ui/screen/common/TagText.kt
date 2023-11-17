@@ -1,8 +1,10 @@
 package com.example.haminjast.ui.screen.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -19,22 +21,24 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun TagText(text: String, backgroundColor:Color) {
-    val t = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                background = backgroundColor,
-                fontSize = 12.sp,
-                fontFamily = VazirFont,
-                fontWeight = FontWeight(400),
-                color = PrimaryBlack,
-            )
-        ) {
-            append(" $text ")
+fun TagText(text: String, backgroundColor: Color, onTagClicked: () -> Unit = {}) {
+    val t = remember {
+        buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(
+                    background = backgroundColor,
+                    fontSize = 12.sp,
+                    fontFamily = VazirFont,
+                    fontWeight = FontWeight(400),
+                    color = PrimaryBlack,
+                )
+            ) {
+                append(" $text ")
+            }
         }
     }
     Text(
-        modifier = Modifier.padding(2.dp),
+        modifier = Modifier.padding(2.dp).clickable { onTagClicked() },
         text = t,
     )
 }

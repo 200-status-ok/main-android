@@ -73,7 +73,7 @@ fun CreatePosterBottomBar(
                 Spacer(modifier = Modifier.size(8.dp))
                 Image(
                     modifier = Modifier.size(18.dp),
-                    painter = painterResource(R.drawable.ic_tick),
+                    painter = painterResource(R.drawable.ic_confirm_tick),
                     contentDescription = null
                 )
             }

@@ -7,6 +7,7 @@ import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.model.AddressAddPoster
 import com.example.haminjast.data.repository.LoginRepository
 import com.example.haminjast.data.repository.PosterRepository
+import com.example.haminjast.ui.component.fakeTagList
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus
 import kotlinx.coroutines.Dispatchers
@@ -77,6 +78,34 @@ class CreatePosterViewModel(
     }
 
 
+    private val _tagFieldText = MutableStateFlow<String>("")
+    val tagFieldText = _tagFieldText.asStateFlow()
+
+    private val _suggestedTags = MutableStateFlow<List<String>>(listOf())
+    val suggestedTags = _suggestedTags.asStateFlow()
+
+    private val _selectedTags = MutableStateFlow<List<String>>(listOf())
+    val selectedTags = _selectedTags.asStateFlow()
+
+
+    init {
+        viewModelScope.launch {
+            _tagFieldText.collectLatest { fieldText ->
+                if (fieldText.isEmpty()) {
+                    _suggestedTags.update {
+                        listOf()
+                    }
+                    return@collectLatest
+                }
+                _suggestedTags.update {
+                    val ls = fakeTagList.filter { it.contains(fieldText) }
+                    ls
+                }
+            }
+        }
+    }
+
+
     fun setTitle(title: String) {
         _title.value = title
     }
@@ -130,5 +159,26 @@ class CreatePosterViewModel(
 
     fun setHaveChat(haveChat: Boolean) {
         _haveChat.value = haveChat
+    }
+    fun setTagFieldText(text: String) {
+        _tagFieldText.value = text
+    }
+
+    fun addSelectedTag(tag: String) {
+        _selectedTags.update {
+            val ls = mutableListOf<String>()
+            ls.addAll(it)
+            ls.add(tag)
+            ls
+        }
+    }
+
+    fun removeSelectedTag(tag: String) {
+        _selectedTags.update {
+            val ls = mutableListOf<String>()
+            ls.addAll(it)
+            ls.remove(tag)
+            ls
+        }
     }
 }
