@@ -32,7 +32,10 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun CreatePosterBottomBar() {
+fun CreatePosterBottomBar(
+    onClickYes : () -> Unit = {},
+    onClickNo : () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .height(60.dp)
@@ -44,7 +47,7 @@ fun CreatePosterBottomBar() {
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .height(42.dp),
-            onClick = { },
+            onClick = onClickYes,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlack),
             contentPadding = PaddingValues(0.dp),
@@ -80,7 +83,7 @@ fun CreatePosterBottomBar() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(42.dp),
-            onClick = { },
+            onClick = onClickNo,
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(width = 1.5.dp, color = PrimaryBlack.copy(alpha = 0.8f)),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
