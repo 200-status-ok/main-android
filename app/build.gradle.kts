@@ -74,6 +74,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("org.testng:testng:6.9.6")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     //room
@@ -89,4 +90,8 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.1.1")
     //paging compose
     implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+    //compose test
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
+    //compose ui test
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
 }
