@@ -74,7 +74,7 @@ fun RegistrationCodeInput(
 }
 
 @Composable
-private fun CodeInputDecoration(code: String, length: Int) {
+fun CodeInputDecoration(code: String, length: Int) {
     Box(modifier = Modifier) {
         Row(
             modifier = Modifier
@@ -101,7 +101,7 @@ private fun CodeInputDecoration(code: String, length: Int) {
 }
 
 @Composable
-private fun CodeEntry(text: String) {
+fun CodeEntry(text: String) {
     Box(
         modifier = Modifier
             .padding(4.dp)

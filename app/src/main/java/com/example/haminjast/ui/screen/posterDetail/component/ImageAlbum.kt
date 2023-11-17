@@ -29,7 +29,7 @@ fun ImageAlbum(width: Dp, height: Dp, imageUrls: List<String>? = null) {
             modifier = modifier
                 .clip(RoundedCornerShape(6.dp)),
             model = url,
-            contentDescription = null,
+            contentDescription = "" ,
             contentScale = ContentScale.Crop
         )
     }
