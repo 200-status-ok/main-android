@@ -38,6 +38,7 @@ import com.example.haminjast.R
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.repository.LoginRepository
 import com.example.haminjast.data.repository.PosterRepository
+import com.example.haminjast.ui.component.TagSelector
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus
 import com.example.haminjast.ui.screen.common.TitleDescription
@@ -66,6 +67,9 @@ fun CreatePosterScreen(
     val posterStatus by viewModel.posterStatus.collectAsStateWithLifecycle()
     val contacts by viewModel.contacts.collectAsStateWithLifecycle()
     val imgUrls by viewModel.imgUrls.collectAsStateWithLifecycle()
+    val tagFieldText by viewModel.tagFieldText.collectAsStateWithLifecycle()
+    val suggestedTags by viewModel.suggestedTags.collectAsStateWithLifecycle()
+    val selectedTags by viewModel.selectedTags.collectAsStateWithLifecycle()
 
     val configuration = LocalConfiguration.current
 
@@ -133,6 +137,29 @@ fun CreatePosterScreen(
                         value = desc,
                         onValueChanged = { viewModel.setDesc(it) }
                     )
+
+                    Spacer(modifier = Modifier.size(16.dp))
+                    TitleDescription(
+                        title = stringResource(id = R.string.tag),
+                        description = "یکی از مشکلاتی که مشکلان بیشتر افراد با آن مواجه هستند. یکی از مشکلاتی که بیشتر افراد با آن مواجه هستند.", //todo
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    TagSelector(
+                        modifier = Modifier.padding(horizontal = 20.dp), fieldText = tagFieldText,
+                        onValueChanged = {
+                            viewModel.setTagFieldText(it)
+                        },
+                        suggestedTags = suggestedTags,
+                        selectedTags = selectedTags,
+                        onSuggestedTagClicked = {
+                            viewModel.setTagFieldText("")
+                            viewModel.addSelectedTag(it)
+                        },
+                        onSelectedTagClicked = {
+                            viewModel.removeSelectedTag(it)
+                        }
+                    )
+
                     Spacer(modifier = Modifier.size(16.dp))
                     TitleDescription(title = stringResource(id = R.string.contacts))
                     Spacer(modifier = Modifier.size(8.dp))
