@@ -8,4 +8,11 @@ data class UiMessage(
     val type: MessageType,
     val date: String,
     val time: String,
+    val status: MessageStatus = MessageStatus.Pending,
 )
+
+enum class MessageStatus {
+    Pending,
+    Sent,
+    Seen,
+}
