@@ -37,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haminjast.R
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.repository.LoginRepository
+import com.example.haminjast.data.repository.PosterRepository
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus
 import com.example.haminjast.ui.screen.common.TitleDescription
@@ -52,11 +53,9 @@ import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
 fun CreatePosterScreen(
+    loginDataStore: LoginDataStore,
     viewModel: CreatePosterViewModel = viewModel(
-        factory = CreatePosterViewModelFactory(
-            LoginRepository,
-            LoginDataStore(LocalContext.current)
-        )
+        factory = provideViewModelFactory(loginDataStore)
     ),
     onCloseClicked: () -> Unit = {},
 ) {
@@ -155,7 +154,14 @@ fun CreatePosterScreen(
                             .fillMaxWidth()
                             .height(1.5.dp), color = PrimaryBlack.copy(alpha = 0.8f)
                     )
-                    CreatePosterBottomBar()
+                    CreatePosterBottomBar(
+                        onClickYes = {
+                            viewModel.createPoster()
+                        },
+                        onClickNo = {
+                            onCloseClicked()
+                        }
+                    )
 
                     if (showAddContactDialog) {
                         AddContactDialog(
@@ -173,10 +179,4 @@ fun CreatePosterScreen(
         },
     )
 
-}
-
-@RTLPixel5Previews
-@Composable
-fun CreatePosterScreenPreview() {
-    CreatePosterScreen()
 }
