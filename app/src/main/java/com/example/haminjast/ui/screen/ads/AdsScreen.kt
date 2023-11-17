@@ -41,6 +41,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.haminjast.R
+import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.model.posterToUiPoster
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.theme.PrimaryBlack
@@ -142,7 +143,7 @@ fun ErrorMessage(
 @Composable
 fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
     Column(modifier = Modifier.clickable {
-        onPosterClicked(0) //todo set poster id
+        onPosterClicked(ad.id)
     }) {
         Row(
             modifier = Modifier
