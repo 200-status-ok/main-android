@@ -34,12 +34,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.navigation.Ads
 import com.example.haminjast.ui.navigation.Chat
 import com.example.haminjast.ui.navigation.ChatsList
 import com.example.haminjast.ui.navigation.CreatePoster
 import com.example.haminjast.ui.navigation.Login
 import com.example.haminjast.ui.navigation.Me
+import com.example.haminjast.ui.navigation.MyPoster
 import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
@@ -50,22 +52,26 @@ import com.example.haminjast.ui.screen.chatslist.ChatsListScreen
 import com.example.haminjast.ui.screen.common.HaminjastBottomNavigationBar
 import com.example.haminjast.ui.screen.createPoster.CreatePosterScreen
 import com.example.haminjast.ui.screen.login.LoginScreen
+import com.example.haminjast.ui.screen.myPoster.MyPosterScreen
 import com.example.haminjast.ui.screen.posterDetail.PosterDetailScreen
 import com.example.haminjast.ui.theme.HaminjastTheme
 import com.example.haminjast.ui.theme.NavBarBlue
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
+import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val loginDataStore = LoginDataStore(applicationContext)
         setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 HaminjastTheme {
                     val navController = rememberNavController()
                     val currentBackStack by navController.currentBackStackEntryAsState()
                     val currentDestination = currentBackStack?.destination
+
                     val showBottomNav =
                         listOf(Ads, ChatsList, Me).map { it.route }
                             .contains(currentDestination?.route)
@@ -82,10 +88,10 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         content = { innerPadding ->
-                            MainNavHost(navController = navController, innerPadding = innerPadding)
+                            MainNavHost(navController = navController, innerPadding = innerPadding , loginDataStore)
                         },
                         floatingActionButton = {
-                            if (currentDestination?.route == Ads.route) {
+                            if (currentDestination?.route == Ads.route || currentDestination?.route == MyPoster.route) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
                                         navController.navigateSingleTopTo(CreatePoster.route)
@@ -113,6 +119,64 @@ class MainActivity : ComponentActivity() {
                                     },
                                     containerColor = PrimaryBlack
                                 )
+                            }
+                            if(currentDestination?.route == Me.route){
+                                if(loginDataStore.readTokenF() == ""){
+                                    ExtendedFloatingActionButton(
+                                        onClick = {
+                                            navController.navigateSingleTopTo(Login.route)
+                                        },
+                                        icon = {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_person),
+                                                null,
+                                                tint = Color.White
+                                            )
+                                        },
+                                        text = {
+                                            Text(
+                                                modifier = Modifier.padding(bottom = 2.dp),
+                                                text = stringResource(id = R.string.login),
+                                                style = TextStyle(
+                                                    fontSize = 14.sp,
+                                                    fontFamily = VazirFont,
+                                                    fontWeight = FontWeight(400),
+                                                    color = Color.White,
+                                                    textAlign = TextAlign.Center,
+                                                )
+                                            )
+                                        },
+                                        containerColor = PrimaryBlack
+                                    )
+                                }else{
+                                    ExtendedFloatingActionButton(
+                                        onClick = {
+                                            navController.navigateSingleTopTo(MyPoster.route)
+                                        },
+                                        icon = {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_person),
+                                                null,
+                                                tint = Color.White
+                                            )
+                                        },
+                                        text = {
+                                            Text(
+                                                modifier = Modifier.padding(bottom = 2.dp),
+                                                text = stringResource(id = R.string.my_ads),
+                                                style = TextStyle(
+                                                    fontSize = 14.sp,
+                                                    fontFamily = VazirFont,
+                                                    fontWeight = FontWeight(400),
+                                                    color = Color.White,
+                                                    textAlign = TextAlign.Center,
+                                                )
+                                            )
+                                        },
+                                        containerColor = PrimaryBlack
+                                    )
+                                }
+
                             }
                         }
                     )
@@ -237,7 +301,7 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
 }
 
 @Composable
-fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
+fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues , loginDataStore: LoginDataStore) {
     NavHost(
         navController = navController,
         startDestination = Ads.route,
@@ -246,7 +310,7 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
         composable(route = Ads.route) {
             AdsScreen(
                 onPosterClicked = {
-                    navController.navigateToPosterDetail(0)
+                    navController.navigateToPosterDetail(it)
                 }
             )
         }
@@ -258,10 +322,18 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
             )
         }
         composable(route = Me.route) {
-            MeScreen(onLoginClicked = { navController.navigateSingleTopTo(Login.route) })
+            MeScreen(loginDataStore = loginDataStore,
+                onPosterClicked = {
+                    navController.navigateToPosterDetail(it)
+                })
         }
         composable(route = Login.route) {
-            LoginScreen()
+            LoginScreen(
+                loginDataStore = loginDataStore,
+                onClickLogin = {
+                    navController.navigateSingleTopTo(Me.route)
+                }
+            )
         }
         composable(
             route = PosterDetail.routeWithArgs,
@@ -273,12 +345,22 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues) {
             })
         }
         composable(route = CreatePoster.route) {
-            CreatePosterScreen(onCloseClicked = {
+            CreatePosterScreen(
+                loginDataStore,
+                onCloseClicked = {
                 navController.popBackStack()
             })
         }
         composable(route = Chat.route) {
             ChatScreen()
+        }
+
+        composable(route = "my_poster") {
+            MyPosterScreen(
+                onPosterClicked = {
+                    navController.navigateToPosterDetail(it)
+                }
+            )
         }
     }
 }

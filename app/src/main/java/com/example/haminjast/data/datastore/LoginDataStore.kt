@@ -1,29 +1,45 @@
 package com.example.haminjast.data.datastore
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class LoginDataStore(private val context: Context) {
-    private val login = stringPreferencesKey("login")
-    val getToken: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[login] ?: ""
+    fun saveTokenF(token: String){
+        if(context.filesDir.listFiles()?.any { it.name == "token" } == true){
+            context.deleteFile("token")
         }
+        val file = context.openFileOutput("token", Context.MODE_PRIVATE)
+        file.write(token.toByteArray())
+        file.close()
+    }
 
-    suspend fun saveToken(token: String) {
-        context.dataStore.edit { preferences ->
-            preferences[login] = token
+    fun readTokenF(): String{
+        return if(context.filesDir.listFiles()?.any { it.name == "token" } == true){
+            val file = context.openFileInput("token")
+            val token = file.readBytes().toString(Charsets.UTF_8)
+            file.close()
+            token
+        }else{
+            ""
         }
     }
 
-    companion object {
-        private const val PREFERENCE_NAME = "LoginDataStore"
-        val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = PREFERENCE_NAME)
+    fun saveWallet(balance : Int){
+        if(context.filesDir.listFiles()?.any { it.name == "balance" } == true){
+            context.deleteFile("balance")
+        }
+        val file = context.openFileOutput("balance", Context.MODE_PRIVATE)
+        file.write(balance.toString().toByteArray())
+        file.close()
+    }
+
+    fun readWallet(): Int{
+        return if(context.filesDir.listFiles()?.any { it.name == "balance" } == true){
+            val file = context.openFileInput("balance")
+            val balance = file.readBytes().toString(Charsets.UTF_8).toInt()
+            file.close()
+            balance
+        }else{
+            0
+        }
     }
 }
