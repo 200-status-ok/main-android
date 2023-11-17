@@ -9,6 +9,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +25,9 @@ fun PosterDetailTopBar(
     onMenuClicked: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior=TopAppBarDefaults.pinnedScrollBehavior()
 ) {
+    val isBookMarked = remember {
+        mutableStateOf(false)
+    }
     TopAppBar(
         title = {},
         navigationIcon = {
@@ -29,9 +36,16 @@ fun PosterDetailTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { onBookMarkClicked() }) {
+            IconButton(onClick = {
+                onBookMarkClicked()
+                isBookMarked.value = !isBookMarked.value
+            }) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_bookmark),
+                    painter = if(isBookMarked.value){
+                        painterResource(id = R.drawable.ic_cross)
+                    }else{
+                        painterResource(id = R.drawable.ic_bookmark)
+                    },
                     contentDescription = null
                 )
             }

@@ -1,19 +1,73 @@
 package com.example.haminjast.data.repository
 
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.example.haminjast.data.mediator.PosterRemoteMediator
+import com.example.haminjast.data.model.AddPoster
+import com.example.haminjast.data.model.AddressAddPoster
 import com.example.haminjast.data.model.Poster
+import com.example.haminjast.data.model.RequestBodyForAddPoster
+import com.example.haminjast.data.model.toUiPoster
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.ui.model.Contact
-import com.example.haminjast.ui.model.PosterStatus.Lost
 import com.example.haminjast.ui.model.UiPoster
-import kotlinx.coroutines.delay
 
 class PosterRepository(
     private val apiService : PosterRetrofitService
 ) {
+    suspend fun addPoster(
+        token : String,
+        address : AddressAddPoster?,
+        imageUrls : List<String>,
+        title : String,
+        description : String,
+        contacts : List<Contact>,
+        status : String,
+        tags : List<String>,
+        award : Int,
+        haveChat : Boolean
+        ): Result<String> {
+        return try {
+            val res = apiService.createPoster(
+                authorization = "Bearer $token",
+                acceptHeader = "application/json",
+                contentTypeHeader = "application/json",
+                requestBody = RequestBodyForAddPoster(
+                    addresses = listOf(AddressAddPoster(
+                        address_detail = "Sttrsfg",
+                        city = "Sttrsfg",
+                        latitude = 32.1,
+                        longitude = 26.51,
+                        province = "Sttrsfg"
+                    )),
+                    img_urls = listOf( "normal"),
+                    poster = AddPoster(
+                        alert = false,
+                        award = 0,
+                        chat = true,
+                        description = "description",
+                        special_type = "normal",
+                        state = "pending",
+                        status = "lost",
+                        tel_id =  "normal",
+                        title =  "normal",
+                        user_phone = "normal"
+                    ),
+                    tags = listOf("normal")
+                    )
+                )
+            Log.d("dafsd", "addPoster: ${res.errorBody()})")
+            if (res.isSuccessful) {
+                Result.success("Poster added <pending for approval>")
+            } else {
+                Result.failure(Exception("Poster not added"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     fun getPosters(pageSize: Int): Pager<Int, Poster> {
         return Pager(
@@ -27,29 +81,17 @@ class PosterRepository(
         )
     }
     suspend fun getPosterById(id: Int): Result<UiPoster?> {
-        delay(100)
-        return Result.success(
-            UiPoster(
-                id = 1,
-                title = "کیف پول قهوه ای",
-                description = "یک کیف پول قهوه ای در محدوده ی ستارخان گم شده. از یابنده تقاضا می شود که با شماره ی زیر تماس بگیرد.یک کیف پول قهوه ای در محدوده ی ستارخان گم شده.یک کیف پول قهوه ای در محدوده ی ستارخان گم شده. از یابنده تقاضا می شود که با شماره ی زیر تماس بگیرد.یک کیف پول قهوه ای در محدوده ی ستارخان گم شده.یک کیف پول قهوه ای در محدوده ی ستارخان گم شده.\n به یابنده مژدگانی داده خواهد شد. ",
-                imageUrls = listOf(
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg"
-                ),
-                timeCreatedTimeStamp = 1698867077,
-                status = Lost,
-                vicinity = "ستارخان",
-                reward = 200000,
-                lat = 34.0,
-                lng = 34.0,
-                issuerId = 1,
-                contacts = listOf(
-                    Contact("شماره تماس", "09123456789"),
-                    Contact("ایمیل", "felanihastam@gmail.com")
-                )
-            )
-        )
+        return try {
+            val res = apiService.getPoster(id)
+            if (res.isSuccessful) {
+                val poster = res.body()
+                val uiPoster = poster?.toUiPoster()
+                Result.success(uiPoster)
+            } else {
+                Result.failure(Exception("Poster not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
