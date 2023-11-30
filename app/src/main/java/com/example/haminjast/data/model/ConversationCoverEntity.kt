@@ -1,0 +1,30 @@
+package com.example.haminjast.data.model
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "conversation_covers")
+data class ConversationCoverEntity(
+    @PrimaryKey
+    val id:Long,
+    val title:String,
+    val imageUrl:String,
+    val lastMessageId: Long,
+    val posterID:Long,
+    val isOwner:Boolean,
+    val lastReadMessageSeqNumber:Long
+){
+    companion object{
+        fun fromResponse(conversationCoverResponseItem: ConversationCoverResponse.ConversationCoverResItem):ConversationCoverEntity{
+            return ConversationCoverEntity(
+                id = conversationCoverResponseItem.id.toLong(),
+                title = conversationCoverResponseItem.title,
+                imageUrl = conversationCoverResponseItem.imageUrl,
+                lastMessageId = 0, //TODO
+                posterID = conversationCoverResponseItem.posterId.toLong(),
+                isOwner = conversationCoverResponseItem.isOwner,
+                lastReadMessageSeqNumber = 0 //TODO
+            )
+        }
+    }
+}

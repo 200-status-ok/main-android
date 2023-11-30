@@ -9,7 +9,7 @@ import androidx.room.Upsert
 import com.example.haminjast.data.model.Poster
 
 @Dao
-interface PosterDAO {
+interface PosterDao {
     @Insert(entity = Poster::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(repos: List<Poster>)
 
