@@ -88,7 +88,11 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         content = { innerPadding ->
-                            MainNavHost(navController = navController, innerPadding = innerPadding , loginDataStore)
+                            MainNavHost(
+                                navController = navController,
+                                innerPadding = innerPadding,
+                                loginDataStore
+                            )
                         },
                         floatingActionButton = {
                             if (currentDestination?.route == Ads.route || currentDestination?.route == MyPoster.route) {
@@ -120,8 +124,8 @@ class MainActivity : ComponentActivity() {
                                     containerColor = PrimaryBlack
                                 )
                             }
-                            if(currentDestination?.route == Me.route){
-                                if(loginDataStore.readTokenF() == ""){
+                            if (currentDestination?.route == Me.route) {
+                                if (loginDataStore.readTokenF() == "") {
                                     ExtendedFloatingActionButton(
                                         onClick = {
                                             navController.navigateSingleTopTo(Login.route)
@@ -148,7 +152,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         containerColor = PrimaryBlack
                                     )
-                                }else{
+                                } else {
                                     ExtendedFloatingActionButton(
                                         onClick = {
                                             navController.navigateSingleTopTo(MyPoster.route)
@@ -301,7 +305,11 @@ fun BottomNavigationBar(currentDestinationRoute: String?, onItemClicked: (String
 }
 
 @Composable
-fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues , loginDataStore: LoginDataStore) {
+fun MainNavHost(
+    navController: NavHostController,
+    innerPadding: PaddingValues,
+    loginDataStore: LoginDataStore
+) {
     NavHost(
         navController = navController,
         startDestination = Ads.route,
@@ -348,8 +356,8 @@ fun MainNavHost(navController: NavHostController, innerPadding: PaddingValues , 
             CreatePosterScreen(
                 loginDataStore,
                 onCloseClicked = {
-                navController.popBackStack()
-            })
+                    navController.popBackStack()
+                })
         }
         composable(route = Chat.route) {
             ChatScreen()
