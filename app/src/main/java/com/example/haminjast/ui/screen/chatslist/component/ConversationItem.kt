@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.haminjast.R
-import com.example.haminjast.ui.model.UiConversation
+import com.example.haminjast.ui.model.ConversationCoverUI
 import com.example.haminjast.ui.screen.common.TagText
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.PrimaryBlue
@@ -37,7 +37,7 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun ConversationItem(conversation: UiConversation, onClick: () -> Unit = {}) {
+fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +83,7 @@ fun ConversationItem(conversation: UiConversation, onClick: () -> Unit = {}) {
                     )
                     Spacer(modifier = Modifier.weight(1f))
 
-                    if (conversation.myPoster) {
+                    if (conversation.isOwner) {
                         TagText(
                             text = stringResource(id = R.string.my_poster),
                             backgroundColor = TagGray
@@ -100,7 +100,7 @@ fun ConversationItem(conversation: UiConversation, onClick: () -> Unit = {}) {
 
                     Text(
                         modifier = Modifier,
-                        text = conversation.lastMessageDate,
+                        text = conversation.lastMessage.date.toString(),
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
@@ -123,7 +123,7 @@ fun ConversationItem(conversation: UiConversation, onClick: () -> Unit = {}) {
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = conversation.lastMessage,
+            text = conversation.lastMessage.content,
             style = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = VazirFont,
@@ -138,15 +138,15 @@ fun ConversationItem(conversation: UiConversation, onClick: () -> Unit = {}) {
 @RTLPixel5Previews
 @Composable
 fun ConversationItemPreview() {
-    ConversationItem(
-        UiConversation(
-            id = 0,
-            title = "دوچرخه",
-            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
-            lastMessage = "سلام. دوچرخه رو پیدا کردم. اگه میخوای بیا بگیرش",
-            lastMessageDate = "۳ دقیقه پیش",
-            unreadCount = 2,
-            myPoster = true,
-        )
-    )
+//    ConversationItem(
+////        UiConversation(
+////            id = 0,
+////            title = "دوچرخه",
+////            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
+////            lastMessage = "سلام. دوچرخه رو پیدا کردم. اگه میخوای بیا بگیرش",
+////            lastMessageDate = "۳ دقیقه پیش",
+////            unreadCount = 2,
+////            myPoster = true,
+////        )
+//    )
 }

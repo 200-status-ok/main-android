@@ -6,36 +6,40 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.haminjast.data.model.AddressListConverter
+import com.example.haminjast.data.model.ConversationCoverEntity
 import com.example.haminjast.data.model.LocationConverter
+import com.example.haminjast.data.model.MessageEntity
 import com.example.haminjast.data.model.Poster
 import com.example.haminjast.data.model.StringListConverter
 import com.example.haminjast.data.model.TagConverter
 import com.example.haminjast.data.model.TagListConverter
 
 @Database(
-    entities = [Poster::class],
+    entities = [Poster::class, MessageEntity::class, ConversationCoverEntity::class],
     version = 1,
     exportSchema = false
 )
-@TypeConverters(AddressListConverter::class,
+@TypeConverters(
+    AddressListConverter::class,
     LocationConverter::class,
     TagConverter::class,
     StringListConverter::class,
     TagListConverter::class
 )
-abstract class RoomDB : RoomDatabase() {
-    abstract fun posterDao(): PosterDAO
+abstract class ApplicationDataBase : RoomDatabase() {
+    abstract fun posterDao(): PosterDao
+    abstract fun chatDao(): ChatDao
 
     companion object {
         @Volatile
-        private var INSTANCE: RoomDB? = null
-        fun getInstance(context: Context): RoomDB =
+        private var INSTANCE: ApplicationDataBase? = null
+        fun getInstance(context: Context): ApplicationDataBase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE
                     ?: buildDatabase(context).also { INSTANCE = it }
             }
 
-        fun refreshInstance(context: Context): RoomDB {
+        fun refreshInstance(context: Context): ApplicationDataBase {
             INSTANCE = null
             return buildDatabase(context).also { INSTANCE = it }
         }
@@ -43,11 +47,9 @@ abstract class RoomDB : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                RoomDB::class.java, "posters.db"
+                ApplicationDataBase::class.java, "posters.db"
             )
                 .fallbackToDestructiveMigration()
                 .build()
     }
-
-
 }

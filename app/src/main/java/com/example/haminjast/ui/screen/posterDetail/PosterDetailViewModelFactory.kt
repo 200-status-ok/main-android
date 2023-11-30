@@ -1,9 +1,7 @@
 package com.example.haminjast.ui.screen.posterDetail
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.haminjast.data.database.RoomDB
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofit
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.data.repository.PosterRepository
