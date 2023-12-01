@@ -30,4 +30,13 @@ object LoginRepository{
         }
     }
 
+    suspend fun loginUserWithGoogle(email: String) : Result<VerifyOtpResponse?> {
+        val res = apiService.loginUserWithGoogle(email)
+        return if(res.isSuccessful){
+            Result.success(res.body())
+        }else{
+            Result.failure(Exception("OTP not verified"))
+        }
+    }
+
 }

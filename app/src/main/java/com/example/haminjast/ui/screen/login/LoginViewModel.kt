@@ -25,6 +25,7 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
     private val _otpState = MutableStateFlow(OTPState.NOT_REQUESTED)
     val otpState = _otpState.asStateFlow()
 
+
     fun sendOTP(userName: String) {
         if (!validateUserName(userName)) return
         viewModelScope.launch {
@@ -39,6 +40,17 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
             } else {
                 _otpState.update {
                     OTPState.NOT_REQUESTED
+                }
+            }
+        }
+    }
+
+    fun loginUserWithGoogle(email: String) {
+        viewModelScope.launch {
+            val loginUserWithGoogleResult = loginRepository.loginUserWithGoogle(email)
+            if (loginUserWithGoogleResult.isSuccess) {
+                loginUserWithGoogleResult.getOrNull()?.token?.let {
+                    loginDataStore.saveTokenF(it)
                 }
             }
         }

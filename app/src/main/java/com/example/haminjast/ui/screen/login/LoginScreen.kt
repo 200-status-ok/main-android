@@ -37,6 +37,9 @@ import com.example.haminjast.ui.component.MaxWidthBorderedEditText
 import com.example.haminjast.ui.component.MaxWidthIconButton
 import com.example.haminjast.ui.component.OTPView
 import com.example.haminjast.ui.theme.PrimaryBlack
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
+import com.stevdzasan.onetap.getUserFromTokenId
+import com.stevdzasan.onetap.rememberOneTapSignInState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,9 +56,34 @@ fun LoginScreen(
     ),
     onClickLogin : () -> Unit = {}
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val errorToast = Toast.makeText(LocalContext.current,"خطا در ورود",Toast.LENGTH_SHORT)
+    val successToast = Toast.makeText(LocalContext.current,"ورود موفقیت آمیز",Toast.LENGTH_SHORT)
     val otpState: LoginViewModel.OTPState by viewModel.otpState.collectAsStateWithLifecycle()
     val userName: String by viewModel.userName.collectAsStateWithLifecycle()
     val otp: String by viewModel.otp.collectAsStateWithLifecycle()
+    val state = rememberOneTapSignInState()
+    OneTapSignInWithGoogle(
+        state = state,
+        clientId = "244021126772-rvj91vk3mb4euqnen7bn6dm2k9nu58dn.apps.googleusercontent.com",
+        onTokenIdReceived = { tokenId ->
+            getUserFromTokenId(tokenId)?.email?.let {
+                Log.d("mmmmmmmmm", it)
+                viewModel.onUserNameChanged(it)
+                viewModel.loginUserWithGoogle(it)
+                if(loginDataStore.readTokenF() == ""){
+                    errorToast.show()
+                }else{
+                    successToast.show()
+                    onClickLogin()
+                }
+            }
+        },
+        onDialogDismissed = { message ->
+            Log.d("LOG", message)
+        }
+    )
+
 
     Column(
         modifier = Modifier
@@ -126,22 +154,22 @@ fun LoginScreen(
                 viewModel.onOtpChanged(it)
             })
         }
-        val errorToast = Toast.makeText(LocalContext.current,"خطا در ورود",Toast.LENGTH_SHORT)
         Column(Modifier.padding(bottom = 64.dp)) {
             MaxWidthIconButton(
                 modifier = Modifier.height(52.dp),
                 text = stringResource(id = R.string.login),
                 onClick = {
-                    CoroutineScope(Dispatchers.IO).launch{
-                        val isLogin = viewModel.verifyOTP(userName,otp)
-                        if(isLogin){
-                            withContext(Dispatchers.Main){
-                                onClickLogin()
+                    coroutineScope.launch{
+                        withContext((Dispatchers.IO)){
+                            val isLogin = viewModel.verifyOTP(userName,otp)
+                            if(isLogin){
+                                withContext(Dispatchers.Main){
+                                    onClickLogin()
+                                }
+                            }else{
+                                errorToast.show()
                             }
-                        }else{
-                            errorToast.show()
                         }
-
                     }
                 }
             )
@@ -153,7 +181,7 @@ fun LoginScreen(
                 backgroundColor = Color.White,
                 contentColor = PrimaryBlack,
                 onClick = {
-
+                    state.open()
                 }
             )
         }
