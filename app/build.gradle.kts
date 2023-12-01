@@ -102,4 +102,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
     //open street map
     implementation("org.osmdroid:osmdroid-android:6.1.17")
+
+    implementation("com.github.stevdza-san:OneTapCompose:1.0.9")
 }
