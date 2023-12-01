@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -99,4 +100,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
     //compose ui test
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.1")
+    //open street map
+    implementation("org.osmdroid:osmdroid-android:6.1.17")
 }
