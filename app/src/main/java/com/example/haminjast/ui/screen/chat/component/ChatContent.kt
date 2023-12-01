@@ -32,86 +32,110 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haminjast.R
+import com.example.haminjast.ui.model.MessageContentType
 import com.example.haminjast.ui.model.MessageStatus
-import com.example.haminjast.ui.model.UiMessage
+import com.example.haminjast.ui.model.MessageUI
 import com.example.haminjast.ui.theme.IncomingMessageColor
 import com.example.haminjast.ui.theme.OutgoingMessageColor
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
-
-val fakeMessageList = mutableListOf<UiMessage>(
-    UiMessage(1, "سلام. چطوری؟", MessageType.Incoming, "1400/01/01", "12:00"),
-    UiMessage(
+val fakeMessages = mutableListOf(
+    MessageUI(
+        1,
+        "سلام. چطوری؟",
+        MessageContentType.Text,
+        "1400/01/01",
+        MessageStatus.Pending,
+        MessageType.Incoming,
+        1,
+        1,
+        1
+    ),
+    MessageUI(
         2,
         "یکی از مشکلان شصیشسطز لفذذر زی بیشتر مشکلان شصیشسطز لفذذر یشصی صشش زی بیشتر مشکلاتی که مشکلز لفذذر زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Incoming,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
+        MessageStatus.Pending,
+        MessageType.Incoming,
+        1,
+        1,
+        1
     ),
-    UiMessage(
+    MessageUI(
         3,
         "یکی از مشکلان شصیشسطز لفذذر زی بیشتر مشکلان شصیشسطز لفذذر زی بیشتر مشکلاتی که مشکلز لفذذر زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Outgoing,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
+        MessageStatus.Pending,
+        MessageType.Outgoing,
+        1,
+        1,
+        1
     ),
-    UiMessage(
+    MessageUI(
         4,
         "یکی از مشکلان شصیشسطز لفذذر زی بیشتر مشکلان شصیشسطز لفذذر یشصی صشش زی بیشتر مشکلاتی که مشکلز لفذذر زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Incoming,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
+        MessageStatus.Pending,
+        MessageType.Incoming,
+        1,
+        1,
+        1
     ),
-    UiMessage(
+    MessageUI(
         5,
         "یکی از مشکلان شصیشسطز لفذذر زیصشی بیشتر مشک زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Outgoing,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
+        MessageStatus.Pending,
+        MessageType.Outgoing,
+        1,
+        1,
+        1
     ),
-    UiMessage(
+    MessageUI(
         6,
         "یکی از مشکلان شصیشسطز لفذذر زیصشی بیشتر مشک زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Outgoing,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
+        MessageStatus.Pending,
+        MessageType.Outgoing,
+        1,
+        1,
+        1
     ),
-    UiMessage(
+    MessageUI(
         7,
         "یکی از مشکلان شصیشسطز لفذذر زیصشی بیشتر مشک زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Outgoing,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
+        MessageStatus.Pending,
+        MessageType.Outgoing,
+        1,
+        1,
+        1
     ),
-    UiMessage(
+    MessageUI(
         8,
         "یکی از مشکلان شصیشسطز لفذذر زیصشی بیشتر مشک زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Outgoing,
+        MessageContentType.Text,
         "1400/01/01",
-        "12:00"
-    ),
-    UiMessage(
-        9,
-        "یکی از مشکلان شصیشسطز لفذذر زیصشی بیشتر مشک زی بیشتر افراد با آن مواجه هستند.",
+        MessageStatus.Pending,
         MessageType.Outgoing,
-        "1400/01/01",
-        "12:00"
+        1,
+        1,
+        1
     ),
-    UiMessage(
-        10,
-        "یکی از مشکلان شصیشسطز لفذذر زیصشی بیشتر مشک زی بیشتر افراد با آن مواجه هستند.",
-        MessageType.Outgoing,
-        "1400/01/01",
-        "12:00"
-    ),
-    UiMessage(11, "یکی از مشکلان ", MessageType.Outgoing, "1400/01/01", "12:00"),
 )
 
 @Composable
 fun ChatContent(
     outerPadding: PaddingValues = PaddingValues(),
+    messages: List<MessageUI> = emptyList(),
     onBackClicked: () -> Unit = {},
     onMenuClicked: () -> Unit = {}
 ) {
@@ -121,7 +145,7 @@ fun ChatContent(
             .fillMaxSize(),
         reverseLayout = true
     ) {
-        items(fakeMessageList.reversed(), key = { it.id }) {
+        items(messages, key = { it.id }) {
             TextBubble(it)
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -129,7 +153,7 @@ fun ChatContent(
 }
 
 @Composable
-fun TextBubble(message: UiMessage) {
+fun TextBubble(message: MessageUI) {
     CompositionLocalProvider(LocalLayoutDirection provides if (message.type == MessageType.Incoming) LayoutDirection.Ltr else LayoutDirection.Rtl) {
         Row(
             modifier = Modifier
@@ -150,7 +174,7 @@ fun TextBubble(message: UiMessage) {
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    text = message.text,
+                    text = message.content,
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontFamily = VazirFont,
@@ -189,11 +213,13 @@ fun TextBubble(message: UiMessage) {
 
                 Icon(
                     modifier = Modifier.size(20.dp),
-                    painter = painterResource(id = when (message.status) {
-                        MessageStatus.Pending -> R.drawable.ic_clock
-                        MessageStatus.Sent -> R.drawable.ic_tick
-                        MessageStatus.Seen -> R.drawable.ic_double_tick
-                    }),
+                    painter = painterResource(
+                        id = when (message.status) {
+                            MessageStatus.Pending -> R.drawable.ic_clock
+                            MessageStatus.Sent -> R.drawable.ic_tick
+                            MessageStatus.Seen -> R.drawable.ic_double_tick
+                        }
+                    ),
                     contentDescription = null,
                     tint = PrimaryBlack.copy(alpha = 0.6f)
                 )
@@ -205,7 +231,7 @@ fun TextBubble(message: UiMessage) {
 @RTLPixel5Previews
 @Composable
 fun TextMessagePreview() {
-    TextBubble(fakeMessageList[0])
+    TextBubble(fakeMessages[0])
 }
 
 @RTLPixel5Previews

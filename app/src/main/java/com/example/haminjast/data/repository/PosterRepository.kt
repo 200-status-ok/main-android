@@ -14,7 +14,7 @@ import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.UiPoster
 
-class PosterRepository(
+class PosterRepository( //TODO singleton
     private val apiService : PosterRetrofitService
 ) {
     suspend fun addPoster(
