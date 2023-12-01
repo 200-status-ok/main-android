@@ -8,9 +8,9 @@ data class MessageEntity(
     @PrimaryKey
     val id: Long,
     val content: String,
-    val contentType: String,
+    val contentType: String, //TODO enum
     val date: Long,
-    val status: String,
+    val status: String, //TODO enum
     val senderID: Long,
     val conversationID: Long,
     val seqNumber: Long
@@ -26,6 +26,19 @@ data class MessageEntity(
                 senderID = messageResponse.senderID,
                 conversationID = messageResponse.conversationID,
                 seqNumber = messageResponse.seqNumber
+            )
+        }
+
+        fun fromResponse2(messageResponse: ConversationHistoryResponse.ConversationHistoryResItem.Message): MessageEntity { //TODO remove
+            return MessageEntity(
+                id = messageResponse.id.toLong(),
+                content = messageResponse.content,
+                contentType = messageResponse.type,
+                date = messageResponse.updatedAt.toLong(),
+                status = messageResponse.status,
+                senderID = messageResponse.senderId.toLong(),
+                conversationID = messageResponse.conversationId.toLong(),
+                seqNumber = 0
             )
         }
     }

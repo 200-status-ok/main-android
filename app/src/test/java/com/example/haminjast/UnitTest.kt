@@ -21,10 +21,8 @@ import com.example.haminjast.ui.component.secondsToMinuteAndSecondsString
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus
 import com.example.haminjast.ui.model.UiConversation
-import com.example.haminjast.ui.model.UiMessage
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.navigation.Ads
-import com.example.haminjast.ui.screen.chat.component.MessageType
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -309,33 +307,6 @@ class UnitTest {
         assertEquals(unreadCount, uiConversation.unreadCount)
         assertEquals(myPoster, uiConversation.myPoster)
     }
-
-    @Test
-    fun `test UiMessage properties`() {
-        // Given
-        val id = 1
-        val text = "Hello, how are you?"
-        val type = MessageType.Incoming
-        val date = "2023-11-17"
-        val time = "12:30 PM"
-
-        // When
-        val uiMessage = UiMessage(
-            id = id,
-            text = text,
-            type = type,
-            date = date,
-            time = time
-        )
-
-        // Then
-        assertEquals(id, uiMessage.id)
-        assertEquals(text, uiMessage.text)
-        assertEquals(type, uiMessage.type)
-        assertEquals(date, uiMessage.date)
-        assertEquals(time, uiMessage.time)
-    }
-
 
     @Test
     fun `test UiPoster properties`() {

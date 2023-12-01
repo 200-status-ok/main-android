@@ -34,7 +34,10 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun ChatInputBar() {
+fun ChatInputBar(
+    inputBarText: String = "", onInputBarTextChanged: (String) -> Unit = {},
+    onSendClicked: () -> Unit = {}
+) {
     Surface(
         color = Color.White,
         shadowElevation = 8.dp,
@@ -51,7 +54,7 @@ fun ChatInputBar() {
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .size(48.dp),
-                onClick = { /*TODO*/ },
+                onClick = onSendClicked,
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlack),
                 contentPadding = PaddingValues(0.dp)
@@ -63,9 +66,6 @@ fun ChatInputBar() {
                 )
             }
 
-            val txt = remember {
-                mutableStateOf("")
-            }
 
             BasicTextField(
                 modifier = Modifier
@@ -73,8 +73,8 @@ fun ChatInputBar() {
                     .background(Color.Transparent)
                     .heightIn(min = 64.dp, max = 128.dp)
                     .fillMaxWidth(),
-                value = txt.value,
-                onValueChange = { s: String -> txt.value = s },
+                value = inputBarText,
+                onValueChange = { s: String -> onInputBarTextChanged(s) },
                 textStyle = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = VazirFont,
