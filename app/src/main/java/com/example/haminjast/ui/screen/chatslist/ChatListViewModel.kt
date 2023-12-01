@@ -3,6 +3,7 @@ package com.example.haminjast.ui.screen.chatslist
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haminjast.WSClient
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.model.AddressAddPoster
 import com.example.haminjast.data.model.ConversationCoverEntity
@@ -43,8 +44,10 @@ class ChatListViewModel(
         _conversationCovers.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     init {
+        WSClient().run()
+
         viewModelScope.launch {
-            chatRepository.fetchConversationCovers()
+            chatRepository.fetchConversationCovers() //TODO handle error
         }
     }
 

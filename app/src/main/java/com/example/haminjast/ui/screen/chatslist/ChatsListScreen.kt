@@ -54,6 +54,8 @@ fun ChatsListScreen(
 ) {
     val conversationCovers by viewModel.conversationCovers.collectAsStateWithLifecycle()
 
+
+
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(conversationCovers, key = { it.id }) {
             ConversationItem(it, onClick = onChatClicked)

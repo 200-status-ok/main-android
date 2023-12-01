@@ -32,9 +32,9 @@ class WSClient : WebSocketListener() {
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        webSocket.send("Hello...")
-        webSocket.send("...World!")
-        webSocket.close(1000, "Goodbye, World!")
+//        webSocket.send("Hello...")
+//        webSocket.send("...World!")
+//        webSocket.close(1000, "Goodbye, World!")
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
