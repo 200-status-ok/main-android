@@ -7,7 +7,7 @@ data class MessageUI(
     val content: String,
     val contentType: String,
     val date: Long,
-    val status: Long,
+    val status: String,
     val senderID: Long,
     val conversationID: Long,
     val seqNumber: Long

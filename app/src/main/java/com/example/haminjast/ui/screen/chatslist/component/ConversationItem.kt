@@ -100,7 +100,7 @@ fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}
 
                     Text(
                         modifier = Modifier,
-                        text = conversation.lastMessage.date.toString(),
+                        text = "",//conversation.lastMessage.date.toString(),
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
@@ -123,7 +123,7 @@ fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = conversation.lastMessage.content,
+            text = "",//conversation.lastMessage.date.toString(),
             style = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = VazirFont,
