@@ -1,16 +1,12 @@
 package com.example.haminjast.data.repository
 
 
-import com.example.haminjast.data.network.loginretrofit.LoginRetrofit
 import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.network.loginretrofit.OtpRequest
 import com.example.haminjast.data.network.loginretrofit.VerifyOtpRequest
 import com.example.haminjast.data.network.loginretrofit.VerifyOtpResponse
 
-object LoginRepository{
-    private val apiService: LoginRetrofitService =
-        LoginRetrofit.getRetrofitInstance()
-            .create(LoginRetrofitService::class.java)
+class LoginRepository constructor(private val apiService: LoginRetrofitService){ //TODO private constructor
 
     suspend fun sendOTP(userName: String) : Result<Unit> {
         val res = apiService.sendOtpRequest(OtpRequest(userName))
@@ -22,10 +18,10 @@ object LoginRepository{
     }
 
     suspend fun verifyOTP(userName: String, otp: String) : Result<VerifyOtpResponse?> {
-        val res = apiService.verifyOtpRequest(VerifyOtpRequest(userName,otp))
-        return if(res.isSuccessful){
+        val res = apiService.verifyOtpRequest(VerifyOtpRequest(userName, otp))
+        return if (res.isSuccessful) {
             Result.success(res.body())
-        }else{
+        } else {
             Result.failure(Exception("OTP not verified"))
         }
     }
@@ -39,4 +35,14 @@ object LoginRepository{
         }
     }
 
+    companion object {
+        @Volatile
+        private var INSTANCE: LoginRepository? = null
+        fun getInstance(apiService: LoginRetrofitService): LoginRepository =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE
+                    ?: LoginRepository(apiService)
+                        .also { INSTANCE = it }
+            }
+    }
 }

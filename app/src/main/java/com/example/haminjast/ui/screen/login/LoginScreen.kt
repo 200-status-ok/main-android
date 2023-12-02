@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haminjast.R
 import com.example.haminjast.data.datastore.LoginDataStore
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofit
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.repository.LoginRepository
 import com.example.haminjast.ui.component.MaxWidthBorderedEditText
 import com.example.haminjast.ui.component.MaxWidthIconButton
@@ -50,7 +52,9 @@ fun LoginScreen(
     loginDataStore: LoginDataStore,
     viewModel: LoginViewModel = viewModel(
         factory = LoginViewModelFactory(
-            LoginRepository,
+            LoginRepository.getInstance(
+                LoginRetrofit.getRetrofitInstance()
+                .create(LoginRetrofitService::class.java)),
             loginDataStore
         )
     ),
