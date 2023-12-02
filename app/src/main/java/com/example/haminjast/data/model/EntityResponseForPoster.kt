@@ -70,18 +70,18 @@ data class EntityResponseForPoster(
     val specialType: String
 )
 
-fun EntityResponseForPoster.toUiPoster() : UiPoster {
+fun EntityResponseForPoster.toUiPoster(): UiPoster {
     return UiPoster(
         id = id,
         title = title,
         description = description,
         imageUrls = images.map { it.url },
         timeCreatedTimeStamp = 0L,
-        status =  if( status == "lost") PosterStatus.Lost else PosterStatus.Found,
-        vicinity = addresses.first().province,
+        status = if (status == "lost") PosterStatus.Lost else PosterStatus.Found,
+        vicinity = addresses.firstOrNull()?.province?:"",
         reward = award.toLong(),
-        lat = addresses.first().latitude,
-        lng = addresses.first().longitude,
+        lat = addresses.firstOrNull()?.latitude ?: 0.0,
+        lng = addresses.firstOrNull()?.longitude ?: 0.0,
         issuerId = userId,
         contacts = listOf(
             Contact("شماره تماس", userPhone),

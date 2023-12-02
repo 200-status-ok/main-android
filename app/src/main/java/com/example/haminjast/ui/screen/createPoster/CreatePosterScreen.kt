@@ -42,6 +42,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haminjast.R
 import com.example.haminjast.data.datastore.LoginDataStore
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofit
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.repository.LoginRepository
 import com.example.haminjast.data.repository.PosterRepository
 import com.example.haminjast.ui.component.TagSelector
@@ -68,10 +70,18 @@ import org.osmdroid.util.GeoPoint
 fun CreatePosterScreen(
     loginDataStore: LoginDataStore,
     viewModel: CreatePosterViewModel = viewModel(
-        factory = provideViewModelFactory(loginDataStore)
+        factory = provideViewModelFactory(
+            loginDataStore,
+            LoginRepository.getInstance(
+                LoginRetrofit.getRetrofitInstance()
+                    .create(LoginRetrofitService::class.java)
+            )
+        )
     ),
     onCloseClicked: () -> Unit = {},
 ) {
+
+
     val cameraState = rememberCameraState {
         geoPoint = GeoPoint(35.7219, 51.3347)
         zoom = 12.0
@@ -178,7 +188,7 @@ fun CreatePosterScreen(
                             viewModel.removeSelectedTag(it)
                         }
                     )
-                    
+
                     Spacer(modifier = Modifier.size(16.dp))
                     TitleDescription(title = "موقعیت مکانی (برای انتخاب مکان نگه دارید)")
                     Spacer(modifier = Modifier.size(8.dp))

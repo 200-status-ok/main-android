@@ -10,6 +10,7 @@ import com.example.haminjast.data.model.AddressAddPoster
 import com.example.haminjast.data.model.Poster
 import com.example.haminjast.data.model.RequestBodyForAddPoster
 import com.example.haminjast.data.model.toUiPoster
+import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.UiPoster
@@ -58,7 +59,6 @@ class PosterRepository( //TODO singleton
                     tags = listOf("normal")
                     )
                 )
-            Log.d("dafsd", "addPoster: ${res.errorBody()})")
             if (res.isSuccessful) {
                 Result.success("Poster added <pending for approval>")
             } else {
