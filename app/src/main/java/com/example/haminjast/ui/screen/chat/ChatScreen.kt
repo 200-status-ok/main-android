@@ -25,6 +25,7 @@ fun ChatScreen(
     posterId: Int = 0,
     viewModel: ChatViewModel = viewModel(
         factory = ChatViewModelFactory(
+            conversationID = posterId.toLong(), //TODO
             posterRepository = PosterRepository(
                 apiService = PosterRetrofit.getRetrofitInstance()
                     .create(PosterRetrofitService::class.java),

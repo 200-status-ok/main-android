@@ -1,24 +1,17 @@
 package com.example.haminjast.data.repository
 
-import android.content.Context
-import androidx.room.Room
 import com.example.haminjast.User
-import com.example.haminjast.data.database.ApplicationDataBase
 import com.example.haminjast.data.database.ChatDao
 import com.example.haminjast.data.model.ConversationCoverEntity
-import com.example.haminjast.data.model.ConversationCoverResponse
-import com.example.haminjast.data.model.ConversationHistoryResponse
 import com.example.haminjast.data.model.MessageEntity
-import com.example.haminjast.data.model.MessageResponse
 import com.example.haminjast.data.model.SendMessageRequest
 import com.example.haminjast.data.network.ChatService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
-class ChatRepository(
+class ChatRepository constructor( //TODO pprivate constructor
     private val chatDao: ChatDao, private val chatService: ChatService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
