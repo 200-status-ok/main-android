@@ -1,5 +1,6 @@
 package com.example.haminjast
 
+import android.icu.util.UniversalTimeScale.toLong
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +35,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.haminjast.User.token
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.navigation.Ads
 import com.example.haminjast.ui.navigation.Chat
@@ -44,6 +46,7 @@ import com.example.haminjast.ui.navigation.Me
 import com.example.haminjast.ui.navigation.MyPoster
 import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
+import com.example.haminjast.ui.navigation.navigateToChat
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
 import com.example.haminjast.ui.screen.MeScreen
 import com.example.haminjast.ui.screen.ads.AdsScreen
@@ -58,13 +61,14 @@ import com.example.haminjast.ui.theme.HaminjastTheme
 import com.example.haminjast.ui.theme.NavBarBlue
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
-import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val loginDataStore = LoginDataStore(applicationContext)
+        User.token = loginDataStore.readTokenF()
+        User.id = loginDataStore.readIdF()?.toLong()?:0L
         setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 HaminjastTheme {
@@ -324,8 +328,8 @@ fun MainNavHost(
         }
         composable(route = ChatsList.route) {
             ChatsListScreen(
-                onChatClicked = {
-                    navController.navigateSingleTopTo(Chat.route)
+                onChatClicked = { conversationID, posterID ->
+                    navController.navigateToChat(conversationID,posterID)
                 }
             )
         }
@@ -348,19 +352,29 @@ fun MainNavHost(
             arguments = PosterDetail.arguments
         ) { backStackEntry ->
             val posterId = backStackEntry.arguments?.getInt(PosterDetail.posterIdArg)!!
-            PosterDetailScreen(posterId, onBackClicked = {
-                navController.popBackStack()
-            })
+            PosterDetailScreen(posterId,
+                onBackClicked = {
+                    navController.popBackStack()
+                },
+                onChatClicked = {
+                    navController.navigateToChat(-1, it)
+                }
+            )
         }
         composable(route = CreatePoster.route) {
             CreatePosterScreen(
                 loginDataStore,
                 onCloseClicked = {
                     navController.popBackStack()
-                })
+                }
+            )
         }
-        composable(route = Chat.route) {
-            ChatScreen()
+
+        composable(route = Chat.routeWithArgs, arguments = Chat.arguments) { backStackEntry ->
+            val conversationID = backStackEntry.arguments?.getLong(Chat.conversationIdArg) ?: -1
+            val posterID =
+                backStackEntry.arguments?.getLong(Chat.posterIdArg) ?: return@composable
+            ChatScreen(conversationID, posterID)
         }
 
         composable(route = "my_poster") {

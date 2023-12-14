@@ -1,7 +1,9 @@
 package com.example.haminjast.ui.screen.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.haminjast.User.token
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.repository.LoginRepository
 import kotlinx.coroutines.async
@@ -49,8 +51,12 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
         viewModelScope.launch {
             val loginUserWithGoogleResult = loginRepository.loginUserWithGoogle(email)
             if (loginUserWithGoogleResult.isSuccess) {
-                loginUserWithGoogleResult.getOrNull()?.token?.let {
-                    loginDataStore.saveTokenF(it)
+                loginUserWithGoogleResult.getOrNull()?.token?.let {token ->
+                    loginDataStore.saveTokenF(token)
+                    loginRepository.getUserId(token).onSuccess { userID ->
+                        Log.d("modar","getUserID success $userID");
+                        loginDataStore.saveIdF(userID.toString())
+                    }
                 }
             }
         }
@@ -61,8 +67,9 @@ class LoginViewModel(private val loginRepository: LoginRepository, private val l
         val loginJob = viewModelScope.async{
             val verifyOTPResult = loginRepository.verifyOTP(userName, otp)
             if (verifyOTPResult.isSuccess) {
-                verifyOTPResult.getOrNull()?.token?.let {
-                    loginDataStore.saveTokenF(it)
+                verifyOTPResult.getOrNull()?.let { verifyOTPResponse ->
+                    loginDataStore.saveTokenF(verifyOTPResponse.token)
+                    loginDataStore.saveIdF(verifyOTPResponse.id.toString())
                 }
                 _otpState.update {
                     OTPState.NOT_REQUESTED

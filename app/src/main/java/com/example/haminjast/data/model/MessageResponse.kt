@@ -14,7 +14,7 @@ data class MessageResponse(
     val contentType: String,
 
     @SerializedName("date")
-    val date: Long,
+    val date: String,
 
     @SerializedName("status")
     val status: String,

@@ -1,5 +1,6 @@
 package com.example.haminjast.ui.model
 
+import android.util.Log
 import com.example.haminjast.User
 import com.example.haminjast.data.model.MessageEntity
 import com.example.haminjast.ui.screen.chat.component.MessageType
@@ -17,12 +18,13 @@ data class MessageUI(
 ) {
     companion object {
         fun fromEntity(entity: MessageEntity): MessageUI {
+            Log.d("modar","User.id ${User.id} senderID ${entity.senderID}");
             return MessageUI(
                 id = entity.id,
                 content = entity.content,
-                messageContentType = MessageContentType.valueOf(entity.contentType),
+                messageContentType = MessageContentType.valueOf(entity.contentType.replaceFirstChar { it.uppercase() }),
                 date = entity.date.toString(), //TODO
-                status = MessageStatus.valueOf(entity.status),
+                status = MessageStatus.valueOf(entity.status.replaceFirstChar { it.uppercase() }),
                 type = if (entity.senderID == User.id) MessageType.Outgoing else MessageType.Incoming,
                 senderID = entity.senderID,
                 conversationID = entity.conversationID,
@@ -40,7 +42,7 @@ enum class MessageContentType {
 
 enum class MessageStatus {
     Pending,
-    Sent,
-    Seen,
+    Unread,
+    Read,
     Failed;
 }

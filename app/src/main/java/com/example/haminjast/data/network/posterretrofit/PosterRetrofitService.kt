@@ -1,9 +1,9 @@
 package com.example.haminjast.data.network.posterretrofit
 
+import com.example.haminjast.data.model.CreatePosterRequest
+import com.example.haminjast.data.model.CreatePosterResponse
 import com.example.haminjast.data.model.EntityResponse
-import com.example.haminjast.data.model.EntityResponseForPoster
-import com.example.haminjast.data.model.RequestBodyForAddPoster
-import okhttp3.RequestBody
+import com.example.haminjast.data.model.GetPosterByIdResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -25,9 +25,9 @@ interface PosterRetrofitService {
     ): Response<EntityResponse>
 
     @GET("posters/{posterId}")
-    suspend fun getPoster(
+    suspend fun getPosterById(
         @Path("posterId") posterId: Int
-    ): Response<EntityResponseForPoster>
+    ): Response<GetPosterByIdResponse>
 
 
     @POST("/api/v1/posters/authorize")
@@ -35,6 +35,6 @@ interface PosterRetrofitService {
         @Header("authorization") authorization: String,
         @Header("accept") acceptHeader: String,
         @Header("Content-Type") contentTypeHeader: String,
-        @Body requestBody: RequestBodyForAddPoster
-    ): Response<EntityResponseForPoster>
+        @Body requestBody: CreatePosterRequest
+    ): Response<CreatePosterResponse>
 }

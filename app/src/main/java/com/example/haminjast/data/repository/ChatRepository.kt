@@ -1,9 +1,12 @@
 package com.example.haminjast.data.repository
 
+import android.util.Log
 import com.example.haminjast.User
+import com.example.haminjast.User.token
 import com.example.haminjast.data.database.ChatDao
 import com.example.haminjast.data.model.ConversationCoverEntity
 import com.example.haminjast.data.model.MessageEntity
+import com.example.haminjast.data.model.MessageReceivedUpdate
 import com.example.haminjast.data.model.SendMessageRequest
 import com.example.haminjast.data.network.ChatService
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,31 +14,45 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
-class ChatRepository constructor( //TODO pprivate constructor
+class ChatRepository constructor( //TODO private constructor
     private val chatDao: ChatDao, private val chatService: ChatService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    fun getConversationCovers(): Flow<Map<ConversationCoverEntity, MessageEntity>> {
+    fun getConversationCovers(): Flow<Map<ConversationCoverEntity, MessageEntity?>> {
         return chatDao.getConversationCovers()
     }
 
     suspend fun fetchConversationCovers(): Result<Unit> {
         return withContext(ioDispatcher) {
+            Log.d("modar", "fetch conversation covers");
             val response = chatService.getConversations(
-                authorization = "Bearer ",//TODO
+                authorization = "Bearer $token",//TODO
             )
 
             if (response.isSuccessful) {
+                Log.d("modar", "fetch conversation covers success");
                 response.body()?.let { conversationCoverResponse ->
-                    val conversationCoverEntities = conversationCoverResponse.map {
-//                        chatDao.insertMessage(MessageEntity.fromResponse(it.lastMessage))//TODO
-                        ConversationCoverEntity.fromResponse(it)
+                    Log.d("modar", "fetch conversation covers response $conversationCoverResponse");
+
+                    val conversationCoverEntities = mutableListOf<ConversationCoverEntity>()
+                    val conversationCoverLastMessageEntities = mutableListOf<MessageEntity>()
+                    conversationCoverResponse.forEach {
+                        conversationCoverEntities.add(ConversationCoverEntity.fromResponse(it))
+                        conversationCoverLastMessageEntities.add(
+                            MessageEntity.fromConversationCoverResponseLastMessage(
+                                it.lastMessage
+                            )
+                        )
                     }
+
+                    chatDao.insertAllMessages(conversationCoverLastMessageEntities)
                     chatDao.insertAllConversationCovers(conversationCoverEntities)
                 }
                 return@withContext Result.success(Unit)
 
             } else {
+                Log.d("modar", "fetch conversation covers failed ${response.message()}")
+                Log.d("modar", "fetch conversation covers failed ${response.code()}")
                 return@withContext Result.failure(Throwable(response.message()))
             }
         }
@@ -47,59 +64,110 @@ class ChatRepository constructor( //TODO pprivate constructor
 
     suspend fun fetchConversationHistory(conversationID: Long): Result<Unit> {
         return withContext(ioDispatcher) {
+            Log.d("modar","fetchConversationHistory convId: $conversationID");
             val response = chatService.getConversationHistory(
-                authorization = "Bearer ", //TODO
+                authorization = "Bearer $token", //TODO
                 conversationID = conversationID.toString(),
                 pageID = 1,
                 pageSize = 100
             )
             return@withContext if (response.isSuccessful) {
+                Log.d("modar","fetchConversationHistory success");
                 response.body()?.let { conversationHistoryResponse ->
-                    val messageEntities = conversationHistoryResponse[0].messages.map {
-                        MessageEntity.fromResponse2(it)
+                    val messageEntities = conversationHistoryResponse.messages.map {
+                        MessageEntity.fromConversationHistoryResponseMessage(it)
                     }
                     chatDao.insertAllMessages(messageEntities)
                 }
                 Result.success(Unit)
 
             } else {
+                Log.d("modar","fetchConversationHistory failure");
                 Result.failure(Throwable(response.message()))
             }
         }
     }
 
-    suspend fun sendMessage( // TODO make usecase and change logic
+    suspend fun sendMessage( // TODO make useCase and change logic
         conversationID: Long,
+        posterID: Long,
         content: String,
         contentType: String
     ): Result<Unit> {
         return withContext(ioDispatcher) {
-//            chatDao.insertMessage(MessageEntity()) //TODO
-//
-//            chatDao.updateConversationCoverLastMessageId(conversationID,)
+            Log.d("modar", "send message");
 
-            val response = chatService.sendMessage(
-                sendMessageRequest = SendMessageRequest(
+            val messageID = System.currentTimeMillis()
+
+            chatDao.insertMessage(
+                MessageEntity(
+                    id = messageID,
                     content = content,
-                    conversationId = conversationID.toInt(),
-                    posterId = 0,
-                    receiverId = 0,
-                    senderId = User.id.toInt(),
-                    type = contentType
+                    contentType = contentType,
+                    date = System.currentTimeMillis(),
+                    status = "pending",
+                    senderID = User.id,
+                    conversationID = conversationID,
+                    seqNumber = 0 //TODO Fakhar
                 )
             )
-            return@withContext if (response.isSuccessful) {
-//                chatDao.updateMessageDateAndStatus(,,"sent")
 
-                fetchConversationHistory(conversationID)
+            chatDao.updateConversationCoverLastMessageId(conversationID, messageID)
+
+            val smr = SendMessageRequest(
+                id = messageID,
+                conversationId = 2,
+                posterId = posterID.toInt(),
+                content = content,
+                type = contentType
+            )
+
+            Log.d("modar", "token $token");
+            Log.d("modar", "smr $smr");
+            val response = chatService.sendMessage(
+                authorization = "Bearer $token",
+                acceptHeader = "application/json",
+                contentTypeHeader = "application/json",
+                sendMessageRequest = smr
+            )
+            val messageResponse = response.body()
+
+            return@withContext if (response.isSuccessful) {
+                Log.d("modar", "send message success");
+                messageResponse?.let {
+                    Log.d("modar", "send message response $messageResponse");
+                    chatDao.updateMessageDateAndStatus(
+                        messageID,
+                        System.currentTimeMillis(),//TODO UNIX
+                        "unread"
+                    )
+                }
+//                fetchConversationHistory(conversationID) TODO remove: no need probably
                 Result.success(Unit)
 
-
-
             } else {
-//                chatDao.updateMessageDateAndStatus(,,"failed")
+                Log.d("modar", "send message failed ${response.message()}");
+                Log.d("modar", "send message failed ${response.errorBody()?.string()}");
+                Log.d("modar", "send message failed ${response.code()}");
+                messageResponse?.let {
+                    Log.d("modar", "message response $messageResponse");
+                    chatDao.updateMessageDateAndStatus(
+                        messageID,
+                        System.currentTimeMillis(),//TODO UNIX
+                        "failed"
+                    )
+                }
                 Result.failure(Throwable(response.message()))
+
             }
+        }
+    }
+
+    suspend fun onMessageReceived(messageReceivedUpdate: MessageReceivedUpdate) {
+        val messageEntity = MessageEntity.fromMessageReceivedUpdate(messageReceivedUpdate)
+        withContext(ioDispatcher) {// todo transaction
+            chatDao.insertMessage(messageEntity)
+            chatDao.updateConversationCoverLastMessageId(messageEntity.conversationID, messageEntity.id)
         }
     }
 

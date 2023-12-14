@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(
     private val conversationID: Long,
+    private val posterID: Long,
     posterRepository: PosterRepository,
     private val chatRepository: ChatRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -57,12 +58,15 @@ class ChatViewModel(
     }
 
     fun sendMessage() {
+        val message = chatState.value.inputBarText
+        updateChatState { state -> state.copy(inputBarText = "") }
         viewModelScope.launch {
             chatRepository.sendMessage(
-                conversationID,
-                chatState.value.inputBarText,
-                "text"
-            ) //TODO content type
+                conversationID = conversationID,
+                posterID = posterID,
+                content = message,
+                contentType = "text" //TODO enum maybe
+            )
         }
     }
 

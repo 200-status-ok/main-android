@@ -1,6 +1,8 @@
 package com.example.haminjast.data.repository
 
 
+import com.example.haminjast.User
+import com.example.haminjast.data.model.VOR
 import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.network.loginretrofit.OtpRequest
 import com.example.haminjast.data.network.loginretrofit.VerifyOtpRequest
@@ -17,7 +19,7 @@ class LoginRepository constructor(private val apiService: LoginRetrofitService){
         }
     }
 
-    suspend fun verifyOTP(userName: String, otp: String) : Result<VerifyOtpResponse?> {
+    suspend fun verifyOTP(userName: String, otp: String) : Result<VOR?> {
         val res = apiService.verifyOtpRequest(VerifyOtpRequest(userName, otp))
         return if (res.isSuccessful) {
             Result.success(res.body())
@@ -32,6 +34,18 @@ class LoginRepository constructor(private val apiService: LoginRetrofitService){
             Result.success(res.body())
         }else{
             Result.failure(Exception("OTP not verified"))
+        }
+    }
+
+    suspend fun getUserId(token:String= User.token): Result<Int?> {
+        val res = apiService.getUser(authorization = "Bearer $token")
+        if (res.isSuccessful) {
+            res.body()?.let {
+                return Result.success(it.id)
+            }
+            return Result.failure(Exception("ID is null"))
+        } else {
+            return Result.failure(Exception("OTP not verified"))
         }
     }
 

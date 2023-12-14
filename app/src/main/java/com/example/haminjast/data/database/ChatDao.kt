@@ -38,9 +38,9 @@ interface ChatDao {
     suspend fun updateMessageDateAndStatus(id: Long, date: Long, status: String)
 
     @Query(
-        "SELECT * FROM conversation_covers JOIN messages ON conversation_covers.lastMessageId = messages.id"
+        "SELECT * FROM conversation_covers LEFT JOIN messages ON conversation_covers.lastMessageId = messages.id"
     )
-    fun getConversationCovers(): Flow<Map<ConversationCoverEntity, MessageEntity>> // TODO if doesn't work, convert MessageEntity to List<MessageEntity>, check suspend
+    fun getConversationCovers(): Flow<Map<ConversationCoverEntity, MessageEntity?>> // TODO if doesn't work, convert MessageEntity to List<MessageEntity>, check suspend
 
     @Query("SELECT * FROM messages WHERE conversationId = :conversationId ORDER BY id DESC")
     fun getConversationHistory(conversationId: Long): Flow<List<MessageEntity>>

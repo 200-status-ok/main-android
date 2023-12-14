@@ -1,6 +1,6 @@
 package com.example.haminjast
 
 object User {
-    val token=""
-    val id=0L
+    var token=""
+    var id=0L
 }
