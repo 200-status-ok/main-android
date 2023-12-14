@@ -38,7 +38,8 @@ import com.example.haminjast.ui.util.RTLPixel5Previews
 @Composable
 fun ContactsBottomSheetContent(
     contacts: List<Contact>? = null,
-    onToggleBottomSheet: () -> Unit = {}
+    onToggleBottomSheet: () -> Unit = {},
+    onChatButtonClicked: () -> Unit = {}
 ) {
 //    Divider(
 //        modifier = Modifier
@@ -77,7 +78,7 @@ fun ContactsBottomSheetContent(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Button(
                 modifier = Modifier.size(120.dp, 36.dp),
-                onClick = { /*TODO*/ },
+                onClick = onChatButtonClicked,
                 shape = RoundedCornerShape(4.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = ButtonBlue),
                 contentPadding = PaddingValues(0.dp)

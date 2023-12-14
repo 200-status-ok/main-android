@@ -1,5 +1,6 @@
 package com.example.haminjast.ui.screen.chatslist
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,7 +43,7 @@ val fakeConversationList = mutableListOf<UiConversation>().apply {
 
 @Composable
 fun ChatsListScreen(
-    onChatClicked: () -> Unit = {},
+    onChatClicked: (Long, Long) -> Unit = { _, _ -> },
     viewModel: ChatListViewModel = viewModel(
         factory = ChatListViewModelFactory(
             chatRepository = ChatRepository.getInstance(
@@ -53,8 +54,7 @@ fun ChatsListScreen(
     )
 ) {
     val conversationCovers by viewModel.conversationCovers.collectAsStateWithLifecycle()
-
-
+    Log.d("modar", "conversationCovers : $conversationCovers");
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(conversationCovers, key = { it.id }) {

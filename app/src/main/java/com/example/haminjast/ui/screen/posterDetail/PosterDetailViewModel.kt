@@ -14,12 +14,16 @@ class PosterDetailViewModel(posterId: Int, posterRepository: PosterRepository) :
 
     private val _poster = MutableStateFlow<UiPoster?>(null)
     val poster = _poster.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val result = posterRepository.getPosterById(posterId)
             result.onSuccess { poster ->
-                _poster.update {
-                    poster
+                poster?.let {
+                    val uiPoster = UiPoster.fromResponse(it)
+                    _poster.update {
+                        uiPoster
+                    }
                 }
             }
         }

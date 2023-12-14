@@ -1,8 +1,9 @@
 package com.example.haminjast.data.network
 
-import com.example.haminjast.data.model.ConversationCoverResponse
 import com.example.haminjast.data.model.ConversationHistoryResponse
+import com.example.haminjast.data.model.ConversationCoverResponse
 import com.example.haminjast.data.model.SendMessageRequest
+import com.example.haminjast.data.model.SendMessageResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -41,10 +42,12 @@ interface ChatService {
     ): Response<ConversationHistoryResponse>
 
     @POST("chat/authorize/message")
-    @Headers("accept: application/json", "Content-Type: application/json")
     suspend fun sendMessage(
-        @Body sendMessageRequest: SendMessageRequest
-    ): Response<Unit> //TODO change to SendMessageResponse
+        @Header("authorization") authorization: String,
+        @Header("accept") acceptHeader: String,
+        @Header("Content-Type") contentTypeHeader: String,
+        @Body sendMessageRequest: SendMessageRequest,
+    ): Response<SendMessageResponse> //TODO change to SendMessageResponse
 
 }
 

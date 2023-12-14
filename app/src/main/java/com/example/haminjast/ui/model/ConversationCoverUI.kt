@@ -7,7 +7,7 @@ data class ConversationCoverUI(
     val id: Long,
     val title: String,
     val imageUrl: String,
-    val lastMessageId: MessageUI, //TODO
+    val lastMessage: MessageUI?, //TODO
     val posterID: Long,
     val isOwner: Boolean,
     val unreadCount: Int
@@ -15,17 +15,22 @@ data class ConversationCoverUI(
     companion object {
         fun fromConversationCoverEntityAndMessageEntity(
             conversationCoverEntity: ConversationCoverEntity,
-            messageEntity: MessageEntity
+            messageEntity: MessageEntity?
         ): ConversationCoverUI {
-            val messageUI = MessageUI.fromEntity(messageEntity)
+            var unreadCount = 0
+            val messageUI = messageEntity?.let {
+                unreadCount =
+                    (it.seqNumber - conversationCoverEntity.lastReadMessageSeqNumber).toInt()
+                MessageUI.fromEntity(it)
+            }
             return ConversationCoverUI(
-                conversationCoverEntity.id,
-                conversationCoverEntity.title,
-                conversationCoverEntity.imageUrl,
-                messageUI,
-                conversationCoverEntity.posterID,
-                conversationCoverEntity.isOwner,
-                (messageUI.seqNumber - conversationCoverEntity.lastReadMessageSeqNumber).toInt()
+                id = conversationCoverEntity.id,
+                title = conversationCoverEntity.title,
+                imageUrl = conversationCoverEntity.imageUrl,
+                lastMessage = messageUI,
+                posterID = conversationCoverEntity.posterID,
+                isOwner = conversationCoverEntity.isOwner,
+                unreadCount = unreadCount
             )
         }
     }

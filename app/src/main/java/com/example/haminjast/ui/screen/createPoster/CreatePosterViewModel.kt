@@ -1,10 +1,8 @@
 package com.example.haminjast.ui.screen.createPoster
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haminjast.data.datastore.LoginDataStore
-import com.example.haminjast.data.model.AddressAddPoster
 import com.example.haminjast.data.repository.LoginRepository
 import com.example.haminjast.data.repository.PosterRepository
 import com.example.haminjast.ui.component.fakeTagList
@@ -47,19 +45,17 @@ class CreatePosterViewModel(
     private val _award = MutableStateFlow(0)
     val award = _award.asStateFlow()
 
-    private val _haveChat = MutableStateFlow(false)
-    val haveChat = _haveChat.asStateFlow()
+    private val _latLong = MutableStateFlow(35.0 to 35.0)
+    val latLong = _latLong.asStateFlow()
 
-    private val _address = MutableStateFlow<AddressAddPoster?>(null)
-    val address = _address.asStateFlow()
 
-    fun createPoster(){
+    fun createPoster() {
         viewModelScope.launch(Dispatchers.IO) {
-            if(loginDataStore.readTokenF() != ""){
-                Log.d("dafsd", "createPoster: ${loginDataStore.readTokenF()}")
-                val res = posterRepository.addPoster(
-                    loginDataStore.readTokenF(),
-                    address = _address.value,
+            val token = loginDataStore.readTokenF()
+            if (token != "") {
+                posterRepository.addPoster(
+                    token = token,
+                    latLong = _latLong.value,
                     imageUrls = _imgUrls.value,
                     title = _title.value,
                     description = _desc.value,
@@ -67,13 +63,8 @@ class CreatePosterViewModel(
                     status = if (_posterStatus.value == PosterStatus.Lost) "lost" else "found",
                     tags = _tags.value,
                     award = _award.value,
-                    haveChat = _haveChat.value
                 )
-                Log.d("dafsd", "createPoster: $res")
-            }else{
-                Log.d("dafsd", "createPoster: ${loginDataStore.readTokenF()}")
             }
-
         }
     }
 
@@ -157,9 +148,6 @@ class CreatePosterViewModel(
         _award.value = award
     }
 
-    fun setHaveChat(haveChat: Boolean) {
-        _haveChat.value = haveChat
-    }
     fun setTagFieldText(text: String) {
         _tagFieldText.value = text
     }
@@ -179,6 +167,12 @@ class CreatePosterViewModel(
             ls.addAll(it)
             ls.remove(tag)
             ls
+        }
+    }
+
+    fun setLatLong(lat: Double, long: Double) {
+        _latLong.update {
+            lat to long
         }
     }
 }

@@ -48,6 +48,15 @@ object PosterDetail : HaminjastDestination {
 object Chat : HaminjastDestination {
     override val icon = Icons.Filled.Person
     override val route = "chat"
+
+    const val conversationIdArg = "conversation_id"
+    const val posterIdArg = "poster_id"
+    val arguments = listOf(
+        navArgument(conversationIdArg) { type = NavType.LongType },
+        navArgument(posterIdArg) { type = NavType.LongType }
+    )
+
+    val routeWithArgs = "$route/{$conversationIdArg}/{$posterIdArg}"
 }
 
 object CreatePoster : HaminjastDestination {

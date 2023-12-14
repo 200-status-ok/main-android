@@ -30,7 +30,7 @@ class PosterRemoteMediator(
             LoadResult.Page(
                 data = posters.body()?.posters ?: emptyList(),
                 prevKey = if (currentPage == 1) null else currentPage - 1,
-                nextKey = if (posters.body()?.posters?.isEmpty() == true) null else currentPage + 1
+                nextKey = if (posters.body()?.posters?.isEmpty() == true) null else null
             )
         } catch (exception: IOException) {
             return LoadResult.Error(exception)

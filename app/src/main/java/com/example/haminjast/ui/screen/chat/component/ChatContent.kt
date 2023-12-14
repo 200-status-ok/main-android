@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -217,8 +216,8 @@ fun TextBubble(message: MessageUI) {
                     painter = painterResource(
                         id = when (message.status) {
                             MessageStatus.Pending -> R.drawable.ic_clock
-                            MessageStatus.Sent -> R.drawable.ic_tick
-                            MessageStatus.Seen -> R.drawable.ic_double_tick
+                            MessageStatus.Unread -> R.drawable.ic_tick
+                            MessageStatus.Read -> R.drawable.ic_double_tick
                             MessageStatus.Failed -> R.drawable.ic_arrow_up //TODO()
                         }
                     ),
