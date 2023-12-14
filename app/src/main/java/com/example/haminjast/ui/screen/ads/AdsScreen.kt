@@ -156,7 +156,8 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                     .fillMaxHeight()
                     .width(96.dp)
                     .clip(RoundedCornerShape(4.dp)),
-                model = ad.imageUrls?.get(0),
+//                model = ad.imageUrls?.get(0),
+                model = null ,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )

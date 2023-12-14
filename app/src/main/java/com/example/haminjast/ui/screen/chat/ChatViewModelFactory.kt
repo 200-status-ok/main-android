@@ -9,11 +9,12 @@ import com.example.haminjast.data.repository.PosterRepository
 
 class ChatViewModelFactory(
     private val conversationID: Long,
+    private val posterID: Long,
     private val posterRepository: PosterRepository,
     private val chatRepository: ChatRepository,
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChatViewModel(conversationID, posterRepository, chatRepository) as T
+        return ChatViewModel(conversationID,posterID,posterRepository,chatRepository) as T //todo pass convID
     }
 }

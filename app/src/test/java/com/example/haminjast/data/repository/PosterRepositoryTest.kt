@@ -123,7 +123,7 @@ class PosterRepositoryTest {
             )
 
             val expectedResult = Result.success(resEntity.toUiPoster())
-            `when`(apiService.getPoster(0))
+            `when`(apiService.getPosterById(0))
                 .thenReturn(
                     Response.success(
                         resEntity

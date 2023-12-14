@@ -2,7 +2,6 @@
 
 package com.example.haminjast.ui.screen.posterDetail
 
-import android.util.Log
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue
@@ -22,12 +21,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.screen.posterDetail.component.ContactsBottomSheetContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailTopBar
-import com.example.haminjast.ui.util.RTLPixel5Previews
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,13 +36,13 @@ fun PosterDetailScreen(
             posterId,
         )
     ),
-    onBackClicked: () -> Unit = {}
+    onBackClicked: () -> Unit = {},
+    onChatClicked: (Long) -> Unit = {}
 ) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
     val poster: State<UiPoster?> = viewModel.poster.collectAsStateWithLifecycle()
-    Log.d("modar", "poster: ${poster.value}");
 
     val appBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(appBarState)
@@ -55,8 +52,6 @@ fun PosterDetailScreen(
         producer = {
             value = appBarState.contentOffset < -1
         })
-
-    Log.d("modar", "${appBarState.contentOffset}");
 
     BottomSheetScaffold(
         modifier = Modifier.nestedScroll(connection = scrollBehavior.nestedScrollConnection),
@@ -81,7 +76,8 @@ fun PosterDetailScreen(
                             bottomSheetScaffoldState.bottomSheetState.partialExpand()
                         }
                     }
-                }
+                },
+                onChatButtonClicked = { onChatClicked(posterId.toLong()) }
             )
         },
         scaffoldState = bottomSheetScaffoldState,

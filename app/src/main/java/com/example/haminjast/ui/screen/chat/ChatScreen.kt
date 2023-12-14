@@ -19,13 +19,14 @@ import com.example.haminjast.ui.screen.chat.component.ChatContent
 import com.example.haminjast.ui.screen.chat.component.ChatInputBar
 import com.example.haminjast.ui.screen.chat.component.ChatTopBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    posterId: Int = 0,
+    conversationID: Long,
+    posterID: Long,
     viewModel: ChatViewModel = viewModel(
         factory = ChatViewModelFactory(
-            conversationID = posterId.toLong(), //TODO
+            conversationID = conversationID,
+            posterID= posterID,
             posterRepository = PosterRepository(
                 apiService = PosterRetrofit.getRetrofitInstance()
                     .create(PosterRetrofitService::class.java),

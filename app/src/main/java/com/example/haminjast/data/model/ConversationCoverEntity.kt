@@ -15,12 +15,12 @@ data class ConversationCoverEntity(
     val lastReadMessageSeqNumber:Long
 ){
     companion object{
-        fun fromResponse(conversationCoverResponseItem: ConversationCoverResponse.ConversationCoverResItem):ConversationCoverEntity{
+        fun fromResponse(conversationCoverResponseItem: ConversationCoverResponse.ConversationCoverResponseItem):ConversationCoverEntity{
             return ConversationCoverEntity(
                 id = conversationCoverResponseItem.id.toLong(),
-                title = conversationCoverResponseItem.title,
+                title = conversationCoverResponseItem.name,
                 imageUrl = conversationCoverResponseItem.imageUrl,
-                lastMessageId = 0, //TODO
+                lastMessageId = conversationCoverResponseItem.lastMessage.id, //TODO
                 posterID = conversationCoverResponseItem.posterId.toLong(),
                 isOwner = conversationCoverResponseItem.isOwner,
                 lastReadMessageSeqNumber = 0 //TODO

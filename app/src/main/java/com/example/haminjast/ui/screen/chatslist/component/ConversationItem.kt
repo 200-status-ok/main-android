@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.haminjast.R
 import com.example.haminjast.ui.model.ConversationCoverUI
+import com.example.haminjast.ui.screen.chat.component.fakeMessages
 import com.example.haminjast.ui.screen.common.TagText
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.PrimaryBlue
@@ -37,12 +38,15 @@ import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
-fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}) {
+fun ConversationItem(
+    conversation: ConversationCoverUI,
+    onClick: (Long, Long) -> Unit = { _, _ -> }
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clickable { onClick() }
+            .clickable { onClick(conversation.id,conversation.posterID) }
             .padding(horizontal = 16.dp), verticalArrangement = Arrangement.Center
     ) {
         Row(
@@ -113,7 +117,7 @@ fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}
 
                 if (conversation.unreadCount > 0) {
                     TagText(
-                        text = "${conversation.unreadCount} ${stringResource(id = R.string.description)}",
+                        text = "${conversation.unreadCount} ${stringResource(id = R.string.unread_message)}",
                         backgroundColor = PrimaryBlue
                     )
                 }
@@ -123,7 +127,7 @@ fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = "",//conversation.lastMessage.date.toString(),
+            text = conversation.lastMessage?.content ?: "",
             style = TextStyle(
                 fontSize = 12.sp,
                 fontFamily = VazirFont,
@@ -138,15 +142,15 @@ fun ConversationItem(conversation: ConversationCoverUI, onClick: () -> Unit = {}
 @RTLPixel5Previews
 @Composable
 fun ConversationItemPreview() {
-//    ConversationItem(
-////        UiConversation(
-////            id = 0,
-////            title = "دوچرخه",
-////            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
-////            lastMessage = "سلام. دوچرخه رو پیدا کردم. اگه میخوای بیا بگیرش",
-////            lastMessageDate = "۳ دقیقه پیش",
-////            unreadCount = 2,
-////            myPoster = true,
-////        )
-//    )
+    ConversationItem(
+        ConversationCoverUI(
+            id = 0,
+            title = "دوچرخه",
+            imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/WalletMpegMan.jpg/500px-WalletMpegMan.jpg",
+            lastMessage = fakeMessages[0],
+            unreadCount = 2,
+            isOwner = true,
+            posterID = 2
+        )
+    )
 }
