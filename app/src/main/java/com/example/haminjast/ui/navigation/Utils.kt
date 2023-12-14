@@ -18,3 +18,7 @@ fun NavHostController.navigateSingleTopTo(route: String) {
 fun NavHostController.navigateToPosterDetail(posterId:Int) {
     this.navigateSingleTopTo("${PosterDetail.route}/$posterId")
 }
+
+fun NavHostController.navigateToChat(conversationID: Long,posterID: Long) {
+    this.navigateSingleTopTo("${Chat.route}/$conversationID/$posterID")
+}
