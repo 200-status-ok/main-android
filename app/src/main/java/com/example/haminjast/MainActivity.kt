@@ -1,6 +1,5 @@
 package com.example.haminjast
 
-import android.icu.util.UniversalTimeScale.toLong
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,7 +34,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.haminjast.User.token
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.navigation.Ads
 import com.example.haminjast.ui.navigation.Chat
