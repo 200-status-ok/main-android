@@ -64,7 +64,6 @@ class ChatRepository constructor( //TODO private constructor
 
     suspend fun fetchConversationHistory(conversationID: Long): Result<Unit> {
         return withContext(ioDispatcher) {
-            Log.d("modar","fetchConversationHistory convId: $conversationID");
             val response = chatService.getConversationHistory(
                 authorization = "Bearer $token", //TODO
                 conversationID = conversationID.toString(),
@@ -72,7 +71,6 @@ class ChatRepository constructor( //TODO private constructor
                 pageSize = 100
             )
             return@withContext if (response.isSuccessful) {
-                Log.d("modar","fetchConversationHistory success");
                 response.body()?.let { conversationHistoryResponse ->
                     val messageEntities = conversationHistoryResponse.messages.map {
                         MessageEntity.fromConversationHistoryResponseMessage(it)
@@ -82,7 +80,6 @@ class ChatRepository constructor( //TODO private constructor
                 Result.success(Unit)
 
             } else {
-                Log.d("modar","fetchConversationHistory failure");
                 Result.failure(Throwable(response.message()))
             }
         }
@@ -95,7 +92,6 @@ class ChatRepository constructor( //TODO private constructor
         contentType: String
     ): Result<Unit> {
         return withContext(ioDispatcher) {
-            Log.d("modar", "send message");
 
             val messageID = System.currentTimeMillis()
 
@@ -114,7 +110,7 @@ class ChatRepository constructor( //TODO private constructor
 
             chatDao.updateConversationCoverLastMessageId(conversationID, messageID)
 
-            val smr = SendMessageRequest(
+            val sendMessageRequest = SendMessageRequest(
                 id = messageID,
                 conversationId = 2,
                 posterId = posterID.toInt(),
@@ -122,20 +118,16 @@ class ChatRepository constructor( //TODO private constructor
                 type = contentType
             )
 
-            Log.d("modar", "token $token");
-            Log.d("modar", "smr $smr");
             val response = chatService.sendMessage(
                 authorization = "Bearer $token",
                 acceptHeader = "application/json",
                 contentTypeHeader = "application/json",
-                sendMessageRequest = smr
+                sendMessageRequest = sendMessageRequest
             )
             val messageResponse = response.body()
 
             return@withContext if (response.isSuccessful) {
-                Log.d("modar", "send message success");
                 messageResponse?.let {
-                    Log.d("modar", "send message response $messageResponse");
                     chatDao.updateMessageDateAndStatus(
                         messageID,
                         System.currentTimeMillis(),//TODO UNIX
@@ -146,11 +138,7 @@ class ChatRepository constructor( //TODO private constructor
                 Result.success(Unit)
 
             } else {
-                Log.d("modar", "send message failed ${response.message()}");
-                Log.d("modar", "send message failed ${response.errorBody()?.string()}");
-                Log.d("modar", "send message failed ${response.code()}");
                 messageResponse?.let {
-                    Log.d("modar", "message response $messageResponse");
                     chatDao.updateMessageDateAndStatus(
                         messageID,
                         System.currentTimeMillis(),//TODO UNIX

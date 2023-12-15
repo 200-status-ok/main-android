@@ -10,9 +10,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ChatDao {
-//    @Query("SELECT * FROM conversation_covers")
-//    fun getConversationCovers(): Flow<List<ConversationCoverEntity>> //TODO check suspend
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllConversationCovers(conversationCoverEntities: List<ConversationCoverEntity>)
 

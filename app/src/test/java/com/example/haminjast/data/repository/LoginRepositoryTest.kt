@@ -1,5 +1,6 @@
 package com.example.haminjast.data.repository
 
+import com.example.haminjast.data.model.VOR
 import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.network.loginretrofit.OtpRequest
 import com.example.haminjast.data.network.loginretrofit.OtpResponse
@@ -52,7 +53,7 @@ class LoginRepositoryTest {
         // Arrange
         val userName = "testUser"
         val otp = "123456"
-        val expectedResponse = Response.success(VerifyOtpResponse("OTP verified", "token"))
+        val expectedResponse = Response.success(VOR(0,"OTP verified", "token"))
 //        'when'(apiService.verifyOtpRequest(VerifyOtpRequest(userName, otp))).thenReturn(
 //            expectedResponse
 //        )
