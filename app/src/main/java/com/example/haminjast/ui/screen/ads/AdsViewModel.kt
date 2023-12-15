@@ -20,6 +20,10 @@ import kotlinx.coroutines.launch
 class AdsViewModel(
     private val posterRepository: PosterRepository
 ): ViewModel() {
+
+    private val _isShowingMap : MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isShowingMap = _isShowingMap.asStateFlow()
+
     fun onPosterSearchQueryChanged(query: String) {
         _posterSearchQuery.value = query
     }
@@ -93,5 +97,9 @@ class AdsViewModel(
 
     fun retry() {
         posters = getPostersFlow()
+    }
+
+    fun onToggleMapClicked() {
+        _isShowingMap.value = !_isShowingMap.value
     }
 }

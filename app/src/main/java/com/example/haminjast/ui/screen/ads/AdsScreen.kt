@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -69,8 +71,13 @@ import com.example.haminjast.ui.model.UiPoster
 import com.example.haminjast.ui.screen.createPoster.component.LostOrFoundToggle
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
+import com.utsman.osmandcompose.Marker
+import com.utsman.osmandcompose.OpenStreetMap
+import com.utsman.osmandcompose.rememberCameraState
+import com.utsman.osmandcompose.rememberMarkerState
 import okhttp3.internal.notify
 import okhttp3.internal.notifyAll
+import org.osmdroid.util.GeoPoint
 
 @Composable
 fun AdsScreen(
@@ -83,19 +90,27 @@ fun AdsScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        val isShowingMap = viewModel.isShowingMap.collectAsStateWithLifecycle()
         val posters = viewModel.posters.collectAsLazyPagingItems()
-        val searchQuery = viewModel.posterSearchQuery.collectAsState()
+        val searchQuery = viewModel.posterSearchQuery.collectAsStateWithLifecycle()
         var isExpanded by remember { mutableStateOf(false) }
-        val posterStatus = viewModel.posterStatus.collectAsState()
-        val onlyWithAward = viewModel.onlyWithAward.collectAsState()
-        val posterState = viewModel.posterState.collectAsState()
-        val posterSpecialType = viewModel.posterSpecialType.collectAsState()
-        val posterSortBy = viewModel.posterSortBy.collectAsState()
-        val posterSortOrder = viewModel.posterSortOrder.collectAsState()
+        val posterStatus = viewModel.posterStatus.collectAsStateWithLifecycle()
+        val onlyWithAward = viewModel.onlyWithAward.collectAsStateWithLifecycle()
+        val posterState = viewModel.posterState.collectAsStateWithLifecycle()
+        val posterSpecialType = viewModel.posterSpecialType.collectAsStateWithLifecycle()
+        val posterSortBy = viewModel.posterSortBy.collectAsStateWithLifecycle()
+        val posterSortOrder = viewModel.posterSortOrder.collectAsStateWithLifecycle()
+
+        val cameraState = rememberCameraState {
+            geoPoint = GeoPoint(35.7219, 51.3347)
+            zoom = 12.0
+        }
+        val depokMarkerState = rememberMarkerState(
+            geoPoint = GeoPoint(35.7219, 51.3347)
+        )
 
         SearchBar(
             status = posterStatus.value,
@@ -163,43 +178,63 @@ fun AdsScreen(
             onClickAward = {
                 viewModel.onOnlyWithAwardChanged(it)
             },
+            onToggleMapClicked = {
+                viewModel.onToggleMapClicked()
+            }
         )
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(posters.itemCount) {
-                    posters[it]?.let { poster ->
-                        PosterItem(posterToUiPoster(poster), onPosterClicked)
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(2.dp),
-                            color = PrimaryBlack.copy(alpha = 0.1f)
-                        )
-                    }
+        Box(modifier = Modifier.fillMaxSize().clip(RectangleShape)) {
+            if (isShowingMap.value) {
+                OpenStreetMap(
+                    modifier = Modifier.fillMaxSize(),
+                    cameraState = cameraState,
+                    onMapLongClick = {
+                        depokMarkerState.geoPoint = it
+                    },
+                    depokMarkerState = depokMarkerState
+                ) {
+                    Marker(
+                        state = depokMarkerState,
+                        icon = LocalContext.current.getDrawable(R.drawable.ic_location)
+                    )
                 }
-                posters.apply {
-                    when {
-                        loadState.refresh is LoadState.Loading -> {
-                            item { PageLoader(modifier = Modifier.fillParentMaxSize()) }
-                        }
 
-                        loadState.refresh is LoadState.Error -> {
-                            val error = posters.loadState.refresh as LoadState.Error
-                            item {
-                                ErrorMessage(
-                                    modifier = Modifier.fillParentMaxSize(),
-                                    message = error.error.localizedMessage!!,
-                                    onClickRetry = { retry() })
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(posters.itemCount) {
+                        posters[it]?.let { poster ->
+                            PosterItem(posterToUiPoster(poster), onPosterClicked)
+                            Divider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(2.dp),
+                                color = PrimaryBlack.copy(alpha = 0.1f)
+                            )
+                        }
+                    }
+                    posters.apply {
+                        when {
+                            loadState.refresh is LoadState.Loading -> {
+                                item { PageLoader(modifier = Modifier.fillParentMaxSize()) }
                             }
-                        }
 
-                        loadState.append is LoadState.Error -> {
-                            val error = posters.loadState.append as LoadState.Error
-                            item {
-                                ErrorMessage(
-                                    modifier = Modifier,
-                                    message = error.error.localizedMessage!!,
-                                    onClickRetry = { retry() })
+                            loadState.refresh is LoadState.Error -> {
+                                val error = posters.loadState.refresh as LoadState.Error
+                                item {
+                                    ErrorMessage(
+                                        modifier = Modifier.fillParentMaxSize(),
+                                        message = error.error.localizedMessage!!,
+                                        onClickRetry = { retry() })
+                                }
+                            }
+
+                            loadState.append is LoadState.Error -> {
+                                val error = posters.loadState.append as LoadState.Error
+                                item {
+                                    ErrorMessage(
+                                        modifier = Modifier,
+                                        message = error.error.localizedMessage!!,
+                                        onClickRetry = { retry() })
+                                }
                             }
                         }
                     }
