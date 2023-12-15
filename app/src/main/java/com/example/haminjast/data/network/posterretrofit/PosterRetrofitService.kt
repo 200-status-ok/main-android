@@ -19,8 +19,12 @@ interface PosterRetrofitService {
         @Query("page_size") pageSize: Int,
         @Query("sort") sort: String,
         @Query("sort_by") sortBy: String,
+        @Query("search_phrase") searchPhrase: String = "",
+        @Query("only_awards") onlyAwards: Boolean = false,
         @Query("status") status: String,
         @Query("state") state: String,
+        @Query("lat") lat: Double?,
+        @Query("lon") lon: Double?,
         @Query("special_type") specialType: String
     ): Response<EntityResponse>
 

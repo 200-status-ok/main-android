@@ -11,6 +11,7 @@ import com.example.haminjast.data.model.toUiPoster
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.UiPoster
+import retrofit2.http.Query
 
 class PosterRepository( //TODO singleton
     private val apiService: PosterRetrofitService
@@ -64,14 +65,35 @@ class PosterRepository( //TODO singleton
         }
     }
 
-    fun getPosters(pageSize: Int): Pager<Int, Poster> {
+    fun getPosters(pageSize: Int,
+                   query : String,
+                   sort : String,
+                   sortBy : String,
+                   status : String,
+                   state : String,
+                   specialType : String,
+                   lat : Double?,
+                   lon : Double?,
+                   onlyAwards : Boolean
+                   ): Pager<Int, Poster> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PosterRemoteMediator(apiService)
+                PosterRemoteMediator(
+                    apiService,
+                    query = query,
+                    sort = sort,
+                    sortBy = sortBy,
+                    status = status,
+                    state = state,
+                    specialType = specialType,
+                    lat = lat,
+                    lon = lon,
+                    onlyAwards = onlyAwards
+                )
             }
         )
     }
