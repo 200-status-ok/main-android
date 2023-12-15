@@ -243,6 +243,7 @@ fun CreatePosterScreen(
                     CreatePosterBottomBar(
                         onClickYes = {
                             viewModel.createPoster()
+                            onCloseClicked()
                         },
                         onClickNo = {
                             onCloseClicked()

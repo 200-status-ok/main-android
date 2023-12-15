@@ -11,17 +11,36 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,9 +62,15 @@ import coil.compose.AsyncImage
 import com.example.haminjast.R
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.model.posterToUiPoster
+import com.example.haminjast.ui.component.SelectionType
+import com.example.haminjast.ui.component.ToggleButton
+import com.example.haminjast.ui.component.ToggleButtonOption
 import com.example.haminjast.ui.model.UiPoster
+import com.example.haminjast.ui.screen.createPoster.component.LostOrFoundToggle
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 
 @Composable
 fun AdsScreen(
@@ -56,43 +81,126 @@ fun AdsScreen(
     ),
     onPosterClicked: (Int) -> Unit = {}
 ) {
-    val posters = viewModel.posters.collectAsLazyPagingItems()
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(posters.itemCount) {
-                posters[it]?.let { poster ->
-                    PosterItem(posterToUiPoster(poster), onPosterClicked)
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp),
-                        color = PrimaryBlack.copy(alpha = 0.1f)
-                    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val posters = viewModel.posters.collectAsLazyPagingItems()
+        val searchQuery = viewModel.posterSearchQuery.collectAsState()
+        var isExpanded by remember { mutableStateOf(false) }
+        val posterStatus = viewModel.posterStatus.collectAsState()
+        val onlyWithAward = viewModel.onlyWithAward.collectAsState()
+        val posterState = viewModel.posterState.collectAsState()
+        val posterSpecialType = viewModel.posterSpecialType.collectAsState()
+        val posterSortBy = viewModel.posterSortBy.collectAsState()
+        val posterSortOrder = viewModel.posterSortOrder.collectAsState()
+
+        SearchBar(
+            status = posterStatus.value,
+            sort = posterSortOrder.value,
+            sortBy = posterSortBy.value,
+            state = posterState.value,
+            specialType = posterSpecialType.value,
+            onlyWithAward = onlyWithAward.value,
+            text = searchQuery.value,
+            isExpanded = isExpanded,
+            onIsExpandedChange = {
+                isExpanded = it
+            },
+            onValueChange = {
+                viewModel.onPosterSearchQueryChanged(it)
+                viewModel.retry()
+            },
+            onSearchClick = {
+                viewModel.retry()
+                posters.refresh()
+            },
+            onClickStatus = {
+                if (it[0].text == "همه") {
+                    viewModel.onPosterStatusChanged("both")
+                } else if (it[0].text == "گم شده") {
+                    viewModel.onPosterStatusChanged("lost")
+                } else if (it[0].text == "پیدا شده") {
+                    viewModel.onPosterStatusChanged("found")
                 }
-            }
-            posters.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item { PageLoader(modifier = Modifier.fillParentMaxSize()) }
+            },
+            onClickSortBy = {
+                if (it[0].text == "تاریخ ساخت آگهی") {
+                    viewModel.onPosterSortByChanged("created_at")
+                } else if (it[0].text == "تاریخ آپدبت آگهی") {
+                    viewModel.onPosterSortByChanged("updated_at")
+                }
+            },
+            onClickSortOrder = {
+                if (it[0].text == "نزولی") {
+                    viewModel.onPosterSortOrderChanged("desc")
+                } else if (it[0].text == "صعودی") {
+                    viewModel.onPosterSortOrderChanged("asc")
+                }
+            },
+            onClickState = {
+                if (it[0].text == "همه") {
+                    viewModel.onPosterStateChanged("all")
+                } else if (it[0].text == "در حال بررسی") {
+                    viewModel.onPosterStateChanged("pending")
+                } else if (it[0].text == "تایید شده") {
+                    viewModel.onPosterStateChanged("approved")
+                } else if (it[0].text == "رد شده") {
+                    viewModel.onPosterStateChanged("rejected")
+                }
+            },
+            onClickSpecialType = {
+                if (it[0].text == "همه") {
+                    viewModel.onPosterSpecialTypeChanged("all")
+                } else if (it[0].text == "عادی") {
+                    viewModel.onPosterSpecialTypeChanged("normal")
+                } else if (it[0].text == "ویژه") {
+                    viewModel.onPosterSpecialTypeChanged("special")
+                }
+            },
+            onClickAward = {
+                viewModel.onOnlyWithAwardChanged(it)
+            },
+        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(posters.itemCount) {
+                    posters[it]?.let { poster ->
+                        PosterItem(posterToUiPoster(poster), onPosterClicked)
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(2.dp),
+                            color = PrimaryBlack.copy(alpha = 0.1f)
+                        )
                     }
-
-                    loadState.refresh is LoadState.Error -> {
-                        val error = posters.loadState.refresh as LoadState.Error
-                        item {
-                            ErrorMessage(
-                                modifier = Modifier.fillParentMaxSize(),
-                                message = error.error.localizedMessage!!,
-                                onClickRetry = { retry() })
+                }
+                posters.apply {
+                    when {
+                        loadState.refresh is LoadState.Loading -> {
+                            item { PageLoader(modifier = Modifier.fillParentMaxSize()) }
                         }
-                    }
 
-                    loadState.append is LoadState.Error -> {
-                        val error = posters.loadState.append as LoadState.Error
-                        item {
-                            ErrorMessage(
-                                modifier = Modifier,
-                                message = error.error.localizedMessage!!,
-                                onClickRetry = { retry() })
+                        loadState.refresh is LoadState.Error -> {
+                            val error = posters.loadState.refresh as LoadState.Error
+                            item {
+                                ErrorMessage(
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    message = error.error.localizedMessage!!,
+                                    onClickRetry = { retry() })
+                            }
+                        }
+
+                        loadState.append is LoadState.Error -> {
+                            val error = posters.loadState.append as LoadState.Error
+                            item {
+                                ErrorMessage(
+                                    modifier = Modifier,
+                                    message = error.error.localizedMessage!!,
+                                    onClickRetry = { retry() })
+                            }
                         }
                     }
                 }
@@ -108,7 +216,7 @@ fun PageLoader(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Loading...",
+            text = "در حال دریافت آگهی ها",
             color = MaterialTheme.colorScheme.primary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -224,10 +332,4 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun AdItemP() {
-    //PosterItem(fakeAdList[0])
 }
