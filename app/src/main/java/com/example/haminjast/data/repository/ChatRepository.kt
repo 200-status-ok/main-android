@@ -24,37 +24,46 @@ class ChatRepository constructor( //TODO private constructor
 
     suspend fun fetchConversationCovers(): Result<Unit> {
         return withContext(ioDispatcher) {
-            Log.d("modar", "fetch conversation covers");
-            val response = chatService.getConversations(
-                authorization = "Bearer $token",//TODO
-            )
+            try {
+                Log.d("modar", "fetch conversation covers");
+                val response = chatService.getConversations(
+                    authorization = "Bearer $token",//TODO
+                )
 
-            if (response.isSuccessful) {
-                Log.d("modar", "fetch conversation covers success");
-                response.body()?.let { conversationCoverResponse ->
-                    Log.d("modar", "fetch conversation covers response $conversationCoverResponse");
+                if (response.isSuccessful) {
+                    Log.d("modar", "fetch conversation covers success");
+                    response.body()?.let { conversationCoverResponse ->
+                        Log.d(
+                            "modar",
+                            "fetch conversation covers response $conversationCoverResponse"
+                        );
 
-                    val conversationCoverEntities = mutableListOf<ConversationCoverEntity>()
-                    val conversationCoverLastMessageEntities = mutableListOf<MessageEntity>()
-                    conversationCoverResponse.forEach {
-                        conversationCoverEntities.add(ConversationCoverEntity.fromResponse(it))
-                        conversationCoverLastMessageEntities.add(
-                            MessageEntity.fromConversationCoverResponseLastMessage(
-                                it.lastMessage
+                        val conversationCoverEntities = mutableListOf<ConversationCoverEntity>()
+                        val conversationCoverLastMessageEntities = mutableListOf<MessageEntity>()
+                        conversationCoverResponse.forEach {
+                            conversationCoverEntities.add(ConversationCoverEntity.fromResponse(it))
+                            conversationCoverLastMessageEntities.add(
+                                MessageEntity.fromConversationCoverResponseLastMessage(
+                                    it.lastMessage
+                                )
                             )
-                        )
+                        }
+
+                        chatDao.insertAllMessages(conversationCoverLastMessageEntities)
+                        chatDao.insertAllConversationCovers(conversationCoverEntities)
                     }
+                    return@withContext Result.success(Unit)
 
-                    chatDao.insertAllMessages(conversationCoverLastMessageEntities)
-                    chatDao.insertAllConversationCovers(conversationCoverEntities)
+                } else {
+                    Log.d("modar", "fetch conversation covers failed ${response.message()}")
+                    Log.d("modar", "fetch conversation covers failed ${response.code()}")
+                    return@withContext Result.failure(Throwable(response.message()))
                 }
-                return@withContext Result.success(Unit)
-
-            } else {
-                Log.d("modar", "fetch conversation covers failed ${response.message()}")
-                Log.d("modar", "fetch conversation covers failed ${response.code()}")
-                return@withContext Result.failure(Throwable(response.message()))
+            } catch (e: Exception) {
+                Log.e("modar", "ws error ${e.message}")
+                return@withContext Result.failure(Throwable(e.message))
             }
+
         }
     }
 
@@ -112,7 +121,7 @@ class ChatRepository constructor( //TODO private constructor
 
             val sendMessageRequest = SendMessageRequest(
                 id = messageID,
-                conversationId = 2,
+                conversationId = conversationID.toInt(),
                 posterId = posterID.toInt(),
                 content = content,
                 type = contentType
@@ -155,7 +164,10 @@ class ChatRepository constructor( //TODO private constructor
         val messageEntity = MessageEntity.fromMessageReceivedUpdate(messageReceivedUpdate)
         withContext(ioDispatcher) {// todo transaction
             chatDao.insertMessage(messageEntity)
-            chatDao.updateConversationCoverLastMessageId(messageEntity.conversationID, messageEntity.id)
+            chatDao.updateConversationCoverLastMessageId(
+                messageEntity.conversationID,
+                messageEntity.id
+            )
         }
     }
 
