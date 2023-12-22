@@ -1,11 +1,8 @@
 package com.example.haminjast.ui.screen.createPoster.component
 
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -14,21 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -38,17 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.haminjast.R
-import com.example.haminjast.ui.screen.createPoster.UploadStatus
-import com.example.haminjast.ui.screen.createPoster.UploadedImage
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
 
 @Composable
 fun ImageSelector(
-    uploadedImages: List<UploadedImage> = listOf(),
+    imgUrls: List<String> = listOf(),
     onSelectorClicked: () -> Unit = {},
-    onRetryUploadClicked: (Uri) -> Unit = {},
     screenWidth: Int
 ) {
     val biggerSide = (screenWidth - 32 - 8) * 0.7f
@@ -68,47 +56,18 @@ fun ImageSelector(
             Selector(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(if (uploadedImages.isEmpty()) x.dp else x.dp * 0.6f),
+                    .width(if (imgUrls.isEmpty()) x.dp else x.dp * 0.6f),
                 onSelectorClicked = onSelectorClicked
             )
         }
-        items(uploadedImages, key = { it.uri }) { uploadedImage ->
-            Box(
+        items(imgUrls, key = { it }) { url ->
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .widthIn(min = 60.dp)
-                    .clip(RoundedCornerShape(6.dp))
-            ) {
-                AsyncImage(
-                    model = uploadedImage.uri,
-                    contentDescription = null
-                )
-                Surface(
-                    modifier = Modifier.matchParentSize(),
-                    color = Color.White.copy(alpha = if (uploadedImage.uploadStatus != UploadStatus.UploadSucceed) 0.45f else 0f)
-                ) {}
-                if (uploadedImage.uploadStatus == UploadStatus.Uploading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .align(Alignment.Center),
-                        color = Color.White
-                    )
-                } else if (uploadedImage.uploadStatus == UploadStatus.UploadFailed) {
-                    IconButton(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .align(Alignment.Center),
-                        onClick = { onRetryUploadClicked(uploadedImage.uri) }) {
-                        Icon(
-                            modifier = Modifier.size(36.dp),
-                            painter = painterResource(R.drawable.ic_retry),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
-                }
-            }
+                    .clip(RoundedCornerShape(6.dp)),
+                model = url,
+                contentDescription = null
+            )
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.haminjast.ui.screen.ads
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,7 +53,7 @@ fun SearchBar(
     onlyWithAward: Boolean = false,
     onToggleMapClicked: () -> Unit = {},
 ) {
-    Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
