@@ -66,7 +66,7 @@ fun AiSuggestionBar(onSuggestClicked: () -> Unit = {}) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(36.dp),
-                onClick = { onSuggestClicked() },
+                onClick = onSuggestClicked,
                 shape = RoundedCornerShape(4.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = ButtonBlue),
                 contentPadding = PaddingValues(0.dp),

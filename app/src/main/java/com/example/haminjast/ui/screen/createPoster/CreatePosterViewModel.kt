@@ -1,5 +1,8 @@
 package com.example.haminjast.ui.screen.createPoster
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.haminjast.data.datastore.LoginDataStore
@@ -14,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 class CreatePosterViewModel(
     private val loginRepository: LoginRepository,
@@ -36,8 +41,8 @@ class CreatePosterViewModel(
     private val _posterStatus = MutableStateFlow(PosterStatus.Lost)
     val posterStatus = _posterStatus.asStateFlow()
 
-    private val _imgUrls = MutableStateFlow<List<String>>(listOf())
-    val imgUrls = _imgUrls.asStateFlow()
+    private val _uploadedImages = MutableStateFlow<List<UploadedImage>>(listOf())
+    val uploadedImages = _uploadedImages.asStateFlow()
 
     private val _tags = MutableStateFlow<List<String>>(listOf())
     val tags = _tags.asStateFlow()
@@ -56,7 +61,7 @@ class CreatePosterViewModel(
                 posterRepository.addPoster(
                     token = token,
                     latLong = _latLong.value,
-                    imageUrls = _imgUrls.value,
+                    imageUrls = _uploadedImages.value.mapNotNull { it.uploadedUrl },
                     title = _title.value,
                     description = _desc.value,
                     contacts = _contacts.value,
@@ -109,12 +114,14 @@ class CreatePosterViewModel(
         _posterStatus.value = status
     }
 
-    fun addImageUrl(url: String) {
-        _imgUrls.update {
-            val ls = mutableListOf<String>()
-            ls.addAll(it)
-            ls.add(url)
-            ls
+    fun addImageUri(uri: Uri) {
+        if (!_uploadedImages.value.any { it.uri == uri }) {
+            _uploadedImages.update {
+                val ls = mutableListOf<UploadedImage>()
+                ls.addAll(it)
+                ls.add(UploadedImage(uri))
+                ls
+            }
         }
     }
 
@@ -175,4 +182,110 @@ class CreatePosterViewModel(
             lat to long
         }
     }
+
+    fun onAiSuggestionsClicked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            uploadedImages.value.firstOrNull { it.uploadStatus == UploadStatus.UploadSucceed && !it.uploadedUrl.isNullOrEmpty() }
+                ?.let {
+                    val uploadedUrl = it.uploadedUrl ?: return@let
+                    val res = posterRepository.generatePosterInfo(uploadedUrl)
+                    res.onSuccess { generatedInfo ->
+                        Log.d("modar", "success $generatedInfo");
+                        generatedInfo ?: return@onSuccess
+                        _title.update {
+                            generatedInfo.titles.first()
+                        }
+                        _desc.update {
+                            generatedInfo.description
+                        }
+                        _tags.update {
+                            generatedInfo.tags
+                        }
+                    }
+                    res.onFailure {
+                        Log.d("modar", "failure");
+                    }
+                }
+        }
+    }
+
+    fun uploadImage(context: Context, uri: Uri) {
+        updateUploadedImageState(
+            uri = uri,
+            uploadStatus = UploadStatus.Uploading
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val cacheDir = context.cacheDir
+            val file = File(cacheDir, "temp")
+
+            context.contentResolver.openInputStream(uri)?.use { ins ->
+                FileOutputStream(file).use { output ->
+                    val buffer = ByteArray(4 * 1024)
+                    var read: Int
+                    while (ins.read(buffer).also { read = it } != -1) {
+                        output.write(buffer, 0, read)
+                    }
+                    output.flush()
+                }
+            }
+
+            val res = posterRepository.uploadImage(file)
+            res.onSuccess { uploadImageResponse ->
+                Log.d("modar", "success ${uploadImageResponse?.url}");
+                if (uploadImageResponse?.url.isNullOrEmpty()) {
+                    updateUploadedImageState(
+                        uri = uri,
+                        uploadStatus = UploadStatus.UploadFailed
+                    )
+                } else {
+                    updateUploadedImageState(
+                        uri = uri,
+                        uploadedUrl = uploadImageResponse?.url,
+                        uploadStatus = UploadStatus.UploadSucceed
+                    )
+                }
+            }
+            res.onFailure {
+                Log.d("modar", "failure ${it.message}");
+                updateUploadedImageState(
+                    uri = uri,
+                    uploadStatus = UploadStatus.UploadFailed
+                )
+            }
+        }
+    }
+
+    private fun updateUploadedImageState(
+        uri: Uri,
+        uploadedUrl: String? = null,
+        uploadStatus: UploadStatus? = null
+    ) {
+
+        _uploadedImages.update { uploadedImages ->
+            val ls = mutableListOf<UploadedImage>()
+            ls.addAll(uploadedImages)
+            val index = ls.indexOfFirst { it.uri == uri }
+            if (index != -1) {
+                uploadedUrl?.let { ls[index] = ls[index].copy(uploadedUrl = uploadedUrl) }
+                uploadStatus?.let {  ls[index] = ls[index].copy(uploadStatus = uploadStatus) }
+            }
+            ls
+        }
+    }
+
+}
+
+data class UploadedImage(
+    val uri: Uri,
+    val uploadedUrl: String? = null,
+    val uploadStatus: UploadStatus = UploadStatus.Normal
+)
+
+enum class UploadStatus {
+    Normal,
+    Uploading,
+    UploadFailed,
+    UploadSucceed
 }
