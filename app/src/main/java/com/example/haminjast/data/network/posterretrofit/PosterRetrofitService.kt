@@ -1,24 +1,16 @@
 package com.example.haminjast.data.network.posterretrofit
 
-import android.net.http.UploadDataProvider
 import com.example.haminjast.data.model.CreatePosterRequest
 import com.example.haminjast.data.model.CreatePosterResponse
 import com.example.haminjast.data.model.EntityResponse
-import com.example.haminjast.data.model.GeneratePosterInfoResponse
 import com.example.haminjast.data.model.GetPosterByIdResponse
-import com.example.haminjast.data.model.UploadImageResponse
-import okhttp3.MultipartBody
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Multipart
 import retrofit2.http.POST
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
-
 
 interface PosterRetrofitService {
     @GET("posters")
@@ -49,13 +41,4 @@ interface PosterRetrofitService {
         @Header("Content-Type") contentTypeHeader: String,
         @Body requestBody: CreatePosterRequest
     ): Response<CreatePosterResponse>
-
-    @GET("api-call/generate-poster-Info")
-    suspend fun generatePosterInfo(
-        @Query("image_url") imageUrl: String,
-    ): Response<GeneratePosterInfoResponse>
-
-    @Multipart
-    @POST("api-call/image-upload")
-    fun uploadAttachment(@Part filePart: MultipartBody.Part?): Call<UploadImageResponse>?
 }
