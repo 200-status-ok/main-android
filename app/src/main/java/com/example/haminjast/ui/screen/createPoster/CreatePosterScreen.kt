@@ -1,11 +1,10 @@
 @file:OptIn(
     ExperimentalFoundationApi::class, ExperimentalFoundationApi::class,
-    ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class
+    ExperimentalFoundationApi::class
 )
 
 package com.example.haminjast.ui.screen.createPoster
 
-import android.graphics.drawable.Drawable
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +12,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +24,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -33,9 +32,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,7 +44,6 @@ import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.network.loginretrofit.LoginRetrofit
 import com.example.haminjast.data.network.loginretrofit.LoginRetrofitService
 import com.example.haminjast.data.repository.LoginRepository
-import com.example.haminjast.data.repository.PosterRepository
 import com.example.haminjast.ui.component.TagSelector
 import com.example.haminjast.ui.model.Contact
 import com.example.haminjast.ui.model.PosterStatus
@@ -58,12 +56,12 @@ import com.example.haminjast.ui.screen.createPoster.component.CreatePosterBottom
 import com.example.haminjast.ui.screen.createPoster.component.CreatePosterTopBar
 import com.example.haminjast.ui.screen.createPoster.component.ImageSelector
 import com.example.haminjast.ui.theme.PrimaryBlack
-import com.example.haminjast.ui.util.RTLPixel5Previews
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
 import org.osmdroid.util.GeoPoint
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -95,7 +93,7 @@ fun CreatePosterScreen(
     val desc by viewModel.desc.collectAsStateWithLifecycle()
     val posterStatus by viewModel.posterStatus.collectAsStateWithLifecycle()
     val contacts by viewModel.contacts.collectAsStateWithLifecycle()
-    val imgUrls by viewModel.imgUrls.collectAsStateWithLifecycle()
+    val uploadedImages by viewModel.uploadedImages.collectAsStateWithLifecycle()
     val tagFieldText by viewModel.tagFieldText.collectAsStateWithLifecycle()
     val suggestedTags by viewModel.suggestedTags.collectAsStateWithLifecycle()
     val selectedTags by viewModel.selectedTags.collectAsStateWithLifecycle()
@@ -106,8 +104,13 @@ fun CreatePosterScreen(
         configuration.screenWidthDp
     }
 
+    val ctx = LocalContext.current
+
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-        viewModel.addImageUrl(it.toString())
+        it?.let { uri ->
+            viewModel.addImageUri(uri)
+            viewModel.uploadImage(ctx, uri)
+        }
     }
 
     Scaffold(
@@ -139,15 +142,22 @@ fun CreatePosterScreen(
                         }
                     )
                     ImageSelector(
-                        imgUrls = imgUrls,
+                        uploadedImages = uploadedImages,
                         onSelectorClicked = {
                             launcher.launch(PickVisualMediaRequest())
+                        },
+                        onRetryUploadClicked = {
+                            viewModel.uploadImage(ctx, it)
                         },
                         screenWidth = screenWidth
                     )
                     Spacer(modifier = Modifier.size(32.dp))
-                    if (imgUrls.isNotEmpty()) {
-                        AiSuggestionBar()
+                    if (uploadedImages.any { it.uploadStatus == UploadStatus.UploadSucceed }) {
+                        AiSuggestionBar(
+                            onSuggestClicked = {
+                                viewModel.onAiSuggestionsClicked()
+                            }
+                        )
                         Spacer(modifier = Modifier.size(16.dp))
                     }
                     TitleDescriptionInput(
@@ -192,7 +202,7 @@ fun CreatePosterScreen(
                     Spacer(modifier = Modifier.size(16.dp))
                     TitleDescription(title = "موقعیت مکانی (برای انتخاب مکان نگه دارید)")
                     Spacer(modifier = Modifier.size(8.dp))
-                    Surface(
+                    Box(
                         modifier = Modifier
                             .padding(horizontal = 20.dp)
                             .height(300.dp)
@@ -200,12 +210,10 @@ fun CreatePosterScreen(
                                 width = 1.5.dp,
                                 color = PrimaryBlack.copy(alpha = 0.4f),
                                 shape = RoundedCornerShape(8.dp)
-                            )
+                            ).clip(RoundedCornerShape(8.dp))
                     ) {
                         OpenStreetMap(
-                            modifier = Modifier
-                                .padding(horizontal = 20.dp)
-                                .height(350.dp),
+                            modifier = Modifier.fillMaxSize(),
                             cameraState = cameraState,
                             onMapLongClick = {
                                 depokMarkerState.geoPoint = it
