@@ -75,14 +75,10 @@ import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
 import com.utsman.osmandcompose.rememberMarkerState
-import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
-import eu.bambooapps.material3.pullrefresh.pullRefresh
-import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import okhttp3.internal.notify
 import okhttp3.internal.notifyAll
 import org.osmdroid.util.GeoPoint
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdsScreen(
     viewModel: AdsViewModel = viewModel(
@@ -186,11 +182,7 @@ fun AdsScreen(
                 viewModel.onToggleMapClicked()
             }
         )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RectangleShape)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().clip(RectangleShape)) {
             if (isShowingMap.value) {
                 OpenStreetMap(
                     modifier = Modifier.fillMaxSize(),
@@ -207,19 +199,7 @@ fun AdsScreen(
                 }
 
             } else {
-
-                val isRefreshing by remember { // TODO this has not been handled properly
-                    mutableStateOf(false)
-                }
-                val state = rememberPullRefreshState(
-                    refreshing = isRefreshing,
-                    onRefresh = { posters.refresh() })
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pullRefresh(state)
-                ) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(posters.itemCount) {
                         posters[it]?.let { poster ->
                             PosterItem(posterToUiPoster(poster), onPosterClicked)
@@ -259,17 +239,10 @@ fun AdsScreen(
                         }
                     }
                 }
-
-                PullRefreshIndicator(
-                    refreshing = isRefreshing, state = state,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                )
             }
         }
     }
 }
-
 @Composable
 fun PageLoader(modifier: Modifier = Modifier) {
     Column(
@@ -310,7 +283,6 @@ fun ErrorMessage(
         }
     }
 }
-
 @Composable
 fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
     Column(modifier = Modifier.clickable {
@@ -328,7 +300,7 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                     .width(96.dp)
                     .clip(RoundedCornerShape(4.dp)),
 //                model = ad.imageUrls?.get(0),
-                model = null,
+                model = null ,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
