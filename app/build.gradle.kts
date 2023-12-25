@@ -113,5 +113,5 @@ dependencies {
     //open street map
     implementation("org.osmdroid:osmdroid-android:6.1.17")
 
-    implementation("com.github.stevdza-san:OneTapCompose:1.0.9")
+    implementation("com.github.stevdza-san:OneTapCompose:1.0.11")
 }
