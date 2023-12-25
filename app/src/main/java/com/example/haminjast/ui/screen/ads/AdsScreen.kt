@@ -1,6 +1,9 @@
 package com.example.haminjast.ui.screen.ads
 
+import android.util.Log
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,39 +14,26 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -53,7 +43,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -62,15 +51,15 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.haminjast.R
-import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.data.model.posterToUiPoster
-import com.example.haminjast.ui.component.SelectionType
-import com.example.haminjast.ui.component.ToggleButton
-import com.example.haminjast.ui.component.ToggleButtonOption
+import com.example.haminjast.ui.model.Contact
+import com.example.haminjast.ui.model.PosterStatus
 import com.example.haminjast.ui.model.UiPoster
-import com.example.haminjast.ui.screen.createPoster.component.LostOrFoundToggle
 import com.example.haminjast.ui.theme.PrimaryBlack
+import com.example.haminjast.ui.theme.PrimaryBlue
+import com.example.haminjast.ui.theme.PrimaryYellow
 import com.example.haminjast.ui.theme.VazirFont
+import com.example.haminjast.ui.util.RTLPixel5Previews
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.OpenStreetMap
 import com.utsman.osmandcompose.rememberCameraState
@@ -78,8 +67,6 @@ import com.utsman.osmandcompose.rememberMarkerState
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
-import okhttp3.internal.notify
-import okhttp3.internal.notifyAll
 import org.osmdroid.util.GeoPoint
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,14 +86,9 @@ fun AdsScreen(
     ) {
         val isShowingMap = viewModel.isShowingMap.collectAsStateWithLifecycle()
         val posters = viewModel.posters.collectAsLazyPagingItems()
-        val searchQuery = viewModel.posterSearchQuery.collectAsStateWithLifecycle()
-        var isExpanded by remember { mutableStateOf(false) }
-        val posterStatus = viewModel.posterStatus.collectAsStateWithLifecycle()
-        val onlyWithAward = viewModel.onlyWithAward.collectAsStateWithLifecycle()
-        val posterState = viewModel.posterState.collectAsStateWithLifecycle()
-        val posterSpecialType = viewModel.posterSpecialType.collectAsStateWithLifecycle()
-        val posterSortBy = viewModel.posterSortBy.collectAsStateWithLifecycle()
-        val posterSortOrder = viewModel.posterSortOrder.collectAsStateWithLifecycle()
+        val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+
+        Log.d("modar", "${posters.itemSnapshotList.items}");
 
         val cameraState = rememberCameraState {
             geoPoint = GeoPoint(35.7219, 51.3347)
@@ -116,76 +98,65 @@ fun AdsScreen(
             geoPoint = GeoPoint(35.7219, 51.3347)
         )
 
-        SearchBar(
-            status = posterStatus.value,
-            sort = posterSortOrder.value,
-            sortBy = posterSortBy.value,
-            state = posterState.value,
-            specialType = posterSpecialType.value,
-            onlyWithAward = onlyWithAward.value,
-            text = searchQuery.value,
-            isExpanded = isExpanded,
-            onIsExpandedChange = {
-                isExpanded = it
-            },
-            onValueChange = {
-                viewModel.onPosterSearchQueryChanged(it)
-                viewModel.retry()
-            },
-            onSearchClick = {
-                viewModel.retry()
-                posters.refresh()
-            },
-            onClickStatus = {
-                if (it[0].text == "همه") {
-                    viewModel.onPosterStatusChanged("both")
-                } else if (it[0].text == "گم شده") {
-                    viewModel.onPosterStatusChanged("lost")
-                } else if (it[0].text == "پیدا شده") {
-                    viewModel.onPosterStatusChanged("found")
+        SearchAndFilterLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(PrimaryYellow)
+                .animateContentSize(),
+            posterFilterOptions = screenState.posterFilterOptions,
+            text = screenState.searchPhrase,
+            isExpanded = screenState.isFilterOptionsExpanded,
+            onPosterTypeItemSelected = { index ->
+                viewModel.updateScreenState {
+                    it.copy(
+                        posterFilterOptions = it.posterFilterOptions.copy(
+                            posterType = PosterFilterOptions.PosterTypeOptions.values()[index]
+                        )
+                    )
                 }
             },
-            onClickSortBy = {
-                if (it[0].text == "تاریخ ساخت آگهی") {
-                    viewModel.onPosterSortByChanged("created_at")
-                } else if (it[0].text == "تاریخ آپدبت آگهی") {
-                    viewModel.onPosterSortByChanged("updated_at")
+            onSelectLocationOnMapClicked = {
+                //TODO
+            },
+            onSelectStartDateClicked = {
+                //TODO
+            },
+            onSelectEndDateClicked = {
+                //TODO
+            },
+            onOnlySpecialPosterToggle = {
+                viewModel.updateScreenState {
+                    it.copy(
+                        posterFilterOptions = it.posterFilterOptions.copy(
+                            onlySpecialPosters = !it.posterFilterOptions.onlySpecialPosters
+                        )
+                    )
                 }
             },
-            onClickSortOrder = {
-                if (it[0].text == "نزولی") {
-                    viewModel.onPosterSortOrderChanged("desc")
-                } else if (it[0].text == "صعودی") {
-                    viewModel.onPosterSortOrderChanged("asc")
+            onSearchClicked = {
+//                viewModel.retry()
+//                viewModel.updateScreenState { it.copy(isFilterOptionsExpanded = false) }
+            },
+            onFilterClicked = {
+                viewModel.updateScreenState { it.copy(isFilterOptionsExpanded = true) }
+            },
+            onCloseFilterOptionsClicked = {
+                viewModel.updateScreenState { it.copy(isFilterOptionsExpanded = false) }
+            },
+            onResetFilterOptionsClicked = {
+                viewModel.updateScreenState {
+                    it.copy(
+                        posterFilterOptions = PosterFilterOptions(),
+                    )
                 }
             },
-            onClickState = {
-                if (it[0].text == "همه") {
-                    viewModel.onPosterStateChanged("all")
-                } else if (it[0].text == "در حال بررسی") {
-                    viewModel.onPosterStateChanged("pending")
-                } else if (it[0].text == "تایید شده") {
-                    viewModel.onPosterStateChanged("approved")
-                } else if (it[0].text == "رد شده") {
-                    viewModel.onPosterStateChanged("rejected")
+            onValueChange = { value ->
+                viewModel.updateScreenState {
+                    it.copy(searchPhrase = value)
                 }
-            },
-            onClickSpecialType = {
-                if (it[0].text == "همه") {
-                    viewModel.onPosterSpecialTypeChanged("all")
-                } else if (it[0].text == "عادی") {
-                    viewModel.onPosterSpecialTypeChanged("normal")
-                } else if (it[0].text == "ویژه") {
-                    viewModel.onPosterSpecialTypeChanged("special")
-                }
-            },
-            onClickAward = {
-                viewModel.onOnlyWithAwardChanged(it)
-            },
-            onToggleMapClicked = {
-                viewModel.onToggleMapClicked()
             }
         )
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -319,22 +290,22 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(112.dp)
-                .padding(8.dp)
+                .height(118.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(96.dp)
+                    .size(86.dp)
                     .clip(RoundedCornerShape(4.dp)),
-//                model = ad.imageUrls?.get(0),
-                model = null,
+                model = if (!ad.imageUrls.isNullOrEmpty()) ad.imageUrls[0] else null,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.width(8.dp))
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .padding(top = 4.dp, bottom = 4.dp, start = 12.dp)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -344,20 +315,20 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                             fontSize = 14.sp,
                             fontFamily = VazirFont,
                             fontWeight = FontWeight(600),
-                            color = PrimaryBlack.copy(alpha = 0.9f),
+                            color = PrimaryBlack,
                             textAlign = TextAlign.Right,
                         )
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = ad.description,
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
                             fontWeight = FontWeight(400),
-                            color = PrimaryBlack.copy(alpha = 0.8f)
+                            color = PrimaryBlack.copy(alpha = 0.65f),
+                            textAlign = TextAlign.Right,
+                            lineHeight = 16.sp
                         ),
-                        textAlign = TextAlign.Right,
                         maxLines = 2
                     )
                 }
@@ -368,7 +339,7 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
                             fontWeight = FontWeight(400),
-                            color = PrimaryBlack.copy(alpha = 0.8f),
+                            color = PrimaryBlack,
                             textAlign = TextAlign.Right,
                         )
                     )
@@ -387,7 +358,7 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
                             fontSize = 12.sp,
                             fontFamily = VazirFont,
                             fontWeight = FontWeight(400),
-                            color = PrimaryBlack.copy(alpha = 0.8f),
+                            color = PrimaryBlack,
                             textAlign = TextAlign.Right,
                         )
                     )
@@ -395,4 +366,34 @@ fun PosterItem(ad: UiPoster, onPosterClicked: (Int) -> Unit = {}) {
             }
         }
     }
+}
+
+@RTLPixel5Previews
+@Composable
+fun PosterItemPreview() {
+    PosterItem(
+        ad = UiPoster(
+            id = 1,
+            title = "گربه گم شده",
+            description = "گربه گم شده در میدان ونک پیش گم شده است. لطفا اگر پیدا کردید با شماره زیر تماس بگیرید.",
+            imageUrls = listOf("https://picsum.photos/200/300"),
+            timeCreatedTimeStamp = 0,
+            status = PosterStatus.Lost,
+            vicinity = "میدان ونک",
+            reward = 100000,
+            lat = 35.7219,
+            lng = 51.3347,
+            issuerId = 1,
+            contacts = listOf(
+                Contact(
+                    name = "تلفن تماس",
+                    value = "09123456789"
+                ),
+                Contact(
+                    name = "تلگرام",
+                    value = "t.me/haminjast"
+                )
+            )
+        )
+    )
 }

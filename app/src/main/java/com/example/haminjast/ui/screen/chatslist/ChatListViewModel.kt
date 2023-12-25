@@ -33,7 +33,7 @@ class ChatListViewModel(
 
     init {
         try {
-            WSClient(chatRepository).run()
+            WSClient(chatRepository).run() //TODO move to app start
         }catch (e: Exception) {
             Log.e("modar", "ws error ${e.message}")
         }

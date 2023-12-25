@@ -1,5 +1,6 @@
 package com.example.haminjast.ui.screen.chat.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,12 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -136,16 +139,28 @@ val fakeMessages = mutableListOf(
 fun ChatContent(
     outerPadding: PaddingValues = PaddingValues(),
     messages: List<MessageUI> = emptyList(),
-    onBackClicked: () -> Unit = {},
-    onMenuClicked: () -> Unit = {}
+    lastReadMessageSeqNumber: Int,
+    onMessageVisible: (MessageUI) -> Unit = {},
 ) {
+    Log.d("modarvm","message.size: ${messages.size} lastReadMessageSeqNumber: $lastReadMessageSeqNumber");
+    val state = rememberLazyListState(initialFirstVisibleItemIndex = 35)
+//    LaunchedEffect(key1 = false, block = {
+////        state.scrollToItem(messages.size - lastReadMessageSeqNumber)
+//        state.scrollToItem(35)
+//        state.ini
+//    })
+
     LazyColumn(
+        state = state,
         modifier = Modifier
             .padding(outerPadding)
             .fillMaxSize(),
         reverseLayout = true
     ) {
         items(messages, key = { it.id }) {
+            LaunchedEffect(key1 = false, block = {
+                onMessageVisible(it)
+            })
             TextBubble(it)
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -193,7 +208,7 @@ fun TextBubble(message: MessageUI) {
             ) {
                 Text(
                     modifier = Modifier,
-                    text = "دیروز",
+                    text = message.date,
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontFamily = VazirFont,
@@ -203,27 +218,29 @@ fun TextBubble(message: MessageUI) {
                     )
                 )
 
-                Image(
-                    modifier = Modifier
-                        .padding(start = 6.dp, end = 4.dp, top = 2.dp)
-                        .size(3.dp),
-                    painter = painterResource(id = R.drawable.dot),
-                    contentDescription = null
-                )
+                if (message.type == MessageType.Outgoing) {
+                    Image(
+                        modifier = Modifier
+                            .padding(start = 6.dp, end = 4.dp, top = 2.dp)
+                            .size(3.dp),
+                        painter = painterResource(id = R.drawable.dot),
+                        contentDescription = null
+                    )
 
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(
-                        id = when (message.status) {
-                            MessageStatus.Pending -> R.drawable.ic_clock
-                            MessageStatus.Unread -> R.drawable.ic_tick
-                            MessageStatus.Read -> R.drawable.ic_double_tick
-                            MessageStatus.Failed -> R.drawable.ic_arrow_up //TODO()
-                        }
-                    ),
-                    contentDescription = null,
-                    tint = PrimaryBlack.copy(alpha = 0.6f)
-                )
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(
+                            id = when (message.status) {
+                                MessageStatus.Pending -> R.drawable.ic_clock
+                                MessageStatus.Unread -> R.drawable.ic_tick
+                                MessageStatus.Read -> R.drawable.ic_double_tick
+                                MessageStatus.Failed -> R.drawable.ic_arrow_up //TODO()
+                            }
+                        ),
+                        contentDescription = null,
+                        tint = PrimaryBlack.copy(alpha = 0.6f)
+                    )
+                }
             }
         }
     }
@@ -238,7 +255,7 @@ fun TextMessagePreview() {
 @RTLPixel5Previews
 @Composable
 fun ChatContentPreview() {
-    ChatContent()
+    ChatContent(lastReadMessageSeqNumber = 0)
 }
 
 enum class MessageType(

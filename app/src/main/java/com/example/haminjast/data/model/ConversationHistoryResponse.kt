@@ -15,9 +15,9 @@ data class ConversationHistoryResponse(
         @SerializedName("conversation_id")
         val conversationId: Int,
         @SerializedName("created_at")
-        val createdAt: String,
+        val createdAt: Long,
         @SerializedName("deleted_at")
-        val deletedAt: String,
+        val deletedAt: Long,
         @SerializedName("id")
         val id: Long,
         @SerializedName("is_send")

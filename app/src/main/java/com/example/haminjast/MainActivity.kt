@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val loginDataStore = LoginDataStore(applicationContext)
         User.token = loginDataStore.readTokenF()
-        User.id = loginDataStore.readIdF()?.toLong()?:0L
+        User.id = loginDataStore.readIdF()?.toLong() ?: 0L
         setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 HaminjastTheme {
@@ -327,7 +327,7 @@ fun MainNavHost(
         composable(route = ChatsList.route) {
             ChatsListScreen(
                 onChatClicked = { conversationID, posterID ->
-                    navController.navigateToChat(conversationID,posterID)
+                    navController.navigateToChat(conversationID, posterID)
                 }
             )
         }
@@ -372,7 +372,11 @@ fun MainNavHost(
             val conversationID = backStackEntry.arguments?.getLong(Chat.conversationIdArg) ?: -1
             val posterID =
                 backStackEntry.arguments?.getLong(Chat.posterIdArg) ?: return@composable
-            ChatScreen(conversationID, posterID)
+            ChatScreen(conversationID, posterID,
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(route = "my_poster") {

@@ -1,9 +1,11 @@
 package com.example.haminjast.data.network
 
-import com.example.haminjast.data.model.ConversationHistoryResponse
 import com.example.haminjast.data.model.ConversationCoverResponse
-import com.example.haminjast.data.model.SendMessageRequest
+import com.example.haminjast.data.model.ConversationHistoryResponse
+import com.example.haminjast.data.model.ReadMessageRequest
+import com.example.haminjast.data.model.ReadMessageResponse
 import com.example.haminjast.data.model.SendMessageResponse
+import com.example.haminjast.data.model.SendMessageRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -48,6 +50,14 @@ interface ChatService {
         @Header("Content-Type") contentTypeHeader: String,
         @Body sendMessageRequest: SendMessageRequest,
     ): Response<SendMessageResponse> //TODO change to SendMessageResponse
+
+    @POST("chat/authorize/read")
+    suspend fun readMessage(
+        @Header("authorization") authorization: String,
+        @Header("accept") acceptHeader: String,
+        @Header("Content-Type") contentTypeHeader: String,
+        @Body readMessageRequest: ReadMessageRequest,
+    ): Response<ReadMessageResponse> //TODO change to SendMessageResponse
 
 }
 
