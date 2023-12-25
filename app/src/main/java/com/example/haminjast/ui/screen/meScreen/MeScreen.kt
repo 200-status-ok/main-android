@@ -1,4 +1,4 @@
-package com.example.haminjast.ui.screen
+package com.example.haminjast.ui.screen.meScreen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +13,11 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,22 +26,24 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.screen.ads.PosterItem
-import com.example.haminjast.ui.screen.myPoster.MyPosterViewModel
-import com.example.haminjast.ui.screen.myPoster.provideViewModelFactory
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MeScreen(
-    viewModel: MyPosterViewModel = viewModel(
+    loginDataStore: LoginDataStore,
+    meViewModel: MeViewModel = viewModel(
         factory = provideViewModelFactory(
-            context = LocalContext.current
+            loginDataStore = loginDataStore,
+            userRepository = provideUserRepository()
         )
     ),
-    loginDataStore: LoginDataStore,
     onPosterClicked: (Int) -> Unit = {}
 ) {
+    val markedPoster = meViewModel.markedPosters.collectAsState()
+    val wallet = meViewModel.wallet.collectAsState()
+
     val isLogin = remember {
         mutableStateOf(loginDataStore.readTokenF())
     }
@@ -52,7 +54,7 @@ fun MeScreen(
             verticalArrangement = Arrangement.Top,
             modifier = Modifier.fillMaxSize()
         ) {
-            Wallet(loginDataStore)
+            Wallet(wallet.value)
 
             Divider(
                 modifier = Modifier
@@ -79,11 +81,11 @@ fun MeScreen(
             )
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item {
-                    MyPosterSaveHeader(5)
+                    MyPosterSaveHeader(markedPoster.value.size)
                 }
-                items(viewModel.myPosters.size) {
+                items(markedPoster.value.size) {
                     PosterItem(
-                        viewModel.myPosters[it],
+                        markedPoster.value[it],
                         onPosterClicked = onPosterClicked,
                     )
                     Divider(
@@ -99,7 +101,7 @@ fun MeScreen(
 }
 
 @Composable
-private fun Wallet(loginDataStore: LoginDataStore) {
+private fun Wallet(wallet : Int) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -108,7 +110,7 @@ private fun Wallet(loginDataStore: LoginDataStore) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "موجودی حساب : ${loginDataStore.readWallet()} تومان",
+            text = "موجودی حساب : $wallet تومان",
             style = TextStyle(
                 fontSize = 15.sp,
                 fontFamily = VazirFont,

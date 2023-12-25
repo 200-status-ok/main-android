@@ -46,7 +46,7 @@ import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToChat
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
-import com.example.haminjast.ui.screen.MeScreen
+import com.example.haminjast.ui.screen.meScreen.MeScreen
 import com.example.haminjast.ui.screen.ads.AdsScreen
 import com.example.haminjast.ui.screen.chat.ChatScreen
 import com.example.haminjast.ui.screen.chatslist.ChatsListScreen
@@ -381,6 +381,7 @@ fun MainNavHost(
 
         composable(route = "my_poster") {
             MyPosterScreen(
+                loginDataStore = loginDataStore,
                 onPosterClicked = {
                     navController.navigateToPosterDetail(it)
                 }
