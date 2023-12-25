@@ -2,7 +2,7 @@ package com.example.haminjast
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.example.haminjast.ui.screen.MyPosterSaveHeader
+import com.example.haminjast.ui.screen.meScreen.MyPosterSaveHeader
 import org.junit.Rule
 import org.junit.Test
 
