@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val PrimaryBlack = Color(0xFF3A3A3A)
 val PrimaryBlue = Color(0xFFEFF8FF)
+val PrimaryYellow = Color(0xFFF9FBE7)
 val ButtonBlue = Color(0xFF687EFF)
 val Gray=Color(0xFFF5F7F8)
 val LostRed=Color(0xFFFFD1D1)

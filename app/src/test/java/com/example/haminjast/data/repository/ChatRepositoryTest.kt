@@ -4,7 +4,6 @@ import com.example.haminjast.data.database.ChatDao
 import com.example.haminjast.data.model.ConversationCoverEntity
 import com.example.haminjast.data.model.ConversationHistoryResponse
 import com.example.haminjast.data.model.MessageEntity
-import com.example.haminjast.data.model.SendMessageResponse
 import com.example.haminjast.data.network.ChatService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first

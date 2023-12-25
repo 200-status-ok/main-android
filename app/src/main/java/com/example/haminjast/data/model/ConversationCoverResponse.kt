@@ -24,23 +24,21 @@ class ConversationCoverResponse : ArrayList<ConversationCoverResponse.Conversati
             @SerializedName("conversation_id")
             val conversationId: Int,
             @SerializedName("created_at")
-            val createdAt: String,
-            @SerializedName("deleted_at")
-            val deletedAt: String,
+            val createdAt: Long,
             @SerializedName("id")
             val id: Long,
-            @SerializedName("is_send")
-            val isSend: Boolean,
             @SerializedName("receiver_id")
             val receiverId: Int,
             @SerializedName("sender_id")
             val senderId: Int,
+            @SerializedName("sequence_no")
+            val sequenceNo: Int,
             @SerializedName("status")
             val status: String,
             @SerializedName("type")
             val type: String,
             @SerializedName("updated_at")
-            val updatedAt: String
+            val updatedAt: Long
         )
     }
 }

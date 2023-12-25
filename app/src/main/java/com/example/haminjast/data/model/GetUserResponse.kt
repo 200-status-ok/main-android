@@ -17,7 +17,7 @@ data class GetUserResponse(
 ) {
     data class MarkedPoster(
         @SerializedName("created_at")
-        val createdAt: String,
+        val createdAt: Long,
         @SerializedName("deleted_at")
         val deletedAt: DeletedAt,
         @SerializedName("id")
@@ -44,7 +44,7 @@ data class GetUserResponse(
             @SerializedName("award")
             val award: Int,
             @SerializedName("created_at")
-            val createdAt: String,
+            val createdAt: Long,
             @SerializedName("deleted_at")
             val deletedAt: DeletedAt,
             @SerializedName("description;")
@@ -84,7 +84,7 @@ data class GetUserResponse(
                 @SerializedName("city")
                 val city: String,
                 @SerializedName("created_at")
-                val createdAt: String,
+                val createdAt: Long,
                 @SerializedName("deleted_at")
                 val deletedAt: DeletedAt,
                 @SerializedName("id")
@@ -115,7 +115,7 @@ data class GetUserResponse(
 
             data class Image(
                 @SerializedName("created_at")
-                val createdAt: String,
+                val createdAt: Long,
                 @SerializedName("deleted_at")
                 val deletedAt: DeletedAt,
                 @SerializedName("id")
@@ -137,7 +137,7 @@ data class GetUserResponse(
 
             data class Tag(
                 @SerializedName("created_at")
-                val createdAt: String,
+                val createdAt: Long,
                 @SerializedName("deleted_at")
                 val deletedAt: DeletedAt,
                 @SerializedName("id")
@@ -167,7 +167,7 @@ data class GetUserResponse(
         @SerializedName("award")
         val award: Int,
         @SerializedName("created_at")
-        val createdAt: String,
+        val createdAt: Long,
         @SerializedName("deleted_at")
         val deletedAt: DeletedAt,
         @SerializedName("description;")
@@ -207,7 +207,7 @@ data class GetUserResponse(
             @SerializedName("city")
             val city: String,
             @SerializedName("created_at")
-            val createdAt: String,
+            val createdAt: Long,
             @SerializedName("deleted_at")
             val deletedAt: DeletedAt,
             @SerializedName("id")
@@ -238,7 +238,7 @@ data class GetUserResponse(
 
         data class Image(
             @SerializedName("created_at")
-            val createdAt: String,
+            val createdAt: Long,
             @SerializedName("deleted_at")
             val deletedAt: DeletedAt,
             @SerializedName("id")
@@ -260,7 +260,7 @@ data class GetUserResponse(
 
         data class Tag(
             @SerializedName("created_at")
-            val createdAt: String,
+            val createdAt: Long,
             @SerializedName("deleted_at")
             val deletedAt: DeletedAt,
             @SerializedName("id")

@@ -8,10 +8,10 @@ import com.google.gson.annotations.SerializedName
 data class Address1Poster(
     val id: Int,
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: Long,
     @SerializedName("updated_at")
     val updatedAt: String,
-    val deletedAt: String?,
+    val deletedAt: Long?,
     val province: String,
     val city: String,
     @SerializedName("address_detail")
@@ -25,10 +25,10 @@ data class Address1Poster(
 data class Image(
     val id: Int,
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: Long,
     @SerializedName("updated_at")
     val updatedAt: String,
-    val deletedAt: String?,
+    val deletedAt: Long?,
     val url: String,
     @SerializedName("poster_id")
     val posterId: Int
@@ -37,10 +37,10 @@ data class Image(
 data class Tag1Poster(
     val id: Int,
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: Long,
     @SerializedName("updated_at")
     val updatedAt: String,
-    val deletedAt: String?,
+    val deletedAt: Long?,
     val name: String,
     val state: String,
     val posters: Any? // Change the type accordingly if you have information about the type.
@@ -62,7 +62,7 @@ data class EntityResponseForPoster(
     val userId: Int,
     val award: Int,
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: Long,
     @SerializedName("updated_at")
     val updatedAt: String,
     val state: String,

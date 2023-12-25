@@ -2,7 +2,7 @@ package com.example.haminjast
 
 import android.util.Log
 import com.example.haminjast.User.token
-import com.example.haminjast.data.model.MessageReceivedUpdate
+import com.example.haminjast.data.model.MessageUpdate
 import com.example.haminjast.data.repository.ChatRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -35,36 +35,40 @@ class WSClient(private val chatRepository: ChatRepository) : WebSocketListener()
     }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        Log.d("modar", "ws open")
+        Log.d("modarws", "ws open")
 //        webSocket.send("Hello...")
 //        webSocket.send("...World!")
 //        webSocket.close(1000, "Goodbye, World!")
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
-        Log.d("modar", "ws ${Thread.currentThread().name} onMessage1 $text");
+        Log.d("modarws", "ws ${Thread.currentThread().name} onMessage1 $text");
 
         CoroutineScope(Dispatchers.IO).launch {// TODO handle scope
-            val receivedMessage = Gson().fromJson(text, MessageReceivedUpdate::class.java)
-            chatRepository.onMessageReceived(receivedMessage)
+            val messageUpdate = Gson().fromJson(text, MessageUpdate::class.java)
+            if (messageUpdate.type=="text") {
+                chatRepository.onMessageReceived(messageUpdate)// TODO enum
+            }else if (messageUpdate.type=="text-read-message"){
+                chatRepository.onMessageRead(messageUpdate)
+            }
         }
 
         println("MESSAGE: $text")
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-        Log.d("modar", "ws onMessage2");
+        Log.d("modarws", "ws onMessage2");
         println("MESSAGE: " + bytes.hex())
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-        Log.d("modar", "ws onClosing");
-        webSocket.close(1000, null)
+        Log.d("modarws", "ws onClosing");
+//        webSocket.close(1000, null) TODO close on app exit
         println("CLOSE: $code $reason")
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        Log.d("modar", "ws onFailure ${t.message}");
+        Log.d("modarws", "ws onFailure ${t.message} $response");
         t.printStackTrace()
     }
 }

@@ -39,6 +39,16 @@ interface ChatDao {
     )
     fun getConversationCovers(): Flow<Map<ConversationCoverEntity, MessageEntity?>> // TODO if doesn't work, convert MessageEntity to List<MessageEntity>, check suspend
 
-    @Query("SELECT * FROM messages WHERE conversationId = :conversationId ORDER BY id DESC")
+    @Query("SELECT * FROM conversation_covers WHERE id = :id")
+    fun getConversationCover(id: Long): Flow<ConversationCoverEntity>
+
+    @Query("SELECT * FROM messages WHERE conversationId = :conversationId ORDER BY date DESC")
     fun getConversationHistory(conversationId: Long): Flow<List<MessageEntity>>
+
+
+    @Query("UPDATE conversation_covers SET lastReadMessageSeqNumber = :seqNumber WHERE id = :conversationId")
+    fun updateLastReadMessageSeqNumber(conversationId: Long, seqNumber: Int)
+
+    @Query("SELECT lastReadMessageSeqNumber FROM conversation_covers WHERE id = :conversationId")
+    fun getLastReadMessageSeqNumber(conversationId: Long): Int
 }
