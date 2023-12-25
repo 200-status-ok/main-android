@@ -12,7 +12,7 @@ data class ConversationCoverEntity(
     val lastMessageId: Long,
     val posterID:Long,
     val isOwner:Boolean,
-    val lastReadMessageSeqNumber:Long
+    val lastReadMessageSeqNumber:Int
 ){
     companion object{
         fun fromResponse(conversationCoverResponseItem: ConversationCoverResponse.ConversationCoverResponseItem):ConversationCoverEntity{
@@ -23,7 +23,7 @@ data class ConversationCoverEntity(
                 lastMessageId = conversationCoverResponseItem.lastMessage.id, //TODO
                 posterID = conversationCoverResponseItem.posterId.toLong(),
                 isOwner = conversationCoverResponseItem.isOwner,
-                lastReadMessageSeqNumber = 0 //TODO
+                lastReadMessageSeqNumber = conversationCoverResponseItem.lastMessage.sequenceNo
             )
         }
     }
