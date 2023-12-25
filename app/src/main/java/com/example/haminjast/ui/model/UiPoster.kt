@@ -3,6 +3,9 @@ package com.example.haminjast.ui.model
 import android.util.Log
 import com.example.haminjast.R
 import com.example.haminjast.data.model.GetPosterByIdResponse
+import com.example.haminjast.data.model.GetUserResponse
+import com.example.haminjast.data.model.PosterU
+import com.example.haminjast.data.model.User
 
 data class UiPoster(
     val id: Int,
@@ -44,6 +47,32 @@ data class UiPoster(
                     Contact(
                         name = "تلگرام",
                         value = response.telegramId
+                    )
+                )
+            )
+        }
+
+        fun PosterU.toUiPoster(): UiPoster {
+            return UiPoster(
+                id = this.id,
+                title = this.title,
+                description = this.description,
+                imageUrls = if (this.images.isEmpty()) null else this.images.map { it.url },
+                timeCreatedTimeStamp = 0, //todo
+                status = if (this.status == "lost") PosterStatus.Lost else PosterStatus.Found,
+                vicinity = this.addresses[0].addressDetail,
+                reward = this.award.toLong(),
+                lat = this.addresses[0].latitude.toDouble(),
+                lng = this.addresses[0].longitude.toDouble(),
+                issuerId = this.userId,
+                contacts = listOf(
+                    Contact(
+                        name = "تلفن تماس",
+                        value = this.userPhone
+                    ),
+                    Contact(
+                        name = "تلگرام",
+                        value = this.telegramId
                     )
                 )
             )
