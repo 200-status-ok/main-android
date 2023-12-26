@@ -10,7 +10,9 @@ import com.example.haminjast.ui.model.ConversationCoverUI
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -22,22 +24,32 @@ class ChatListViewModel(
 
     private val _conversationCovers =
         chatRepository.getConversationCovers().mapLatest { conversationCoverEntities ->
-            Log.d("modar","");
             conversationCoverEntities.map {
+                Log.d(
+                    "modarsn",
+                    "${it.key.title} lastReadMessageSeqNumber:${it.key.lastReadMessageSeqNumber} lastMessageSeqNumber:${it.value?.seqNumber}"
+                );
                 ConversationCoverUI.fromConversationCoverEntityAndMessageEntity(it.key, it.value)
             }
+        }.map { conversationCoverUI ->
+            conversationCoverUI.forEach {
+                Log.d(
+                    "modarsn",
+                    "${it.title} unreadCount:${it.unreadCount}"
+                );
+            }
+            conversationCoverUI
         }.flowOn(ioDispatcher)
 
     val conversationCovers =
         _conversationCovers.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     init {
-        try {
-            WSClient(chatRepository).run() //TODO move to app start
-        }catch (e: Exception) {
-            Log.e("modar", "ws error ${e.message}")
+        viewModelScope.launch {
+            _conversationCovers.collectLatest {
+                Log.d("modarsn","collect $it");
+            }
         }
-
         viewModelScope.launch {
             chatRepository.fetchConversationCovers() //TODO handle error
         }

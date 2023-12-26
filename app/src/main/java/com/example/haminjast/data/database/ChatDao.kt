@@ -29,7 +29,10 @@ interface ChatDao {
     suspend fun getMessageById(id: Long): MessageEntity?
 
     @Query("UPDATE conversation_covers SET lastMessageId = :newMessageID WHERE id = :conversationID")
-    suspend fun updateConversationCoverLastMessageId(conversationID: Long, newMessageID: Long)
+    fun updateConversationCoverLastMessageId(conversationID: Long, newMessageID: Long)
+
+    @Query("SELECT lastMessageId FROM conversation_covers WHERE id = :conversationID")
+    fun getConversationCoverLastMessageId(conversationID: Long): Long
 
     @Query("UPDATE messages SET date = :date, status = :status WHERE id = :id")
     suspend fun updateMessageDateAndStatus(id: Long, date: Long, status: String)

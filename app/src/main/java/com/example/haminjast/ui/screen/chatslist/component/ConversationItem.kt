@@ -157,7 +157,8 @@ fun ConversationItemPreview() {
             unreadCount = 2,
             isOwner = true,
             posterID = 2,
-            lastReadMessageSeqNumber = 0
+            lastReadMessageSeqNumber = 0,
+            lastMessageDate = null
         )
     )
 }

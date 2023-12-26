@@ -1,7 +1,7 @@
 package com.example.haminjast.data.network
 
-import com.example.haminjast.data.model.ConversationCoverResponse
 import com.example.haminjast.data.model.ConversationHistoryResponse
+import com.example.haminjast.data.model.ConversationCoverResponse
 import com.example.haminjast.data.model.ReadMessageRequest
 import com.example.haminjast.data.model.ReadMessageResponse
 import com.example.haminjast.data.model.SendMessageResponse

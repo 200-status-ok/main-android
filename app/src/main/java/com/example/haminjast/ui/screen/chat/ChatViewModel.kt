@@ -121,7 +121,7 @@ class ChatViewModel(
     }
 
     private fun readMessage(messages: List<MessageUI>) {
-        Log.d("modar","readMessage $messages");
+        Log.d("modarrm","readMessage $messages");
         viewModelScope.launch {
             chatRepository.readMessage(
                 messages[0].senderID.toInt(),

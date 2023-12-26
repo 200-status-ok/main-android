@@ -31,9 +31,6 @@ data class MessageEntity(
 //        }
 
         fun fromConversationHistoryResponseMessage(messageResponse: ConversationHistoryResponse.Message): MessageEntity { //TODO remove
-//            val date = DateFormatSymbols("YYYY-MM-DDThh:mm:ss.sTZD").parse(messageResponse.updatedAt)
-//            val l = LocalDate.parse(messageResponse.updatedAt, DateTimeFormatter.ofPattern("YYYY-MM-DDThh:mm:ss.sTZD"))
-//            val unix = l.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             return MessageEntity(
                 id = messageResponse.id,
                 content = messageResponse.content,
@@ -42,7 +39,7 @@ data class MessageEntity(
                 status = messageResponse.status,
                 senderID = messageResponse.senderId.toLong(),
                 conversationID = messageResponse.conversationId.toLong(),
-                seqNumber = 0
+                seqNumber = messageResponse.sequenceNo.toLong()
             )
         }
 
@@ -55,7 +52,7 @@ data class MessageEntity(
                 status = lastMessage.status,
                 senderID = lastMessage.senderId.toLong(),
                 conversationID = lastMessage.conversationId.toLong(),
-                seqNumber = 0,//TODO
+                seqNumber = lastMessage.sequenceNo.toLong(),//TODO
             )
         }
 
@@ -68,7 +65,7 @@ data class MessageEntity(
                 status = messageReceivedUpdate.status,
                 senderID = messageReceivedUpdate.senderId.toLong(),
                 conversationID = messageReceivedUpdate.conversationId.toLong(),
-                seqNumber = 0 //TODO
+                seqNumber = messageReceivedUpdate.sequenceNo.toLong()
             )
         }
     }
