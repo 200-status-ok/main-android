@@ -16,33 +16,30 @@ data class MessageEntity(
     val seqNumber: Long
 ) {
     companion object {
-        fun fromResponse(messageResponse: MessageResponse): MessageEntity {
-            return MessageEntity(
-                id = messageResponse.id,
-                content = messageResponse.content,
-                contentType = messageResponse.contentType,
-//                date = messageResponse.date,//TODO Unix
-                date = System.currentTimeMillis(),
-                status = messageResponse.status,
-                senderID = messageResponse.senderID,
-                conversationID = messageResponse.conversationID,
-                seqNumber = messageResponse.seqNumber
-            )
-        }
+//        fun fromResponse(messageResponse: MessageResponse): MessageEntity {
+//            return MessageEntity(
+//                id = messageResponse.id,
+//                content = messageResponse.content,
+//                contentType = messageResponse.contentType,
+////                date = messageResponse.date,
+//                date = System.currentTimeMillis(),
+//                status = messageResponse.status,
+//                senderID = messageResponse.senderID,
+//                conversationID = messageResponse.conversationID,
+//                seqNumber = messageResponse.seqNumber
+//            )
+//        }
 
         fun fromConversationHistoryResponseMessage(messageResponse: ConversationHistoryResponse.Message): MessageEntity { //TODO remove
-//            val date = DateFormatSymbols("YYYY-MM-DDThh:mm:ss.sTZD").parse(messageResponse.updatedAt)
-//            val l = LocalDate.parse(messageResponse.updatedAt, DateTimeFormatter.ofPattern("YYYY-MM-DDThh:mm:ss.sTZD"))
-//            val unix = l.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
             return MessageEntity(
                 id = messageResponse.id,
                 content = messageResponse.content,
                 contentType = messageResponse.type,
-                date = System.currentTimeMillis(),
+                date = messageResponse.createdAt,
                 status = messageResponse.status,
                 senderID = messageResponse.senderId.toLong(),
                 conversationID = messageResponse.conversationId.toLong(),
-                seqNumber = 0
+                seqNumber = messageResponse.sequenceNo.toLong()
             )
         }
 
@@ -51,26 +48,24 @@ data class MessageEntity(
                 id = lastMessage.id,
                 content = lastMessage.content,
                 contentType = lastMessage.type,
-//                date = lastMessage.createdAt.toLong(),
-                date = 8464644864L,
+                date = lastMessage.createdAt,
                 status = lastMessage.status,
                 senderID = lastMessage.senderId.toLong(),
                 conversationID = lastMessage.conversationId.toLong(),
-                seqNumber = 0,//TODO
+                seqNumber = lastMessage.sequenceNo.toLong(),//TODO
             )
         }
 
-        fun fromMessageReceivedUpdate(messageReceivedUpdate: MessageReceivedUpdate): MessageEntity {
+        fun fromMessageReceivedUpdate(messageReceivedUpdate: MessageUpdate): MessageEntity {
             return MessageEntity(
                 id = messageReceivedUpdate.id,
                 content = messageReceivedUpdate.content,
                 contentType = messageReceivedUpdate.type,
-//                date = messageReceivedUpdate.time.toLong(), TODO UNIX
-                date=System.currentTimeMillis(),
+                date = messageReceivedUpdate.time,
                 status = messageReceivedUpdate.status,
                 senderID = messageReceivedUpdate.senderId.toLong(),
                 conversationID = messageReceivedUpdate.conversationId.toLong(),
-                seqNumber = 0 //TODO
+                seqNumber = messageReceivedUpdate.sequenceNo.toLong()
             )
         }
     }

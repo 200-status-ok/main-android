@@ -1,20 +1,29 @@
 package com.example.haminjast.data.repository
 
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.example.haminjast.data.mediator.PosterRemoteMediator
 import com.example.haminjast.data.model.CreatePosterRequest
+import com.example.haminjast.data.model.GeneratePosterInfoResponse
 import com.example.haminjast.data.model.GetPosterByIdResponse
 import com.example.haminjast.data.model.Poster
-import com.example.haminjast.data.model.toUiPoster
+import com.example.haminjast.data.model.UploadImageResponse
 import com.example.haminjast.data.network.posterretrofit.PosterRetrofitService
 import com.example.haminjast.ui.model.Contact
-import com.example.haminjast.ui.model.UiPoster
-import retrofit2.http.Query
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import java.io.File
 
 class PosterRepository( //TODO singleton
-    private val apiService: PosterRetrofitService
+    private val apiService: PosterRetrofitService,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     suspend fun addPoster(
         token: String,
@@ -65,17 +74,18 @@ class PosterRepository( //TODO singleton
         }
     }
 
-    fun getPosters(pageSize: Int,
-                   query : String,
-                   sort : String,
-                   sortBy : String,
-                   status : String,
-                   state : String,
-                   specialType : String,
-                   lat : Double?,
-                   lon : Double?,
-                   onlyAwards : Boolean
-                   ): Pager<Int, Poster> {
+    fun getPosters(
+        pageSize: Int,
+        query: String,
+        sort: String,
+        sortBy: String,
+        status: String,
+        state: String,
+        specialType: String,
+        lat: Double?,
+        lon: Double?,
+        onlyAwards: Boolean
+    ): Pager<Int, Poster> {
         return Pager(
             config = PagingConfig(
                 pageSize = pageSize,
@@ -108,6 +118,44 @@ class PosterRepository( //TODO singleton
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    suspend fun generatePosterInfo(imageUrl: String): Result<GeneratePosterInfoResponse?> {
+        return withContext(ioDispatcher) {
+            try {
+                val res = apiService.generatePosterInfo(imageUrl)
+                if (res.isSuccessful) {
+                    Result.success(res.body())
+                } else {
+                    Result.failure(Exception("No info generated"))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    suspend fun uploadImage(file:File): Result<UploadImageResponse?> {
+        return withContext(ioDispatcher) {
+            try {
+                val filePart = MultipartBody.Part.createFormData("image", file.name, RequestBody.create(
+                    "image/*".toMediaTypeOrNull(), file))
+
+                val call = apiService.uploadAttachment(filePart)
+                val res= call?.execute()
+                res?: return@withContext Result.failure(Exception("No info generated"))
+                if (res.isSuccessful) {
+                    Log.d("modar","upload image success ${res.body()?.url}")
+                    Result.success(res.body())
+                } else {
+                    Log.d("modar","{${res.code()} ${res.message()}} upload image failed}");
+                    Result.failure(Exception("No info generated"))
+                }
+            } catch (e: Exception) {
+                Log.d("modar","upload image failed ${e.message}");
+                Result.failure(e)
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ data class GetPosterByIdResponse(
     @SerializedName("award")
     val award: Int,
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: Long,
     @SerializedName("description")
     val description: String,
     @SerializedName("id")
@@ -43,7 +43,7 @@ data class GetPosterByIdResponse(
         @SerializedName("city")
         val city: String,
         @SerializedName("created_at")
-        val createdAt: String,
+        val createdAt: Long,
         @SerializedName("deleted_at")
         val deletedAt: DeletedAt,
         @SerializedName("id")
@@ -67,7 +67,7 @@ data class GetPosterByIdResponse(
 
     data class Image(
         @SerializedName("created_at")
-        val createdAt: String,
+        val createdAt: Long,
         @SerializedName("deleted_at")
         val deletedAt: DeletedAt,
         @SerializedName("id")
@@ -89,7 +89,7 @@ data class GetPosterByIdResponse(
 
     data class Tag(
         @SerializedName("created_at")
-        val createdAt: String,
+        val createdAt: Long,
         @SerializedName("deleted_at")
         val deletedAt: DeletedAt,
         @SerializedName("id")
@@ -116,7 +116,7 @@ data class GetPosterByIdResponse(
             @SerializedName("award")
             val award: Int,
             @SerializedName("created_at")
-            val createdAt: String,
+            val createdAt: Long,
             @SerializedName("deleted_at")
             val deletedAt: DeletedAt,
             @SerializedName("description;")
@@ -156,7 +156,7 @@ data class GetPosterByIdResponse(
                 @SerializedName("city")
                 val city: String,
                 @SerializedName("created_at")
-                val createdAt: String,
+                val createdAt: Long,
                 @SerializedName("deleted_at")
                 val deletedAt: DeletedAt,
                 @SerializedName("id")
@@ -187,7 +187,7 @@ data class GetPosterByIdResponse(
 
             data class Image(
                 @SerializedName("created_at")
-                val createdAt: String,
+                val createdAt: Long,
                 @SerializedName("deleted_at")
                 val deletedAt: DeletedAt,
                 @SerializedName("id")

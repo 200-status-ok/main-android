@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import com.example.haminjast.R
 import com.example.haminjast.ui.model.ConversationCoverUI
 import com.example.haminjast.ui.screen.chat.component.fakeMessages
@@ -36,6 +37,7 @@ import com.example.haminjast.ui.theme.PrimaryBlue
 import com.example.haminjast.ui.theme.TagGray
 import com.example.haminjast.ui.theme.VazirFont
 import com.example.haminjast.ui.util.RTLPixel5Previews
+import org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay.backgroundColor
 
 @Composable
 fun ConversationItem(
@@ -92,27 +94,31 @@ fun ConversationItem(
                             text = stringResource(id = R.string.my_poster),
                             backgroundColor = TagGray
                         )
-                        Icon(
-                            modifier = Modifier
-                                .padding(horizontal = 6.dp)
-                                .size(3.dp),
-                            painter = painterResource(id = R.drawable.dot),
-                            contentDescription = null,
-                            tint = PrimaryBlack
-                        )
+                        if (conversation.lastMessage !=null) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(horizontal = 6.dp)
+                                    .size(3.dp),
+                                painter = painterResource(id = R.drawable.dot),
+                                contentDescription = null,
+                                tint = PrimaryBlack
+                            )
+                        }
                     }
 
-                    Text(
-                        modifier = Modifier,
-                        text = "",//conversation.lastMessage.date.toString(),
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            fontFamily = VazirFont,
-                            fontWeight = FontWeight(400),
-                            color = PrimaryBlack,
-                            textAlign = TextAlign.Right,
+                    if (conversation.lastMessage !=null) {
+                        Text(
+                            modifier = Modifier,
+                            text = conversation.lastMessage.date,
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontFamily = VazirFont,
+                                fontWeight = FontWeight(400),
+                                color = PrimaryBlack,
+                                textAlign = TextAlign.Right,
+                            )
                         )
-                    )
+                    }
                 }
 
                 if (conversation.unreadCount > 0) {
@@ -150,7 +156,9 @@ fun ConversationItemPreview() {
             lastMessage = fakeMessages[0],
             unreadCount = 2,
             isOwner = true,
-            posterID = 2
+            posterID = 2,
+            lastReadMessageSeqNumber = 0,
+            lastMessageDate = null
         )
     )
 }

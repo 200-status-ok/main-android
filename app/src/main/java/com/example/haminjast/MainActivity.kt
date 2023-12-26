@@ -1,6 +1,7 @@
 package com.example.haminjast
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +21,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,7 +36,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.haminjast.data.database.ApplicationDataBase
 import com.example.haminjast.data.datastore.LoginDataStore
+import com.example.haminjast.data.network.ChatService
+import com.example.haminjast.data.network.posterretrofit.PosterRetrofit
+import com.example.haminjast.data.repository.ChatRepository
 import com.example.haminjast.ui.navigation.Ads
 import com.example.haminjast.ui.navigation.Chat
 import com.example.haminjast.ui.navigation.ChatsList
@@ -46,7 +52,7 @@ import com.example.haminjast.ui.navigation.PosterDetail
 import com.example.haminjast.ui.navigation.navigateSingleTopTo
 import com.example.haminjast.ui.navigation.navigateToChat
 import com.example.haminjast.ui.navigation.navigateToPosterDetail
-import com.example.haminjast.ui.screen.MeScreen
+import com.example.haminjast.ui.screen.meScreen.MeScreen
 import com.example.haminjast.ui.screen.ads.AdsScreen
 import com.example.haminjast.ui.screen.chat.ChatScreen
 import com.example.haminjast.ui.screen.chatslist.ChatsListScreen
@@ -59,14 +65,30 @@ import com.example.haminjast.ui.theme.HaminjastTheme
 import com.example.haminjast.ui.theme.NavBarBlue
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
+import okhttp3.WebSocket
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+
+    lateinit var webSocket: WebSocket
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val loginDataStore = LoginDataStore(applicationContext)
         User.token = loginDataStore.readTokenF()
-        User.id = loginDataStore.readIdF()?.toLong()?:0L
+        User.id = loginDataStore.readIdF()?.toLong() ?: 0L
+
+        Log.d("modar","user id:${User.id}");
+
+        try {
+            val chatRepository = ChatRepository.getInstance(
+                ApplicationDataBase.getInstance(this).chatDao(),
+                PosterRetrofit.getRetrofitInstance().create(ChatService::class.java)
+            )
+            webSocket = WSClient(chatRepository).run()
+        } catch (e: Exception) {
+            Log.e("modar", "ws error ${e.message}")
+        }
+
         setContent {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 HaminjastTheme {
@@ -189,6 +211,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+
+    override fun onDestroy() {
+        Log.d("modarws","closing websocket...");
+        val result=webSocket.close(1000,null)
+        if (result){
+            Log.d("modarws","socket closed successfully");
+        }else{
+            Log.d("modarws","failed to close socket");
+        }
+        super.onDestroy()
     }
 }
 
@@ -327,7 +361,7 @@ fun MainNavHost(
         composable(route = ChatsList.route) {
             ChatsListScreen(
                 onChatClicked = { conversationID, posterID ->
-                    navController.navigateToChat(conversationID,posterID)
+                    navController.navigateToChat(conversationID, posterID)
                 }
             )
         }
@@ -372,11 +406,16 @@ fun MainNavHost(
             val conversationID = backStackEntry.arguments?.getLong(Chat.conversationIdArg) ?: -1
             val posterID =
                 backStackEntry.arguments?.getLong(Chat.posterIdArg) ?: return@composable
-            ChatScreen(conversationID, posterID)
+            ChatScreen(conversationID, posterID,
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(route = "my_poster") {
             MyPosterScreen(
+                loginDataStore = loginDataStore,
                 onPosterClicked = {
                     navController.navigateToPosterDetail(it)
                 }

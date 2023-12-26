@@ -26,7 +26,7 @@ fun ChatScreen(
     viewModel: ChatViewModel = viewModel(
         factory = ChatViewModelFactory(
             conversationID = conversationID,
-            posterID= posterID,
+            posterID = posterID,
             posterRepository = PosterRepository(
                 apiService = PosterRetrofit.getRetrofitInstance()
                     .create(PosterRetrofitService::class.java),
@@ -45,10 +45,24 @@ fun ChatScreen(
         topBar = {
             ChatTopBar(
                 onBackClicked = onBackClicked,
+                onMenuClicked = {
+                    //TODO
+                }
             )
         },
         content = {
-            ChatContent(it, messages = chatState.messages)
+            chatState.conversationCoverUI?.let { conversationCoverUi ->
+                if (chatState.messages.isNotEmpty()) {
+                    ChatContent(
+                        it,
+                        messages = chatState.messages,
+                        lastReadMessageSeqNumber = conversationCoverUi.lastReadMessageSeqNumber,
+                        onMessageVisible = {
+                            viewModel.onMessageVisible(it)
+                        }
+                    )
+                }
+            }
         },
         bottomBar = {
             ChatInputBar(
@@ -56,7 +70,7 @@ fun ChatScreen(
                 onInputBarTextChanged = { text ->
                     viewModel.updateChatState { it.copy(inputBarText = text) }
                 },
-                onSendClicked = {viewModel.sendMessage()}
+                onSendClicked = { viewModel.sendMessage() }
             )
         }
     )

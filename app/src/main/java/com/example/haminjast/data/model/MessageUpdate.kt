@@ -3,7 +3,7 @@ package com.example.haminjast.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class MessageReceivedUpdate(
+data class MessageUpdate(
     @SerializedName("content")
     val content: String,
     @SerializedName("conversation_id")
@@ -12,12 +12,14 @@ data class MessageReceivedUpdate(
     val id: Long,
     @SerializedName("receiver_id")
     val receiverId: Int,
+    @SerializedName("sequence_no")
+    val sequenceNo: Int,
     @SerializedName("sender_id")
     val senderId: Int,
     @SerializedName("status")
     val status: String,
     @SerializedName("time")
-    val time: String,
+    val time: Long,
     @SerializedName("type")
     val type: String
 )

@@ -1,14 +1,18 @@
 package com.example.haminjast.data.repository
 
+import android.icu.util.UniversalTimeScale.toLong
 import android.util.Log
 import com.example.haminjast.User
 import com.example.haminjast.User.token
 import com.example.haminjast.data.database.ChatDao
 import com.example.haminjast.data.model.ConversationCoverEntity
 import com.example.haminjast.data.model.MessageEntity
-import com.example.haminjast.data.model.MessageReceivedUpdate
+import com.example.haminjast.data.model.MessageUpdate
+import com.example.haminjast.data.model.ReadMessageRequest
 import com.example.haminjast.data.model.SendMessageRequest
+import com.example.haminjast.data.model.SendMessageResponse
 import com.example.haminjast.data.network.ChatService
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +24,10 @@ class ChatRepository constructor( //TODO private constructor
 ) {
     fun getConversationCovers(): Flow<Map<ConversationCoverEntity, MessageEntity?>> {
         return chatDao.getConversationCovers()
+    }
+
+    fun getConversationCover(conversationID: Long): Flow<ConversationCoverEntity> {
+        return chatDao.getConversationCover(conversationID)
     }
 
     suspend fun fetchConversationCovers(): Result<Unit> {
@@ -60,7 +68,7 @@ class ChatRepository constructor( //TODO private constructor
                     return@withContext Result.failure(Throwable(response.message()))
                 }
             } catch (e: Exception) {
-                Log.e("modar", "ws error ${e.message}")
+                Log.e("modar", "error ${e.message}")
                 return@withContext Result.failure(Throwable(e.message))
             }
 
@@ -73,23 +81,29 @@ class ChatRepository constructor( //TODO private constructor
 
     suspend fun fetchConversationHistory(conversationID: Long): Result<Unit> {
         return withContext(ioDispatcher) {
-            val response = chatService.getConversationHistory(
-                authorization = "Bearer $token", //TODO
-                conversationID = conversationID.toString(),
-                pageID = 1,
-                pageSize = 100
-            )
-            return@withContext if (response.isSuccessful) {
-                response.body()?.let { conversationHistoryResponse ->
-                    val messageEntities = conversationHistoryResponse.messages.map {
-                        MessageEntity.fromConversationHistoryResponseMessage(it)
+            try {
+                val response = chatService.getConversationHistory(
+                    authorization = "Bearer $token", //TODO
+                    conversationID = conversationID.toString(),
+                    pageID = 1,
+                    pageSize = 100
+                )
+                return@withContext if (response.isSuccessful) {
+                    response.body()?.let { conversationHistoryResponse ->
+                        Log.d("modar", "${conversationHistoryResponse.messages}");
+                        val messageEntities = conversationHistoryResponse.messages.map {
+                            MessageEntity.fromConversationHistoryResponseMessage(it)
+                        }
+                        chatDao.insertAllMessages(messageEntities)
                     }
-                    chatDao.insertAllMessages(messageEntities)
-                }
-                Result.success(Unit)
+                    Result.success(Unit)
 
-            } else {
-                Result.failure(Throwable(response.message()))
+                } else {
+                    Result.failure(Throwable(response.message()))
+                }
+            } catch (e: Exception) {
+                Log.e("modar", "error ${e.message}")
+                return@withContext Result.failure(Throwable(e.message))
             }
         }
     }
@@ -99,74 +113,130 @@ class ChatRepository constructor( //TODO private constructor
         posterID: Long,
         content: String,
         contentType: String
-    ): Result<Unit> {
+    ): Result<SendMessageResponse?> {
         return withContext(ioDispatcher) {
+            try {
+                val messageID = System.currentTimeMillis()
 
-            val messageID = System.currentTimeMillis()
-
-            chatDao.insertMessage(
-                MessageEntity(
-                    id = messageID,
-                    content = content,
-                    contentType = contentType,
-                    date = System.currentTimeMillis(),
-                    status = "pending",
-                    senderID = User.id,
-                    conversationID = conversationID,
-                    seqNumber = 0 //TODO Fakhar
+                chatDao.insertMessage(
+                    MessageEntity(
+                        id = messageID,
+                        content = content,
+                        contentType = contentType,
+                        date = System.currentTimeMillis(),
+                        status = "pending",
+                        senderID = User.id,
+                        conversationID = conversationID,
+                        seqNumber = 0 //TODO Fakhar
+                    )
                 )
-            )
 
-            chatDao.updateConversationCoverLastMessageId(conversationID, messageID)
+                chatDao.updateConversationCoverLastMessageId(conversationID, messageID)
 
-            val sendMessageRequest = SendMessageRequest(
-                id = messageID,
-                conversationId = conversationID.toInt(),
-                posterId = posterID.toInt(),
-                content = content,
-                type = contentType
-            )
+                val sendMessageRequest = SendMessageRequest(
+                    id = messageID,
+                    conversationId = conversationID.toInt(),
+                    posterId = posterID.toInt(),
+                    content = content,
+                    type = contentType
+                )
 
-            val response = chatService.sendMessage(
-                authorization = "Bearer $token",
-                acceptHeader = "application/json",
-                contentTypeHeader = "application/json",
-                sendMessageRequest = sendMessageRequest
-            )
-            val messageResponse = response.body()
+                val response = chatService.sendMessage(
+                    authorization = "Bearer $token",
+                    acceptHeader = "application/json",
+                    contentTypeHeader = "application/json",
+                    sendMessageRequest = sendMessageRequest
+                )
+                val messageResponse = response.body()
 
-            return@withContext if (response.isSuccessful) {
-                messageResponse?.let {
-                    chatDao.updateMessageDateAndStatus(
-                        messageID,
-                        System.currentTimeMillis(),//TODO UNIX
-                        "unread"
-                    )
-                }
+                return@withContext if (response.isSuccessful) {
+                    messageResponse?.let {
+                        chatDao.updateMessageDateAndStatus(
+                            messageID,
+                            it.sendMessage.time,
+                            "unread"
+                        )
+                    }
 //                fetchConversationHistory(conversationID) TODO remove: no need probably
-                Result.success(Unit)
+                    Result.success(messageResponse)
 
-            } else {
-                messageResponse?.let {
-                    chatDao.updateMessageDateAndStatus(
-                        messageID,
-                        System.currentTimeMillis(),//TODO UNIX
-                        "failed"
-                    )
+                } else {
+                    messageResponse?.let {
+                        chatDao.updateMessageDateAndStatus(
+                            messageID,
+                            it.sendMessage.time,
+                            "failed"
+                        )
+                    }
+                    Result.failure(Throwable(response.message()))
+
                 }
-                Result.failure(Throwable(response.message()))
-
+            } catch (e: Exception) {
+                Log.e("modar", "error ${e.message}")
+                return@withContext Result.failure(Throwable(e.message))
             }
         }
     }
 
-    suspend fun onMessageReceived(messageReceivedUpdate: MessageReceivedUpdate) {
+    suspend fun readMessage(
+        senderId: Int,
+        messageIdsAndSeqNumbers: List<Pair<Long, Int>>,
+        conversationID: Long
+    ) {
+        withContext(ioDispatcher) {
+            try {
+                val response = chatService.readMessage(
+                    authorization = "Bearer $token",
+                    acceptHeader = "application/json",
+                    contentTypeHeader = "application/json",
+                    readMessageRequest = ReadMessageRequest(
+                        messageIds = messageIdsAndSeqNumbers.map { it.first },
+                        senderId = senderId
+                    )
+                )
+                return@withContext if (response.isSuccessful) {
+                    chatDao.updateMessageStatus(messageIdsAndSeqNumbers[0].first, "read")
+                    val largestSeqNumber = messageIdsAndSeqNumbers.maxOf { it.second }
+                    synchronized(this) {
+                        if (largestSeqNumber > chatDao.getLastReadMessageSeqNumber(conversationID)) {
+                            chatDao.updateLastReadMessageSeqNumber(conversationID, largestSeqNumber)
+                        }
+                        Result.success(Unit)
+                    }
+
+                } else {
+                    //TODO retry
+                    Result.failure(Throwable(response.message()))
+                }
+            } catch (e: Exception) {
+                return@withContext Result.failure(Throwable(e.message))
+            }
+        }
+    }
+
+    suspend fun onMessageReceived(messageReceivedUpdate: MessageUpdate) {
         val messageEntity = MessageEntity.fromMessageReceivedUpdate(messageReceivedUpdate)
         withContext(ioDispatcher) {// todo transaction
             chatDao.insertMessage(messageEntity)
-            chatDao.updateConversationCoverLastMessageId(
-                messageEntity.conversationID,
-                messageEntity.id
+            synchronized(this) {
+                if (messageEntity.id > chatDao.getConversationCoverLastMessageId(messageEntity.conversationID)) {
+                    chatDao.updateConversationCoverLastMessageId(
+                        messageEntity.conversationID,
+                        messageEntity.id
+                    )
+                }
+            }
+        }
+    }
+
+    suspend fun onMessageRead(messageReceivedUpdate: MessageUpdate) {
+        Log.d("modar", "onMessageRead");
+        val messageEntity = MessageEntity.fromMessageReceivedUpdate(messageReceivedUpdate)
+        withContext(ioDispatcher) {
+            Log.d("modar", "messageEntity.id: ${messageEntity.content}");
+            chatDao.updateMessageStatus(
+                messageEntity.content.removeSurrounding("[", "]").toLong(),
+                "read"
             )
         }
     }
