@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haminjast.R
+import com.example.haminjast.User
 import com.example.haminjast.ui.model.MessageContentType
 import com.example.haminjast.ui.model.MessageStatus
 import com.example.haminjast.ui.model.MessageUI
@@ -142,8 +143,13 @@ fun ChatContent(
     lastReadMessageSeqNumber: Int,
     onMessageVisible: (MessageUI) -> Unit = {},
 ) {
-    Log.d("modarvm","message.size: ${messages.size} lastReadMessageSeqNumber: $lastReadMessageSeqNumber");
-    val state = rememberLazyListState(initialFirstVisibleItemIndex = 35)
+    Log.d(
+        "modarvm",
+        "message.size: ${messages.size} lastReadMessageSeqNumber: $lastReadMessageSeqNumber"
+    );
+//    val state = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+    val state =
+        rememberLazyListState(initialFirstVisibleItemIndex = if (messages.last().senderID == User.id) 0 else (messages.size - lastReadMessageSeqNumber))
 //    LaunchedEffect(key1 = false, block = {
 ////        state.scrollToItem(messages.size - lastReadMessageSeqNumber)
 //        state.scrollToItem(35)

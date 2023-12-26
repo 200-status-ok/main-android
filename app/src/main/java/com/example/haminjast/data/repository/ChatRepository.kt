@@ -171,7 +171,7 @@ class ChatRepository constructor( //TODO private constructor
                     Result.failure(Throwable(response.message()))
 
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.e("modar", "error ${e.message}")
                 return@withContext Result.failure(Throwable(e.message))
             }
@@ -195,11 +195,14 @@ class ChatRepository constructor( //TODO private constructor
                     )
                 )
                 return@withContext if (response.isSuccessful) {
+                    chatDao.updateMessageStatus(messageIdsAndSeqNumbers[0].first, "read")
                     val largestSeqNumber = messageIdsAndSeqNumbers.maxOf { it.second }
-                    if (largestSeqNumber > chatDao.getLastReadMessageSeqNumber(conversationID)) {
-                        chatDao.updateLastReadMessageSeqNumber(conversationID, largestSeqNumber)
+                    synchronized(this) {
+                        if (largestSeqNumber > chatDao.getLastReadMessageSeqNumber(conversationID)) {
+                            chatDao.updateLastReadMessageSeqNumber(conversationID, largestSeqNumber)
+                        }
+                        Result.success(Unit)
                     }
-                    Result.success(Unit)
 
                 } else {
                     //TODO retry
@@ -215,10 +218,14 @@ class ChatRepository constructor( //TODO private constructor
         val messageEntity = MessageEntity.fromMessageReceivedUpdate(messageReceivedUpdate)
         withContext(ioDispatcher) {// todo transaction
             chatDao.insertMessage(messageEntity)
-            chatDao.updateConversationCoverLastMessageId(
-                messageEntity.conversationID,
-                messageEntity.id
-            )
+            synchronized(this) {
+                if (messageEntity.id > chatDao.getConversationCoverLastMessageId(messageEntity.conversationID)) {
+                    chatDao.updateConversationCoverLastMessageId(
+                        messageEntity.conversationID,
+                        messageEntity.id
+                    )
+                }
+            }
         }
     }
 
@@ -226,9 +233,9 @@ class ChatRepository constructor( //TODO private constructor
         Log.d("modar", "onMessageRead");
         val messageEntity = MessageEntity.fromMessageReceivedUpdate(messageReceivedUpdate)
         withContext(ioDispatcher) {
-            Log.d("modar","messageEntity.id: ${messageEntity.content}");
+            Log.d("modar", "messageEntity.id: ${messageEntity.content}");
             chatDao.updateMessageStatus(
-                messageEntity.content.removeSurrounding("[","]").toLong(),
+                messageEntity.content.removeSurrounding("[", "]").toLong(),
                 "read"
             )
         }

@@ -12,6 +12,8 @@ data class MessageUpdate(
     val id: Long,
     @SerializedName("receiver_id")
     val receiverId: Int,
+    @SerializedName("sequence_no")
+    val sequenceNo: Int,
     @SerializedName("sender_id")
     val senderId: Int,
     @SerializedName("status")
