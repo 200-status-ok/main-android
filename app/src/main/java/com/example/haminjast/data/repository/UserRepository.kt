@@ -16,6 +16,24 @@ class UserRepository(private val apiService: UserRetrofitService) {
         }
     }
 
+    suspend fun markPoster(token: String , id: Int) :Result<Unit>{
+        val res = apiService.markPoster(authorization = "Bearer $token", id = id)
+        return if (res.isSuccessful) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception("OTP not verified"))
+        }
+    }
+
+    suspend fun unMarkPoster(token: String , id: Int) :Result<Unit>{
+        val res = apiService.unmarkPoster(authorization = "Bearer $token",id = id)
+        return if (res.isSuccessful) {
+            Result.success(Unit)
+        } else {
+            Result.failure(Exception("OTP not verified"))
+        }
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: UserRepository? = null
