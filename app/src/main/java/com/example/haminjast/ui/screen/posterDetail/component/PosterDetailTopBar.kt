@@ -21,13 +21,11 @@ import com.example.haminjast.R
 @Composable
 fun PosterDetailTopBar(
     onBackClicked: () -> Unit = {},
-    onBookMarkClicked: () -> Unit = {},
+    onBookMarkClicked: (Boolean) -> Unit = {},
     onMenuClicked: () -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior=TopAppBarDefaults.pinnedScrollBehavior()
+    scrollBehavior: TopAppBarScrollBehavior=TopAppBarDefaults.pinnedScrollBehavior(),
+    isPosterMarked: Boolean = false,
 ) {
-    val isBookMarked = remember {
-        mutableStateOf(false)
-    }
     TopAppBar(
         title = {},
         navigationIcon = {
@@ -37,11 +35,10 @@ fun PosterDetailTopBar(
         },
         actions = {
             IconButton(onClick = {
-                onBookMarkClicked()
-                isBookMarked.value = !isBookMarked.value
+                onBookMarkClicked(isPosterMarked)
             }) {
                 Image(
-                    painter = if(isBookMarked.value){
+                    painter = if(isPosterMarked){
                         painterResource(id = R.drawable.ic_cross)
                     }else{
                         painterResource(id = R.drawable.ic_bookmark)
