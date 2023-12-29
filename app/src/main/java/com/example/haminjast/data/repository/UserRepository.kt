@@ -7,11 +7,15 @@ import com.example.haminjast.data.network.userretrofit.UserRetrofitService
 
 class UserRepository(private val apiService: UserRetrofitService) {
     suspend fun getUser(token: String) :Result<User?>{
-        val res = apiService.getUser(authorization = "Bearer $token")
-        Log.d("mhmdrz" , "  $res")
-        return if (res.isSuccessful) {
-            Result.success(res.body())
-        } else {
+        return try {
+            val res = apiService.getUser(authorization = "Bearer $token")
+            Log.d("mhmdrz" , "  $res")
+            if (res.isSuccessful) {
+                Result.success(res.body())
+            } else {
+                Result.failure(Exception("OTP not verified"))
+            }
+        }catch (e:Exception){
             Result.failure(Exception("OTP not verified"))
         }
     }
