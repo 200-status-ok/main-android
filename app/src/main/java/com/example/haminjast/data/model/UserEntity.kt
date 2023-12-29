@@ -62,3 +62,7 @@ data class TagP(
     @SerializedName("name") val name: String,
     @SerializedName("updated_at") val updatedAt: Long
 )
+
+data class MarkedPosterResponse(
+    @SerializedName("message") val message: String
+)

@@ -11,6 +11,7 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,7 +22,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.model.UiPoster
+import com.example.haminjast.ui.screen.meScreen.MeViewModel
+import com.example.haminjast.ui.screen.meScreen.provideUserRepository
 import com.example.haminjast.ui.screen.posterDetail.component.ContactsBottomSheetContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailContent
 import com.example.haminjast.ui.screen.posterDetail.component.PosterDetailTopBar
@@ -31,6 +35,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun PosterDetailScreen(
     posterId: Int = 0,
+    loginDataStore:LoginDataStore,
+    meViewModel: MeViewModel = viewModel(
+        factory = com.example.haminjast.ui.screen.meScreen.provideViewModelFactory(
+            loginDataStore = loginDataStore,
+            userRepository = provideUserRepository()
+        )
+    ),
     viewModel: PosterDetailViewModel = viewModel(
         factory = provideViewModelFactory(
             posterId,
@@ -39,6 +50,8 @@ fun PosterDetailScreen(
     onBackClicked: () -> Unit = {},
     onChatClicked: (Long) -> Unit = {}
 ) {
+    meViewModel.updatePosterId(posterId)
+    val isPosterMarked = meViewModel.isMarkedPoster.collectAsState()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -61,8 +74,14 @@ fun PosterDetailScreen(
                     onBackClicked = onBackClicked,
                     scrollBehavior = scrollBehavior,
                     onBookMarkClicked = {
-                    }
-                ) //todo: add bookmark and menu click
+                        if(it){
+                            meViewModel.unMarkPoster(posterId)
+                        }else{
+                            meViewModel.markPoster(posterId)
+                        }
+                    },
+                    isPosterMarked = isPosterMarked.value
+                )
             }
         },
         sheetContent = {
