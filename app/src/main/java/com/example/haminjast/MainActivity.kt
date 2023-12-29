@@ -176,35 +176,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         containerColor = PrimaryBlack
                                     )
-                                } else {
-                                    ExtendedFloatingActionButton(
-                                        onClick = {
-                                            navController.navigateSingleTopTo(MyPoster.route)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.ic_person),
-                                                null,
-                                                tint = Color.White
-                                            )
-                                        },
-                                        text = {
-                                            Text(
-                                                modifier = Modifier.padding(bottom = 2.dp),
-                                                text = stringResource(id = R.string.my_ads),
-                                                style = TextStyle(
-                                                    fontSize = 14.sp,
-                                                    fontFamily = VazirFont,
-                                                    fontWeight = FontWeight(400),
-                                                    color = Color.White,
-                                                    textAlign = TextAlign.Center,
-                                                )
-                                            )
-                                        },
-                                        containerColor = PrimaryBlack
-                                    )
                                 }
-
                             }
                         }
                     )
@@ -390,7 +362,8 @@ fun MainNavHost(
                 },
                 onChatClicked = {
                     navController.navigateToChat(-1, it)
-                }
+                },
+                loginDataStore = loginDataStore
             )
         }
         composable(route = CreatePoster.route) {
