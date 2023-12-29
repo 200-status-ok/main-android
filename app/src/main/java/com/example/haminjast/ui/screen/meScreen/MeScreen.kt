@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,13 +18,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,8 +50,6 @@ import com.example.haminjast.data.datastore.LoginDataStore
 import com.example.haminjast.ui.screen.ads.PosterItem
 import com.example.haminjast.ui.theme.PrimaryBlack
 import com.example.haminjast.ui.theme.VazirFont
-import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
-import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -82,7 +81,11 @@ fun MeScreen(
             Wallet(wallet.value)
             val tabs = listOf("آگهی های من", "آگهی های نشان شده")
             Column(modifier = Modifier.fillMaxSize()) {
-                TabRow(selectedTabIndex = tabIndex , containerColor = Color(0xFFFFFFFF)) {
+                TabRow(selectedTabIndex = tabIndex , containerColor = Color(0xFFFFFFFF),
+                    divider = {
+                    },
+                    indicator = { tabPositions ->
+                    }) {
                     tabs.forEachIndexed { index, title ->
                         Tab(text = { Text(title) },
                             modifier = if(tabIndex == index) Modifier.padding(horizontal = 30.dp, vertical = 5.dp).background(color = Color(0xFFEFF8FF), shape = RoundedCornerShape(size = 8.dp))
@@ -109,8 +112,7 @@ fun MeScreen(
                             modifier = Modifier
                             .fillMaxWidth()
                             .height(2.dp),
-                            color = PrimaryBlack.copy(alpha = 0.1f)
-                            )
+                            color = PrimaryBlack.copy(alpha = 0.1f))
                             }
                         }
                     }
