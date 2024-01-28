@@ -16,20 +16,6 @@ data class MessageEntity(
     val seqNumber: Long
 ) {
     companion object {
-//        fun fromResponse(messageResponse: MessageResponse): MessageEntity {
-//            return MessageEntity(
-//                id = messageResponse.id,
-//                content = messageResponse.content,
-//                contentType = messageResponse.contentType,
-////                date = messageResponse.date,
-//                date = System.currentTimeMillis(),
-//                status = messageResponse.status,
-//                senderID = messageResponse.senderID,
-//                conversationID = messageResponse.conversationID,
-//                seqNumber = messageResponse.seqNumber
-//            )
-//        }
-
         fun fromConversationHistoryResponseMessage(messageResponse: ConversationHistoryResponse.Message): MessageEntity { //TODO remove
             return MessageEntity(
                 id = messageResponse.id,
