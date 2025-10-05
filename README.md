@@ -23,10 +23,7 @@ One of the key features of Haminjast is its interactive map, which allows users 
 
 To get started with the Haminjast project, you will need to have Android Studio and the Android SDK installed on your machine.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/haminjast.git
-   ```
+1. **Clone the repository**
 2. **Open the project in Android Studio.**
 3. **Build the project to download the required dependencies.**
 4. **Run the application on an Android emulator or a physical device.**
